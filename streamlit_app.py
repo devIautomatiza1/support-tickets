@@ -60,23 +60,18 @@ if "df" not in st.session_state:
     }
     df = pd.DataFrame(data)
 
-    # Guardar el dataframe en el estado de sesión (un objeto similar a un diccionario que persiste
-    # entre ejecuciones de la página). Esto asegura que nuestros datos se conserven cuando la aplicación se actualice.
+    # Guardar el dataframe en el estado de sesión
     st.session_state.df = df
-
 
 # Mostrar una sección para añadir un nuevo ticket.
 st.header("Añadir un ticket")
 
-# Añadimos tickets mediante un `st.form` y algunos widgets de entrada. Si los widgets se usan
-# en un formulario, la aplicación solo se volverá a ejecutar cuando se presione el botón de enviar.
 with st.form("add_ticket_form"):
     problema = st.text_area("Describe el problema")
     prioridad = st.selectbox("Prioridad", ["Alta", "Media", "Baja"])
     enviado = st.form_submit_button("Enviar")
 
 if enviado:
-    # Crear un dataframe para el nuevo ticket y añadirlo al dataframe en el estado de sesión.
     numero_ticket_reciente = int(max(st.session_state.df.ID).split("-")[1])
     hoy = datetime.datetime.now().strftime("%d-%m-%Y")
     df_nuevo = pd.DataFrame(
@@ -91,7 +86,6 @@ if enviado:
         ]
     )
 
-    # Mostrar un pequeño mensaje de éxito.
     st.write("¡Ticket enviado! Aquí están los detalles del ticket:")
     st.dataframe(df_nuevo, use_container_width=True, hide_index=True)
     st.session_state.df = pd.concat([df_nuevo, st.session_state.df], axis=0)
@@ -106,8 +100,7 @@ st.info(
     icon="✍️",
 )
 
-# Mostrar el dataframe de tickets con `st.data_editor`. Esto permite al usuario editar las celdas
-# de la tabla. Los datos editados se devuelven como un nuevo dataframe.
+# Mostrar el dataframe de tickets con `st.data_editor`
 df_editado = st.data_editor(
     st.session_state.df,
     use_container_width=True,
@@ -133,14 +126,15 @@ df_editado = st.data_editor(
 # Mostrar algunas métricas y gráficos sobre los tickets.
 st.header("Estadísticas")
 
-# Mostrar métricas lado a lado usando `st.columns` y `st.metric`.
+# Mostrar métricas lado a lado usando `st.columns` y `st.metric`
 col1, col2, col3 = st.columns(3)
-num_tickets_abiertos = len(st.session_state.df[st.session_state.df.Estado == "Abierto"])
+# CORREGIDO: Usar "Estado" en lugar de "status"
+num_tickets_abiertos = len(st.session_state.df[st.session_state.df["Estado"] == "Abierto"])
 col1.metric(label="Número de tickets abiertos", value=num_tickets_abiertos, delta=10)
 col2.metric(label="Tiempo de primera respuesta (horas)", value=5.2, delta=-1.5)
 col3.metric(label="Tiempo promedio de resolución (horas)", value=16, delta=2)
 
-# Mostrar dos gráficos de Altair usando `st.altair_chart`.
+# Mostrar dos gráficos de Altair
 st.write("")
 st.write("##### Estado de tickets por mes")
 grafico_estado = (
