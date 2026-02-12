@@ -5,117 +5,123 @@ import pandas as pd
 import datetime
 import os
 
-# --- CONFIGURACIÓN ---
-# Configuración de la página PRIMERO
-st.set_page_config(page_title="AppGestionTickets", page_icon="📝", layout="wide")
+# --- CONFIGURACIÓN DE LA PÁGINA (DEBE SER LO PRIMERO) ---
+st.set_page_config(
+    page_title="AppGestionTickets", 
+    page_icon="📝", 
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Título principal
-st.title("📝 AppGestionTickets - Debug Visual")
+# --- TÍTULO PRINCIPAL ---
+st.title("📝 AppGestionTickets - Gestión de Tickets con Supabase")
 st.markdown("---")
 
-# --- SECCIÓN DE DEBUG VISUAL ---
-st.header("🔍 Panel de Diagnóstico")
+# --- CONFIGURACIÓN DE CREDENCIALES ---
+# Intentar obtener credenciales de diferentes fuentes
+SUPABASE_URL = None
+SUPABASE_KEY = None
+GEMINI_API_KEY = None
 
-# Crear columnas para el diagnóstico
-col_debug1, col_debug2, col_debug3 = st.columns(3)
+# 1. Primero intentar desde secrets de Streamlit
+try:
+    SUPABASE_URL = st.secrets.get("SUPABASE_URL")
+    SUPABASE_KEY = st.secrets.get("SUPABASE_KEY")
+    GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY")
+except:
+    pass
 
-with col_debug1:
-    st.subheader("📡 Configuración Supabase")
-    # Usar secrets de Streamlit Cloud o variables de entorno
-    SUPABASE_URL = st.secrets.get("SUPABASE_URL", os.environ.get("SUPABASE_URL"))
-    SUPABASE_KEY = st.secrets.get("SUPABASE_KEY", os.environ.get("SUPABASE_KEY"))
-    GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", os.environ.get("GEMINI_API_KEY"))
-    
-    # Mostrar estado de las variables
-    st.write("**Estado de credenciales:**")
-    if SUPABASE_URL:
-        st.success(f"✅ SUPABASE_URL: {SUPABASE_URL[:20]}...")
-    else:
-        st.error("❌ SUPABASE_URL no configurada")
-    
-    if SUPABASE_KEY:
-        # Mostrar solo primeros y últimos caracteres por seguridad
-        masked_key = f"{SUPABASE_KEY[:10]}...{SUPABASE_KEY[-5:]}"
-        st.success(f"✅ SUPABASE_KEY: {masked_key}")
-    else:
-        st.error("❌ SUPABASE_KEY no configurada")
-    
-    if GEMINI_API_KEY:
-        masked_gemini = f"{GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-5:]}"
-        st.success(f"✅ GEMINI_API_KEY: {masked_gemini}")
-    else:
-        st.warning("⚠️ GEMINI_API_KEY no configurada (opcional)")
+# 2. Si no, intentar desde variables de entorno
+if not SUPABASE_URL:
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+if not SUPABASE_KEY:
+    SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+if not GEMINI_API_KEY:
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-with col_debug2:
-    st.subheader("🔄 Conexión Supabase")
+# --- PANEL DE DIAGNÓSTICO VISUAL ---
+with st.expander("🔍 PANEL DE DIAGNÓSTICO - Verificar conexión a Supabase", expanded=True):
     
-    # Probar conexión a Supabase
-    if SUPABASE_URL and SUPABASE_KEY:
-        try:
-            st.write("**Intentando conectar a Supabase...**")
-            client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
-            
-            # Prueba simple de conexión
-            test_query = client.table("opportunities").select("count", count="exact").limit(1).execute()
-            
-            st.success("✅ Conexión exitosa a Supabase")
-            
-            # Obtener información de la tabla
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📡 1. Verificación de Credenciales")
+        
+        # Supabase URL
+        if SUPABASE_URL:
+            st.success(f"✅ SUPABASE_URL: {SUPABASE_URL[:20]}...")
+        else:
+            st.error("❌ SUPABASE_URL no configurada")
+            st.info("💡 Configura en .streamlit/secrets.toml o variables de entorno")
+        
+        # Supabase Key
+        if SUPABASE_KEY:
+            masked_key = f"{SUPABASE_KEY[:8]}...{SUPABASE_KEY[-4:]}" if len(SUPABASE_KEY) > 12 else "***configurada***"
+            st.success(f"✅ SUPABASE_KEY: {masked_key}")
+        else:
+            st.error("❌ SUPABASE_KEY no configurada")
+        
+        # Gemini Key
+        if GEMINI_API_KEY:
+            masked_gemini = f"{GEMINI_API_KEY[:8]}...{GEMINI_API_KEY[-4:]}" if len(GEMINI_API_KEY) > 12 else "***configurada***"
+            st.success(f"✅ GEMINI_API_KEY: {masked_gemini}")
+        else:
+            st.warning("⚠️ GEMINI_API_KEY no configurada (solo para análisis con IA)")
+    
+    with col2:
+        st.subheader("🔄 2. Prueba de Conexión a Supabase")
+        
+        if SUPABASE_URL and SUPABASE_KEY:
             try:
-                table_info = client.table("opportunities").select("*").limit(1).execute()
-                if table_info.data:
-                    st.info(f"📊 Tabla 'opportunities' encontrada")
-                    st.write(f"Estructura de columnas: {list(table_info.data[0].keys()) if table_info.data else 'No data'}")
-                else:
-                    st.warning("⚠️ Tabla 'opportunities' existe pero está vacía")
+                with st.spinner("Conectando a Supabase..."):
+                    client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+                    
+                    # Prueba simple de conexión
+                    test_query = client.table("opportunities").select("count", count="exact").limit(1).execute()
+                    
+                    st.success("✅ Conexión a Supabase EXITOSA")
+                    
+                    # Verificar tabla opportunities
+                    try:
+                        table_check = client.table("opportunities").select("*").limit(1).execute()
+                        if table_check.data:
+                            st.success(f"✅ Tabla 'opportunities' encontrada")
+                            st.info(f"📊 Columnas disponibles: {list(table_check.data[0].keys())}")
+                        else:
+                            st.warning("⚠️ Tabla 'opportunities' existe pero está vacía")
+                    except Exception as e:
+                        st.error(f"❌ Error con tabla 'opportunities': {str(e)}")
+                        st.info("💡 Verifica que el nombre de la tabla sea correcto (case-sensitive)")
+                        
             except Exception as e:
-                st.error(f"❌ Error accediendo a tabla 'opportunities': {str(e)}")
-                
-        except Exception as e:
-            st.error(f"❌ Error de conexión a Supabase: {str(e)}")
+                st.error(f"❌ Error de conexión a Supabase: {str(e)}")
+                client = None
+        else:
+            st.warning("⏸️ Credenciales incompletas - No se puede probar conexión")
             client = None
-    else:
-        st.warning("⚠️ Credenciales incompletas para probar conexión")
-        client = None
-
-with col_debug3:
-    st.subheader("📋 Estado de la aplicación")
-    
-    # Contadores y estado
-    st.write("**Session State:**")
-    st.write(f"Keys en session_state: {list(st.session_state.keys()) if st.session_state else 'Vacío'}")
-    
-    # Cache info
-    st.write("**Cache:**")
-    if 'df_cache' in st.session_state:
-        st.write(f"DataFrame en cache: {len(st.session_state.df_cache)} registros")
-        st.write(f"Timestamp: {st.session_state.get('cache_timestamp', 'N/A')}")
-    else:
-        st.write("No hay datos en cache")
 
 st.markdown("---")
 
 # --- FUNCIONES PRINCIPALES ---
-@st.cache_data(ttl=60)  # Cache por 60 segundos para debugging
-def get_all_opportunities():
-    """Carga todos los tickets de oportunidades con debugging visual"""
+@st.cache_data(ttl=30)  # Cache por 30 segundos para datos en tiempo real
+def cargar_tickets_supabase():
+    """Carga todos los tickets desde Supabase con debugging incluido"""
     
     if not SUPABASE_URL or not SUPABASE_KEY:
-        st.error("❌ Credenciales de Supabase no configuradas")
+        st.sidebar.error("❌ Credenciales de Supabase no configuradas")
         return pd.DataFrame()
     
+    if 'client' not in locals() and 'client' not in globals():
+        try:
+            client = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+        except Exception as e:
+            st.error(f"Error creando cliente Supabase: {e}")
+            return pd.DataFrame()
+    
     try:
-        with st.spinner("🔄 Cargando tickets desde Supabase..."):
-            st.write("**Ejecutando query a Supabase...**")
-            
-            # Log de la consulta
-            st.code(f"""
-            Query:
-            - Tabla: opportunities
-            - Select: id, recording_id, title, description, created_at, status, priority, ticket_number, notes, updated_at
-            - Join: recordings(filename, transcription)
-            - Order: created_at DESC
-            """)
+        # Mostrar estado en sidebar
+        with st.sidebar.container():
+            st.sidebar.info("🔄 Cargando tickets desde Supabase...")
             
             # Ejecutar consulta
             query = (
@@ -126,60 +132,21 @@ def get_all_opportunities():
             
             response = query.execute()
             
-            # Debug de la respuesta
-            st.write(f"**Respuesta recibida:**")
-            st.write(f"- Status: {response}")
-            st.write(f"- Tipo de datos: {type(response.data)}")
-            st.write(f"- Longitud de datos: {len(response.data) if response.data else 0}")
-            
             if response.data:
-                st.success(f"✅ {len(response.data)} tickets encontrados")
-                
-                # Mostrar primer registro como ejemplo
-                st.write("**Ejemplo del primer ticket:**")
-                primer_ticket = response.data[0]
-                
-                # Formatear para mostrar de forma legible
-                ticket_info = {
-                    "ID": primer_ticket.get('id'),
-                    "Ticket #": primer_ticket.get('ticket_number'),
-                    "Título": primer_ticket.get('title')[:50] + "..." if primer_ticket.get('title') and len(primer_ticket.get('title')) > 50 else primer_ticket.get('title'),
-                    "Estado": primer_ticket.get('status'),
-                    "Prioridad": primer_ticket.get('priority'),
-                    "Fecha": primer_ticket.get('created_at'),
-                    "Tiene grabación": "✅" if primer_ticket.get('recordings') else "❌"
-                }
-                st.json(ticket_info)
-                
-                # Convertir a DataFrame
+                st.sidebar.success(f"✅ {len(response.data)} tickets cargados")
                 df = pd.DataFrame(response.data)
                 
-                # Debug del DataFrame
-                st.write(f"**DataFrame creado:**")
-                st.write(f"- Shape: {df.shape}")
-                st.write(f"- Columnas: {list(df.columns)}")
-                st.write(f"- Tipos de datos:\n{df.dtypes}")
-                
-                # Guardar en session_state para debug
-                st.session_state.df_cache = df
-                st.session_state.cache_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                # Guardar timestamp en session_state
+                st.session_state.ultima_actualizacion = datetime.datetime.now().strftime("%H:%M:%S")
+                st.session_state.total_tickets = len(df)
                 
                 return df
             else:
-                st.warning("⚠️ No se encontraron tickets en la base de datos")
-                
-                # Verificar si la tabla existe y tiene datos
-                try:
-                    count_query = client.table("opportunities").select("*", count="exact").execute()
-                    st.write(f"Total de registros en tabla: {count_query.count if hasattr(count_query, 'count') else 'desconocido'}")
-                except Exception as e:
-                    st.error(f"Error verificando tabla: {e}")
-                
+                st.sidebar.warning("⚠️ No se encontraron tickets")
                 return pd.DataFrame()
                 
     except Exception as e:
-        st.error(f"❌ Error cargando tickets: {str(e)}")
-        st.exception(e)  # Esto muestra el traceback completo
+        st.sidebar.error(f"❌ Error cargando tickets: {str(e)}")
         return pd.DataFrame()
 
 def traducir_estado(status_en):
@@ -224,176 +191,222 @@ def prioridad_a_ingles(priority_es):
     }
     return traducciones.get(priority_es, priority_es)
 
-# --- FILTROS EN SIDEBAR ---
-st.sidebar.header("🔍 Filtros avanzados")
+# --- SIDEBAR - FILTROS Y CONTROLES ---
+st.sidebar.header("🎛️ Panel de Control")
 
-# Solo mostrar filtros si hay datos
-df_original = None
-if 'client' in locals() and client:
-    df_original = get_all_opportunities()
-else:
-    if SUPABASE_URL and SUPABASE_KEY:
-        st.sidebar.warning("⚠️ Error de conexión. Revisa el panel de diagnóstico.")
-    else:
-        st.sidebar.error("❌ Configura las credenciales de Supabase en secrets.toml")
+# Botón para recargar datos manualmente
+if st.sidebar.button("🔄 Recargar tickets", use_container_width=True):
+    st.cache_data.clear()
+    st.rerun()
+
+# Mostrar última actualización
+if 'ultima_actualizacion' in st.session_state:
+    st.sidebar.info(f"📅 Última actualización: {st.session_state.ultima_actualizacion}")
+    st.sidebar.info(f"🎫 Total tickets: {st.session_state.total_tickets}")
+
+st.sidebar.markdown("---")
+st.sidebar.header("🔍 Filtros")
+
+# --- CARGAR DATOS DESDE SUPABASE ---
+df = cargar_tickets_supabase()
 
 # --- APLICACIÓN PRINCIPAL ---
-st.header("📋 Tickets de Oportunidad - Datos en Tiempo Real")
-
-if df_original is not None and not df_original.empty:
+if not df.empty:
+    
+    # Preparar datos para filtros
+    df['estado_es'] = df['status'].apply(traducir_estado)
+    df['prioridad_es'] = df['priority'].apply(traducir_prioridad)
     
     # Filtros en sidebar
     status_filter = st.sidebar.selectbox(
-        "Estado", 
-        ["Todos"] + list(set(df_original["status"].apply(traducir_estado))),
-        key="status_filter"
+        "Estado del ticket",
+        ["Todos"] + sorted(df['estado_es'].unique().tolist()),
+        key="sidebar_status_filter"
     )
     
     priority_filter = st.sidebar.selectbox(
-        "Prioridad", 
-        ["Todas"] + list(set(df_original["priority"].apply(traducir_prioridad))),
-        key="priority_filter"
+        "Prioridad",
+        ["Todas"] + sorted(df['prioridad_es'].unique().tolist()),
+        key="sidebar_priority_filter"
     )
     
-    # Botón para recargar datos
-    if st.sidebar.button("🔄 Recargar datos"):
-        st.cache_data.clear()
-        st.rerun()
+    # Búsqueda por texto
+    search_term = st.sidebar.text_input("🔎 Buscar en tickets", placeholder="Título, descripción, ticket #...")
     
     # Aplicar filtros
-    df_filtered = df_original.copy()
+    df_filtered = df.copy()
     
     if status_filter != "Todos":
-        status_en = estado_a_ingles(status_filter)
-        df_filtered = df_filtered[df_filtered["status"] == status_en]
+        df_filtered = df_filtered[df_filtered['estado_es'] == status_filter]
     
     if priority_filter != "Todas":
-        priority_en = prioridad_a_ingles(priority_filter)
-        df_filtered = df_filtered[df_filtered["priority"] == priority_en]
+        df_filtered = df_filtered[df_filtered['prioridad_es'] == priority_filter]
     
-    # Métricas
-    st.subheader("📊 Resumen")
-    col1, col2, col3, col4 = st.columns(4)
+    if search_term:
+        mask = (
+            df_filtered['title'].str.contains(search_term, case=False, na=False) |
+            df_filtered['description'].str.contains(search_term, case=False, na=False) |
+            df_filtered['ticket_number'].astype(str).str.contains(search_term, case=False, na=False) |
+            df_filtered['notes'].str.contains(search_term, case=False, na=False)
+        )
+        df_filtered = df_filtered[mask]
+    
+    # --- MÉTRICAS Y ESTADÍSTICAS ---
+    st.header("📊 Dashboard de Tickets")
+    
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         st.metric("Total Tickets", len(df_filtered))
     with col2:
-        abiertos = len(df_filtered[df_filtered["status"].str.lower() == "open"])
+        abiertos = len(df_filtered[df_filtered['status'].str.lower() == "open"])
         st.metric("Abiertos", abiertos)
     with col3:
-        en_progreso = len(df_filtered[df_filtered["status"].str.lower() == "in progress"])
+        en_progreso = len(df_filtered[df_filtered['status'].str.lower() == "in progress"])
         st.metric("En Progreso", en_progreso)
     with col4:
-        cerrados = len(df_filtered[df_filtered["status"].str.lower() == "closed"])
+        cerrados = len(df_filtered[df_filtered['status'].str.lower() == "closed"])
         st.metric("Cerrados", cerrados)
+    with col5:
+        alta_prioridad = len(df_filtered[df_filtered['priority'].str.lower() == "high"])
+        st.metric("Prioridad Alta", alta_prioridad, delta_color="inverse")
     
-    # Mostrar tickets
-    st.subheader(f"🎫 Tickets encontrados: {len(df_filtered)}")
+    st.markdown("---")
+    
+    # --- LISTADO DE TICKETS ---
+    st.header(f"🎫 Tickets encontrados: {len(df_filtered)}")
     
     if df_filtered.empty:
-        st.info("No hay tickets que coincidan con los filtros seleccionados")
+        st.info("📭 No hay tickets que coincidan con los filtros seleccionados")
     else:
         for idx, row in df_filtered.iterrows():
-            with st.container():
-                st.markdown("---")
-                
-                # Cabecera del ticket
-                col1, col2, col3 = st.columns([3, 1, 1])
-                with col1:
-                    st.write(f"### 🎫 Ticket #{row['ticket_number']}")
-                    st.write(f"**{row['title']}**")
-                with col2:
-                    st.write(f"**Estado:** {traducir_estado(row['status'])}")
-                with col3:
-                    st.write(f"**Prioridad:** {traducir_prioridad(row['priority'])}")
-                
-                # Fecha
-                if row['created_at']:
-                    fecha = pd.to_datetime(row['created_at']).strftime("%d/%m/%Y %H:%M")
-                    st.write(f"📅 **Creado:** {fecha}")
-                
-                # Descripción
-                if row['description']:
-                    st.write(f"📝 **Descripción:**")
+            
+            # Usar columnas para mejor organización
+            col_ticket, col_estado, col_prioridad = st.columns([3, 1, 1])
+            
+            with col_ticket:
+                st.subheader(f"🎫 Ticket #{row['ticket_number']}")
+                st.write(f"### {row['title']}")
+            
+            with col_estado:
+                estado_color = {
+                    "Open": "🔴",
+                    "In Progress": "🟡",
+                    "Closed": "🟢"
+                }
+                st.markdown(f"**Estado:** {estado_color.get(row['status'], '⚪')} {traducir_estado(row['status'])}")
+            
+            with col_prioridad:
+                prioridad_color = {
+                    "High": "🔴",
+                    "Medium": "🟡",
+                    "Low": "🟢"
+                }
+                st.markdown(f"**Prioridad:** {prioridad_color.get(row['priority'], '⚪')} {traducir_prioridad(row['priority'])}")
+            
+            # Fecha de creación
+            if row['created_at']:
+                fecha = pd.to_datetime(row['created_at']).strftime("%d/%m/%Y %H:%M")
+                st.write(f"📅 **Creado:** {fecha}")
+            
+            # Descripción
+            if row['description']:
+                with st.expander("📝 Ver descripción"):
                     st.write(row['description'])
+            
+            # Grabación y transcripción
+            if row['recordings']:
+                st.write(f"🎤 **Grabación:** {row['recordings'].get('filename', 'Sin nombre')}")
                 
-                # Grabación y transcripción
-                if row['recordings']:
-                    st.write(f"🎤 **Grabación:** {row['recordings'].get('filename', 'N/D')}")
-                    
-                    transcription = row['recordings'].get('transcription', '')
-                    if transcription:
-                        with st.expander("📜 Ver transcripción completa"):
-                            st.write(transcription)
-                    else:
-                        st.write("*Sin transcripción disponible*")
+                transcription = row['recordings'].get('transcription', '')
+                if transcription:
+                    with st.expander("📜 Ver transcripción"):
+                        st.text(transcription[:500] + "..." if len(transcription) > 500 else transcription)
                 else:
-                    st.write("*Sin grabación asociada*")
-                
-                # Notas
-                if row['notes']:
-                    with st.expander("📌 Notas"):
-                        st.write(row['notes'])
-                
-                # Botones de acción
-                col1, col2 = st.columns(2)
-                with col1:
-                    with st.expander("✏️ Editar ticket"):
-                        new_title = st.text_input("Título", value=row['title'] or "", key=f"title_{row['id']}")
-                        new_desc = st.text_area("Descripción", value=row['description'] or "", key=f"desc_{row['id']}")
-                        
-                        estados_list = ["Abierto", "En progreso", "Cerrado"]
-                        prioridades_list = ["Alta", "Media", "Baja"]
-                        
-                        new_status = st.selectbox(
-                            "Estado", 
-                            estados_list, 
-                            index=estados_list.index(traducir_estado(row['status'])), 
-                            key=f"status_{row['id']}"
-                        )
-                        
-                        new_priority = st.selectbox(
-                            "Prioridad", 
-                            prioridades_list, 
-                            index=prioridades_list.index(traducir_prioridad(row['priority'])), 
-                            key=f"priority_{row['id']}"
-                        )
-                        
-                        new_notes = st.text_area("Notas", value=row['notes'] or "", key=f"notes_{row['id']}")
-                        
-                        if st.button("💾 Guardar cambios", key=f"save_{row['id']}"):
-                            try:
-                                client.table("opportunities").update({
-                                    "title": new_title,
-                                    "description": new_desc,
-                                    "status": estado_a_ingles(new_status),
-                                    "priority": prioridad_a_ingles(new_priority),
-                                    "notes": new_notes,
-                                    "updated_at": datetime.datetime.now().isoformat()
-                                }).eq("id", row['id']).execute()
-                                st.success("✅ Ticket actualizado correctamente")
-                                st.cache_data.clear()
-                                st.rerun()
-                            except Exception as e:
-                                st.error(f"❌ Error: {str(e)}")
-                
-                with col2:
-                    if st.button("🤖 Analizar con Gemini", key=f"gemini_{row['id']}"):
+                    st.caption("*Sin transcripción disponible*")
+            
+            # Notas
+            if row['notes']:
+                with st.expander("📌 Ver notas"):
+                    st.write(row['notes'])
+            
+            # --- BOTONES DE ACCIÓN ---
+            col_edit, col_gemini = st.columns(2)
+            
+            with col_edit:
+                with st.expander("✏️ Editar ticket"):
+                    new_title = st.text_input("Título", value=row['title'] or "", key=f"title_{row['id']}")
+                    new_desc = st.text_area("Descripción", value=row['description'] or "", key=f"desc_{row['id']}")
+                    
+                    estados_list = ["Abierto", "En progreso", "Cerrado"]
+                    prioridades_list = ["Alta", "Media", "Baja"]
+                    
+                    new_status = st.selectbox(
+                        "Estado", 
+                        estados_list, 
+                        index=estados_list.index(traducir_estado(row['status'])), 
+                        key=f"status_{row['id']}"
+                    )
+                    
+                    new_priority = st.selectbox(
+                        "Prioridad", 
+                        prioridades_list, 
+                        index=prioridades_list.index(traducir_prioridad(row['priority'])), 
+                        key=f"priority_{row['id']}"
+                    )
+                    
+                    new_notes = st.text_area("Notas", value=row['notes'] or "", key=f"notes_{row['id']}")
+                    
+                    if st.button("💾 Guardar cambios", key=f"save_{row['id']}", use_container_width=True):
+                        try:
+                            client.table("opportunities").update({
+                                "title": new_title,
+                                "description": new_desc,
+                                "status": estado_a_ingles(new_status),
+                                "priority": prioridad_a_ingles(new_priority),
+                                "notes": new_notes,
+                                "updated_at": datetime.datetime.now().isoformat()
+                            }).eq("id", row['id']).execute()
+                            
+                            st.success("✅ Ticket actualizado correctamente")
+                            st.cache_data.clear()
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"❌ Error al actualizar: {str(e)}")
+            
+            with col_gemini:
+                if GEMINI_API_KEY:
+                    if st.button("🤖 Analizar con IA", key=f"gemini_{row['id']}", use_container_width=True):
                         transcription = row['recordings'].get('transcription', '') if row['recordings'] else ''
-                        if transcription and GEMINI_API_KEY:
-                            with st.spinner("Analizando..."):
+                        
+                        if transcription:
+                            with st.spinner("Analizando con Gemini..."):
                                 try:
+                                    prompt = f"""
+                                    Analiza este ticket de soporte:
+                                    
+                                    Número: {row['ticket_number']}
+                                    Título: {row['title']}
+                                    Descripción: {row['description']}
+                                    Transcripción: {transcription[:1500]}
+                                    
+                                    Por favor, proporciona:
+                                    1. Resumen del problema
+                                    2. Posible causa raíz
+                                    3. Solución recomendada
+                                    4. Prioridad sugerida
+                                    """
+                                    
                                     response = requests.post(
                                         f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}",
                                         json={
                                             "contents": [{
-                                                "parts": [{
-                                                    "text": f"Analiza este ticket de soporte:\n\nTítulo: {row['title']}\nDescripción: {row['description']}\nTranscripción: {transcription[:1000]}"
-                                                }]
+                                                "parts": [{"text": prompt}]
                                             }]
                                         },
                                         timeout=30
                                     )
+                                    
                                     if response.status_code == 200:
                                         result = response.json()
                                         analysis = result['candidates'][0]['content']['parts'][0]['text']
@@ -403,37 +416,51 @@ if df_original is not None and not df_original.empty:
                                 except Exception as e:
                                     st.error(f"Error: {str(e)}")
                         else:
-                            st.warning("No hay transcripción o API key")
-                
-                st.markdown("---")
-                
+                            st.warning("⚠️ No hay transcripción")
+                else:
+                    st.caption("🤖 IA no configurada")
+            
+            st.markdown("---")
+            
 else:
-    if df_original is not None and df_original.empty:
+    # Mensaje cuando no hay datos o hay error
+    st.header("🎫 Tickets de Oportunidad")
+    
+    if SUPABASE_URL and SUPABASE_KEY:
         st.warning("""
         📭 **No se encontraron tickets en la base de datos**
         
-        La conexión a Supabase fue exitosa pero la tabla 'opportunities' está vacía.
+        La conexión a Supabase fue exitosa pero no hay datos en la tabla 'opportunities'.
         
-        Posibles soluciones:
-        1. Verifica que la tabla tenga datos en Supabase
-        2. Revisa el nombre de la tabla (case-sensitive)
-        3. Crea algunos tickets de prueba en Supabase
+        **Posibles soluciones:**
+        1. Verifica que la tabla 'opportunities' tenga datos en Supabase
+        2. Revisa que el nombre de la tabla sea exactamente 'opportunities' (case-sensitive)
+        3. Inserta algunos tickets de prueba en Supabase
         """)
     else:
         st.error("""
-        ❌ **No se pudieron cargar los datos**
+        ❌ **Error de configuración**
         
-        Revisa el panel de diagnóstico en la parte superior para identificar el problema.
+        No se pueden cargar los tickets porque faltan las credenciales de Supabase.
         
-        Causas comunes:
-        1. Credenciales incorrectas
-        2. Tabla 'opportunities' no existe
-        3. Problemas de red/permissions
+        **Configuración necesaria:**
+        
+        Crea un archivo `.streamlit/secrets.toml` con:
+        ```toml
+        SUPABASE_URL = "https://tu-proyecto.supabase.co"
+        SUPABASE_KEY = "tu-anon-key"
+        GEMINI_API_KEY = "tu-gemini-key"  # opcional
+        ```
         """)
 
-# --- FOOTER CON INFORMACIÓN ---
+# Footer
 st.markdown("---")
-st.markdown("**ℹ️ Información de debugging:**")
-st.write(f"Última actualización: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-if 'cache_timestamp' in st.session_state:
-    st.write(f"Datos en caché desde: {st.session_state.cache_timestamp}")
+st.markdown(
+    """
+    <div style='text-align: center; color: gray; padding: 10px;'>
+        AppGestionTickets v2.0 - Conexión a Supabase en tiempo real<br>
+        Desarrollado con Streamlit y ❤️
+    </div>
+    """,
+    unsafe_allow_html=True
+)

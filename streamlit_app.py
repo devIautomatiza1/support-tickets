@@ -128,7 +128,6 @@ st.header("Estadísticas")
 
 # Mostrar métricas lado a lado usando `st.columns` y `st.metric`
 col1, col2, col3 = st.columns(3)
-# CORREGIDO: Usar "Estado" en lugar de "status"
 num_tickets_abiertos = len(st.session_state.df[st.session_state.df["Estado"] == "Abierto"])
 col1.metric(label="Número de tickets abiertos", value=num_tickets_abiertos, delta=10)
 col2.metric(label="Tiempo de primera respuesta (horas)", value=5.2, delta=-1.5)
