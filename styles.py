@@ -297,14 +297,15 @@ class StyleManager:
             /* ===== POPOVER PREMIUM ===== */
             [data-testid="popoverContainer"] {
                 backdrop-filter: blur(16px);
-                width: 380px !important;
-                min-width: 380px !important;
-                max-width: 380px !important;
+                width: 550px !important;
+                min-width: 550px !important;
+                max-width: 550px !important;
                 position: fixed !important;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
                 border: 1px solid rgba(59, 130, 246, 0.2) !important;
                 border-radius: 16px !important;
                 z-index: 100 !important;
+                padding: 1.5rem !important;
             }
 
             .popover-form {
@@ -328,12 +329,14 @@ class StyleManager:
             }
 
             /* Expandir selectores y textareas dentro del popover */
-            [data-testid="popoverContainer"] .stSelectbox {
+            [data-testid="popoverContainer"] .stSelectbox,
+            [data-testid="popoverContainer"] .stTextArea,
+            [data-testid="popoverContainer"] .stContainer {
                 width: 100%;
             }
 
-            [data-testid="popoverContainer"] .stTextArea {
-                width: 100%;
+            [data-testid="popoverContainer"] .stTextArea textarea {
+                min-height: 120px !important;
             }
         </style>
         """, unsafe_allow_html=True)
