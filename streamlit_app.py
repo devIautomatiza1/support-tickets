@@ -354,10 +354,7 @@ def render_ticket_card(ticket: Ticket):
 
     # Renderizado HTML (Mantenemos la lógica pero con datos limpios)
     card_html = f"""
-    <div class="ticket-card ticket-card-interactive" id="card-{ticket.id}" style="cursor: pointer;">
-        <div class="ticket-overlay"></div>
-        <div class="ticket-edit-hint">Editar</div>
-        
+    <div class="ticket-card">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
             <div class="ticket-menu" id="menu-{ticket.id}">
@@ -378,7 +375,7 @@ def render_ticket_card(ticket: Ticket):
     """
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Renderizar el popover oculto pero funcional
+    # Botón popover oculto - se abre al clickear la tarjeta
     with st.popover("", use_container_width=False, help=""):
         st.markdown(f"### Editar ticket #{ticket.ticket_number}")
         st.caption(escape_html(display_title))
