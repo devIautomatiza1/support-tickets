@@ -48,16 +48,73 @@ st.markdown("""
     .ticket-card {
         background: #1E293B;
         border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 16px;
         transition: all 0.2s ease;
     }
     
     .ticket-card:hover {
-        background: #334155;
         border-color: #64748B;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    
+    .ticket-header {
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        padding: 14px 16px;
+        border-bottom: 1px solid #334155;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .ticket-body {
+        padding: 16px;
+    }
+    
+    .ticket-footer {
+        background: #0F172A;
+        padding: 12px 16px;
+        border-top: 1px solid #334155;
+        font-size: 0.85em;
+    }
+    
+    .ticket-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #F1F5F9;
+        margin: 0 0 8px 0;
+    }
+    
+    .ticket-description {
+        color: #CBD5E1;
+        font-size: 0.95em;
+        line-height: 1.5;
+        margin: 0 0 12px 0;
+    }
+    
+    .ticket-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        font-size: 0.85em;
+        margin-bottom: 0;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .meta-label {
+        color: #94A3B8;
+        font-weight: 500;
+    }
+    
+    .meta-value {
+        color: #F1F5F9;
+        font-weight: 500;
     }
     
     /* Container debug */
@@ -417,123 +474,126 @@ else:
     
     # Crear contenedor para tarjetas
     for idx, ticket in tickets.iterrows():
-        with st.container():
-            # Determinar color de estado
-            status_value = str(ticket.get("status", "")).lower()
-            if status_value == "new":
-                status_class = "status-open"
-                status_icon = "🆕"
-                status_label = "Nuevo"
-            elif status_value == "in_progress":
-                status_class = "status-progress"
-                status_icon = "⏳"
-                status_label = "En progreso"
-            elif status_value == "closed":
-                status_class = "status-closed"
-                status_icon = "✅"
-                status_label = "Cerrado"
-            elif status_value == "won":
-                status_class = "status-closed"
-                status_icon = "🎉"
-                status_label = "Ganado"
-            else:
-                status_class = "status-open"
-                status_icon = "❓"
-                status_label = status_value
+        # Determinar color de estado
+        status_value = str(ticket.get("status", "")).lower()
+        if status_value == "new":
+            status_class = "status-open"
+            status_label = "NUEVO"
+        elif status_value == "in_progress":
+            status_class = "status-progress"
+            status_label = "EN PROGRESO"
+        elif status_value == "closed":
+            status_class = "status-closed"
+            status_label = "CERRADO"
+        elif status_value == "won":
+            status_class = "status-closed"
+            status_label = "GANADO"
+        else:
+            status_class = "status-open"
+            status_label = status_value.upper()
+        
+        # Determinar prioridad
+        priority_value = str(ticket.get("priority", "")).lower()
+        if priority_value == "high":
+            priority_label = "ALTA"
+        elif priority_value == "medium":
+            priority_label = "MEDIA"
+        elif priority_value == "low":
+            priority_label = "BAJA"
+        else:
+            priority_label = priority_value.upper()
+        
+        # Limpiar datos
+        desc = ticket.get('description', '').replace('"', '').strip()
+        notes = (ticket.get('notes', '') or '').replace('\n', ' | ')
+        if len(notes) > 200:
+            notes = notes[:200] + '...'
+        
+        ticket_num = ticket.get('ticket_number', 'N/A')
+        title = ticket.get('title', 'Sin título')
+        created_date = ticket.get('created_at', 'N/A')[:10]
+        recording_id = str(ticket.get('recording_id', 'N/A'))[:10]
+        
+        card_html = f'''
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <div style="font-weight: 700; font-size: 1em; color: #F1F5F9;">#{ticket_num}</div>
+                <div class="status-badge {status_class}">{status_label}</div>
+            </div>
             
-            # Determinar color de prioridad
-            priority_value = str(ticket.get("priority", "")).lower()
-            if priority_value == "high":
-                priority_class = "priority-high"
-                priority_icon = "⚠️"
-                priority_label = "Alta"
-            elif priority_value == "medium":
-                priority_class = "priority-medium"
-                priority_icon = "📌"
-                priority_label = "Media"
-            elif priority_value == "low":
-                priority_class = "priority-low"
-                priority_icon = "📍"
-                priority_label = "Baja"
-            else:
-                priority_class = "priority-medium"
-                priority_icon = "❓"
-                priority_label = priority_value
+            <div class="ticket-body">
+                <div class="ticket-title">{title}</div>
+                <div class="ticket-description">{desc}</div>
+                
+                <div class="ticket-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Estado</span>
+                        <span class="meta-value">{status_label.title()}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Prioridad</span>
+                        <span class="meta-value">{priority_label.title()}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Creado</span>
+                        <span class="meta-value">{created_date}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Grabacion</span>
+                        <span class="meta-value" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
+                    </div>
+                </div>
+            </div>
             
-            # Crear columnas para la tarjeta
-            col1, col2 = st.columns([0.1, 0.9])
+            <div class="ticket-footer">
+                <span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else '<em>Sin notas</em>'}</span>
+            </div>
+        </div>
+        '''
+        
+        st.markdown(card_html, unsafe_allow_html=True)
+        
+        # Botón para expandir y editar
+        with st.expander(f"Editar #{ticket.get('ticket_number', 'N/A')} - {title}", expanded=False):
+            col1, col2 = st.columns(2)
             
             with col1:
-                st.markdown(f"<div style='font-size: 2em; margin-top: 10px;'>{priority_icon}</div>", unsafe_allow_html=True)
+                status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+                current_status_label = {"new": "Nuevo", "in_progress": "En progreso", "closed": "Cerrado", "won": "Ganado"}.get(ticket.get('status', 'new'), "Nuevo")
+                status_display = st.selectbox(
+                    "Estado",
+                    list(status_map.keys()),
+                    index=list(status_map.keys()).index(current_status_label) if current_status_label in status_map.keys() else 0,
+                    key=f"status_{ticket.get('id')}"
+                )
+                new_status = status_map[status_display]
             
             with col2:
-                # Limpiar descripción y notas
-                desc = ticket.get('description', '').replace('"', '').strip()
-                notes = (ticket.get('notes', '') or '').replace('\n', '<br>')
-                
-                # Preparar datos para la tarjeta
-                ticket_num = ticket.get('ticket_number', 'N/A')
-                title = ticket.get('title', 'Sin título')
-                created_date = ticket.get('created_at', 'N/A')[:10]
-                recording_id = str(ticket.get('recording_id', 'N/A'))[:12]
-                full_recording_id = ticket.get('recording_id', 'N/A')
-                notes_text = notes if notes else '<span style="color: #64748B; font-style: italic;">Sin notas</span>'
-                
-                card_html = f'<div class="ticket-card">'
-                card_html += f'<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px;">'
-                card_html += f'<div style="flex: 1;"><h3 style="margin: 0 0 4px 0; font-size: 1em;">{ticket_num} - {title}</h3>'
-                card_html += f'<p style="margin: 0; color: #CBD5E1; font-size: 0.9em; line-height: 1.4;">{desc}</p></div>'
-                card_html += f'<div class="status-badge {status_class}" style="white-space: nowrap; flex-shrink: 0;">{status_icon} {status_label}</div></div>'
-                card_html += '<hr>'
-                card_html += f'<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85em; margin-bottom: 11px;">'
-                card_html += f'<div><span style="color: #94A3B8;">Created</span><br><span style="color: #F1F5F9; font-weight: 500;">{created_date}</span></div>'
-                card_html += f'<div><span style="color: #94A3B8;">Recording</span><br><span style="color: #F1F5F9; font-weight: 500;" title="{full_recording_id}">{recording_id}...</span></div>'
-                card_html += '</div>'
-                card_html += f'<div style="background: #0F172A; padding: 10px; border-radius: 6px; border: 1px solid #334155;">'
-                card_html += f'<p style="margin: 0 0 6px 0; color: #94A3B8; font-size: 0.85em; font-weight: 500;">Notes</p>'
-                card_html += f'<p style="margin: 0; color: #CBD5E1; font-size: 0.85em; max-height: 120px; overflow-y: auto; line-height: 1.5;">{notes_text}</p>'
-                card_html += '</div></div>'
-                
-                st.markdown(card_html, unsafe_allow_html=True)
-            
-            # Botón para expandir y editar
-            with st.expander(f"✏️ Editar Ticket {ticket.get('ticket_number', 'N/A')}", expanded=False):
-                edit_col1, edit_col2 = st.columns(2)
-                
-                with edit_col1:
-                    status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-                    current_status_label = {"new": "Nuevo", "in_progress": "En progreso", "closed": "Cerrado", "won": "Ganado"}.get(ticket.get('status', 'new'), "Nuevo")
-                    status_display = st.selectbox(
-                        "Cambiar Estado",
-                        list(status_map.keys()),
-                        index=list(status_map.keys()).index(current_status_label) if current_status_label in status_map.keys() else 0,
-                        key=f"status_{ticket.get('id')}"
-                    )
-                    new_status = status_map[status_display]
-                
-                with edit_col2:
-                    priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-                    current_priority_label = {"Low": "Baja", "Medium": "Media", "High": "Alta"}.get(ticket.get('priority', 'Medium'), "Media")
-                    priority_display = st.selectbox(
-                        "Prioridad",
-                        list(priority_map.keys()),
-                        index=list(priority_map.keys()).index(current_priority_label) if current_priority_label in priority_map.keys() else 0,
-                        key=f"priority_{ticket.get('id')}"
-                    )
-                    new_priority = priority_map[priority_display]
-                
-                new_notes = st.text_area(
-                    "Agregar Notas",
-                    value=ticket.get('notes', '') or '',
-                    key=f"notes_{ticket.get('id')}"
+                priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+                current_priority_label = {"Low": "Baja", "Medium": "Media", "High": "Alta"}.get(ticket.get('priority', 'Medium'), "Media")
+                priority_display = st.selectbox(
+                    "Prioridad",
+                    list(priority_map.keys()),
+                    index=list(priority_map.keys()).index(current_priority_label) if current_priority_label in priority_map.keys() else 0,
+                    key=f"priority_{ticket.get('id')}"
                 )
-                
-                if st.button("💾 Guardar Cambios", key=f"save_{ticket.get('id')}"):
+                new_priority = priority_map[priority_display]
+            
+            new_notes = st.text_area(
+                "Notas",
+                value=ticket.get('notes', '') or '',
+                key=f"notes_{ticket.get('id')}",
+                height=100
+            )
+            
+            col1, col2 = st.columns([0.7, 0.3])
+            with col2:
+                if st.button("Guardar", key=f"save_{ticket.get('id')}", use_container_width=True):
                     if update_ticket(ticket.get('id'), new_status, new_notes):
-                        st.success("✅ Ticket actualizado correctamente")
+                        st.success("Actualizado correctamente")
                         st.rerun()
                     else:
-                        st.error("❌ Error al actualizar el ticket")
+                        st.error("Error al actualizar")
 
 # ============================================================================
 # PANEL DE DIAGNÓSTICO - DEBUG
