@@ -12,14 +12,16 @@ import random
 import base64
 from pathlib import Path
 import time
+from PIL import Image
 
 from styles import StyleManager, ComponentStyles
 
 
 # Configuración
+icon_image = Image.open("icon.jpeg")
 st.set_page_config(
     page_title="FlowTickets",
-    page_icon="icon.jpeg",
+    page_icon=icon_image,
     layout="wide",
     initial_sidebar_state="expanded"
 )
