@@ -35,11 +35,9 @@ st.markdown("""
         --success: #10B981;
         --warning: #F59E0B;
         --danger: #EF4444;
-        --purple: #8B5CF6;
-        --pink: #EC4899;
-        --radius-lg: 16px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
+        --radius-lg: 20px;
+        --radius-md: 14px;
+        --radius-sm: 10px;
         --shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         --transition: all 0.2s ease;
     }
@@ -75,7 +73,6 @@ st.markdown("""
         border-color: var(--border-hover);
         box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         transform: translateY(-2px);
-        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
     }
 
     .ticket-header {
@@ -98,9 +95,9 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         padding: 0.2rem 0.6rem;
-        border-radius: 4px;
+        border-radius: 6px;
         font-size: 0.65rem;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         border: 1px solid transparent;
@@ -143,20 +140,21 @@ st.markdown("""
         min-height: 2.2rem;
     }
 
-    /* ===== MODAL CENTRADO PROFESIONAL ===== */
+    /* ===== MODAL CENTRADO - CON MÁS MARGEN ===== */
     div[data-testid="stDialog"] {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        padding: 2rem 0 !important;  /* ← MÁS MARGEN SUPERIOR/INFERIOR */
     }
     
     div[data-testid="stDialog"] > div {
-        background: linear-gradient(145deg, var(--bg-card), #1A1E24) !important;
+        background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 24px !important;
-        padding: 2rem !important;
+        border-radius: 28px !important;  /* ← MÁS REDONDEADO */
+        padding: 2.5rem 2.5rem !important;  /* ← MÁS PADDING INTERNO */
         box-shadow: var(--shadow) !important;
-        max-width: 700px !important;
+        max-width: 750px !important;
         width: 100% !important;
         margin: 0 auto !important;
     }
@@ -166,13 +164,15 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Header del modal - CON FECHA AL LADO */
+    /* Header del modal - SIN LÍNEA AZUL */
     .modal-header {
         margin-bottom: 2rem;
         display: flex;
         justify-content: space-between;
         align-items: baseline;
         flex-wrap: wrap;
+        border-bottom: 1px solid var(--border);  /* ← LÍNEA SUTIL GRIS */
+        padding-bottom: 1.25rem;
     }
     
     .modal-title {
@@ -192,25 +192,10 @@ st.markdown("""
         border-radius: 20px;
         border: 1px solid var(--border);
     }
-    
-    .modal-divider {
-        height: 3px;
-        width: 100%;
-        background: linear-gradient(90deg, var(--accent), var(--purple));
-        border-radius: 3px;
-        margin-top: 0.75rem;
-    }
 
     /* Descripción */
     .description-section {
         margin-bottom: 2rem;
-    }
-    
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 0.75rem;
     }
     
     .section-title {
@@ -219,10 +204,11 @@ st.markdown("""
         color: var(--text-tertiary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
     }
     
     .description-box {
-        background: linear-gradient(145deg, var(--bg-secondary), #0F1115);
+        background: var(--bg-secondary);
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 1.5rem;
@@ -230,10 +216,9 @@ st.markdown("""
         font-size: 0.95rem;
         line-height: 1.7;
         white-space: pre-wrap;
-        border-left: 4px solid var(--accent);
     }
 
-    /* Estado y Prioridad - DISEÑO LIMPIO */
+    /* Estado y Prioridad */
     .status-priority-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -273,10 +258,6 @@ st.markdown("""
     }
 
     /* Select boxes */
-    .stSelectbox {
-        margin-bottom: 0.5rem;
-    }
-    
     .stSelectbox [data-baseweb="select"] {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
@@ -284,7 +265,7 @@ st.markdown("""
     }
     
     .stSelectbox [data-baseweb="select"]:hover {
-        border-color: var(--accent) !important;
+        border-color: var(--border-hover) !important;
     }
     
     /* Text area - GRANDE */
@@ -299,7 +280,7 @@ st.markdown("""
         color: var(--text-primary) !important;
         font-size: 0.9rem !important;
         line-height: 1.6 !important;
-        padding: 1rem !important;
+        padding: 1.25rem !important;
         min-height: 250px !important;
         font-family: 'SF Mono', 'JetBrains Mono', monospace !important;
     }
@@ -319,12 +300,13 @@ st.markdown("""
     }
     
     .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, var(--accent), var(--purple)) !important;
+        background: var(--accent) !important;
         color: white !important;
         border: none !important;
     }
     
     .stButton > button[kind="primary"]:hover {
+        background: #2563EB !important;
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(59,130,246,0.3) !important;
     }
@@ -337,20 +319,20 @@ st.markdown("""
     
     .stButton > button:not([kind="primary"]):hover {
         background: var(--bg-card) !important;
-        border-color: var(--accent) !important;
+        border-color: var(--border-hover) !important;
         color: var(--text-primary) !important;
     }
 
     hr {
         border: none;
         height: 1px;
-        background: linear-gradient(90deg, transparent, var(--border), transparent);
+        background: var(--border);
         margin: 1.5rem 0;
     }
     
     /* Métricas */
     [data-testid="metric-container"] {
-        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
+        background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 1rem;
@@ -423,11 +405,11 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - SIN ICONOS, CON FECHA EN HEADER
+# MODAL DE EDICIÓN - CON MÁS MARGEN Y SIN LÍNEAS AZULES
 # ============================================================================
 @st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional - SIN ICONOS, con fecha en el header"""
+    """Modal profesional - CON MÁS ESPACIO Y SIN LÍNEAS AZULES"""
     
     # Extraer datos
     ticket_id = ticket_dict.get("id")
@@ -438,7 +420,7 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     notes = ticket_dict.get("notes", "") or ""
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
     
-    # === HEADER CON FECHA AL LADO DEL TÍTULO ===
+    # === HEADER CON BORDE GRIS (SIN AZUL) ===
     st.markdown(f"""
     <div class="modal-header">
         <div>
@@ -446,14 +428,11 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         </div>
         <span class="modal-date">{created_at}</span>
     </div>
-    <div class="modal-divider"></div>
     """, unsafe_allow_html=True)
     
     # === DESCRIPCIÓN ===
     st.markdown("""
-    <div class="section-header">
-        <span class="section-title">DESCRIPCIÓN</span>
-    </div>
+    <div class="section-title">DESCRIPCIÓN</div>
     """, unsafe_allow_html=True)
     
     st.markdown(f"""
@@ -464,7 +443,9 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     
     # === ESTADO Y PRIORIDAD ===
     st.markdown("""
-    <div class="status-priority-grid">
+    <div style="margin-top: 2rem; margin-bottom: 1rem;">
+        <span class="section-title">ESTADO Y PRIORIDAD</span>
+    </div>
     """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
@@ -518,14 +499,10 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         new_priority = st.selectbox("", priority_options, index=priority_idx, key=f"priority_{ticket_id}", label_visibility="collapsed")
         priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
     
-    st.markdown("</div>", unsafe_allow_html=True)
-    
     # === NOTAS Y COMENTARIOS ===
     st.markdown("""
-    <div style="margin-top: 1rem;">
-        <div class="section-header">
-            <span class="section-title">NOTAS Y COMENTARIOS</span>
-        </div>
+    <div style="margin-top: 2rem; margin-bottom: 1rem;">
+        <span class="section-title">NOTAS Y COMENTARIOS</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -534,8 +511,7 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
             "",
             value=notes,
             height=250,
-            placeholder="""Ejemplo:
-⭐️ Tema: Infraestructura
+            placeholder="""⭐️ Tema: Infraestructura
 📌 Descripción: Recursos tecnológicos, herramientas, sistemas, equipos
 👤 Mencionado por: Jaime
 💬 Contexto: Estimamos que necesitamos unos $75,000...
