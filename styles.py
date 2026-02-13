@@ -63,6 +63,13 @@ class StyleManager:
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             }
 
+            .premium-ticket-card .ticket-actions {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                z-index: 10;
+            }
+
             .premium-ticket-card:hover {
                 border-color: rgba(59, 130, 246, 0.4);
                 background: linear-gradient(145deg, rgba(26, 28, 35, 0.8), rgba(26, 28, 35, 0.6));
@@ -80,6 +87,30 @@ class StyleManager:
 
             .ticket-header-left {
                 flex: 1;
+            }
+
+            .ticket-popover-wrapper {
+                position: absolute;
+                top: 0.75rem;
+                right: 0.75rem;
+                z-index: 20;
+            }
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                font-size: 1.1rem;
+                cursor: pointer;
+                padding: 0.25rem 0.5rem;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .ticket-popover-btn:hover {
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--accent-light);
             }
 
             .ticket-number {
@@ -226,133 +257,15 @@ class StyleManager:
                 margin: 0.5rem 0 0 0;
             }
 
-            /* ===== POPOVER GRANDE - CORREGIDO ===== */
-            /* El contenedor principal del popover */
-            div[data-testid="stPopover"] {
-                background: transparent !important;
-            }
-            
-            /* El contenido del popover */
-            div[data-testid="stPopover"] > div:first-child {
-                background: rgba(15, 17, 23, 0.98) !important;
+            /* ===== MODALES ===== */
+            [role="dialog"] {
+                background: rgba(15, 17, 23, 0.95) !important;
                 backdrop-filter: blur(20px) !important;
-                border: 1px solid rgba(59, 130, 246, 0.3) !important;
+                border: 1px solid rgba(59, 130, 246, 0.2) !important;
                 border-radius: 24px !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                min-width: 650px !important;
-                width: 650px !important;
-                max-width: 650px !important;
-                padding: 2rem !important;
-                z-index: 999999 !important;
             }
 
-            /* Título dentro del popover */
-            div[data-testid="stPopover"] h3 {
-                color: var(--text-primary) !important;
-                font-size: 1.8rem !important;
-                font-weight: 700 !important;
-                margin-bottom: 0.25rem !important;
-            }
-
-            /* Subtítulo (caption) */
-            div[data-testid="stPopover"] .stCaption {
-                color: var(--accent-light) !important;
-                font-size: 1.2rem !important;
-                margin-bottom: 1.5rem !important;
-            }
-
-            /* Divisor */
-            div[data-testid="stPopover"] .stDivider {
-                background: rgba(255, 255, 255, 0.1) !important;
-                margin: 1.5rem 0 !important;
-            }
-
-            /* Labels */
-            div[data-testid="stPopover"] label {
-                color: var(--text-muted) !important;
-                font-size: 0.9rem !important;
-                font-weight: 600 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            /* Selectboxes */
-            div[data-testid="stPopover"] .stSelectbox {
-                margin-bottom: 1.5rem !important;
-            }
-
-            div[data-testid="stPopover"] .stSelectbox > div {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 14px !important;
-                height: 55px !important;
-                font-size: 1.1rem !important;
-            }
-
-            div[data-testid="stPopover"] .stSelectbox select {
-                color: var(--text-primary) !important;
-                font-size: 1.1rem !important;
-                padding: 0 1rem !important;
-            }
-
-            /* TextArea */
-            div[data-testid="stPopover"] .stTextArea {
-                margin-bottom: 1.5rem !important;
-            }
-
-            div[data-testid="stPopover"] .stTextArea textarea {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 14px !important;
-                color: var(--text-primary) !important;
-                font-size: 1.1rem !important;
-                min-height: 150px !important;
-                padding: 1rem !important;
-                line-height: 1.5 !important;
-            }
-
-            /* Botón Guardar */
-            div[data-testid="stPopover"] .stButton > button {
-                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-                border: none !important;
-                color: white !important;
-                font-weight: 600 !important;
-                font-size: 1.2rem !important;
-                border-radius: 14px !important;
-                padding: 0.9rem 1.5rem !important;
-                width: 100% !important;
-                height: auto !important;
-                margin-top: 1rem !important;
-                transition: all 0.3s !important;
-                box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3) !important;
-            }
-
-            div[data-testid="stPopover"] .stButton > button:hover {
-                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5) !important;
-            }
-
-            /* Botón de los tres puntos */
-            .stPopoverEmoji {
-                background: rgba(255, 255, 255, 0.05) !important;
-                border: 1px solid var(--border) !important;
-                border-radius: 10px !important;
-                padding: 0.5rem 0.9rem !important;
-                color: var(--text-muted) !important;
-                font-size: 1.2rem !important;
-                cursor: pointer !important;
-                transition: all 0.2s !important;
-            }
-
-            .stPopoverEmoji:hover {
-                background: rgba(59, 130, 246, 0.15) !important;
-                color: var(--accent-light) !important;
-                border-color: rgba(59, 130, 246, 0.4) !important;
-            }
-
-            /* ===== BOTONES GENERALES ===== */
+            /* ===== BOTONES ===== */
             .stButton > button {
                 background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
                 border: none !important;
@@ -368,7 +281,7 @@ class StyleManager:
                 box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
             }
 
-            /* ===== INPUTS GENERALES ===== */
+            /* ===== INPUTS ===== */
             input, textarea, select {
                 background: rgba(10, 12, 18, 0.6) !important;
                 border: 1.5px solid var(--border) !important;
@@ -381,13 +294,81 @@ class StyleManager:
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
             }
 
-            /* Eliminar estilos antiguos que interferían */
-            [role="dialog"] {
-                all: unset;
+            /* ===== POPOVER PREMIUM ===== */
+            [data-testid="popoverContainer"] {
+                backdrop-filter: blur(16px);
+                width: 700px !important;
+                min-width: 700px !important;
+                max-width: 700px !important;
+                position: fixed !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+                border: 1px solid rgba(59, 130, 246, 0.2) !important;
+                border-radius: 16px !important;
+                z-index: 100 !important;
+                padding: 2rem !important;
+                font-size: 1rem !important;
             }
 
-            [data-testid="popoverContainer"] {
-                all: unset;
+            [data-testid="popoverContainer"] h3 {
+                font-size: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stCaption {
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stDivider {
+                margin: 1.5rem 0 !important;
+            }
+
+            [data-testid="popoverContainer"] label {
+                font-size: 0.95rem !important;
+                font-weight: 700 !important;
+            }
+
+            .popover-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .popover-section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .popover-section label {
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+            }
+
+            /* Expandir selectores y textareas dentro del popover */
+            [data-testid="popoverContainer"] .stSelectbox,
+            [data-testid="popoverContainer"] .stTextArea,
+            [data-testid="popoverContainer"] .stContainer {
+                width: 100%;
+            }
+
+            [data-testid="popoverContainer"] .stSelectbox select,
+            [data-testid="popoverContainer"] .stSelectbox > div {
+                height: 45px !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stTextArea textarea {
+                min-height: 150px !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stButton > button {
+                height: 50px !important;
+                font-size: 1.05rem !important;
             }
         </style>
         """, unsafe_allow_html=True)
