@@ -334,6 +334,23 @@ class StyleManager:
                 border-radius: 50%;
                 margin-right: 0.5rem;
             }
+
+            /* ===== POPOVER CENTRADO SIN SALTOS ===== */
+            [data-testid="stPopover"] {
+                position: fixed !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 99999 !important;
+                inset: auto !important;
+            }
+
+            [data-testid="stPopoverBody"] {
+                max-width: 500px;
+                width: 90vw;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
         </style>
         """, unsafe_allow_html=True)
 
