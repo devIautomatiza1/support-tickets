@@ -294,6 +294,10 @@ class StyleManager:
             }
 
             /* ===== MODAL/POPOVER MEJORADO ===== */
+            [data-testid="stPopover"] {
+                z-index: 1000 !important;
+            }
+            
             [data-testid="stPopoverBody"] {
                 background: var(--bg-secondary) !important;
                 border: 1px solid var(--border-accent) !important;
@@ -303,16 +307,20 @@ class StyleManager:
                 min-width: 400px !important;
                 animation: modalFadeIn 0.2s ease !important;
                 transform-origin: top center !important;
+                position: absolute !important;
+                inset: auto auto auto 50% !important;
+                transform: translateX(-50%) !important;
+                margin: 0 !important;
             }
 
             @keyframes modalFadeIn {
                 from {
                     opacity: 0;
-                    transform: scale(0.95) translateY(-10px);
+                    transform: translateX(-50%) scale(0.95) translateY(-10px);
                 }
                 to {
                     opacity: 1;
-                    transform: scale(1) translateY(0);
+                    transform: translateX(-50%) scale(1) translateY(0);
                 }
             }
 
