@@ -324,12 +324,13 @@ def render_tickets(tickets_df: pd.DataFrame):
             </div>
             """, unsafe_allow_html=True)
             
-            # Popover discreto con icono de tres puntos
-            col1, col2 = st.columns([0.2, 0.8], gap="small")
-            with col1:
+            # Popover discreto - integrado visualmente en la tarjeta
+            col1, col2, col3 = st.columns([0.78, 0.02, 0.2], gap="small")
+            
+            with col3:
                 with st.popover("⋯", use_container_width=True):
                     st.markdown(f"### #{ticket.ticket_number}")
-                    st.write(display_title)
+                    st.caption(display_title)
                     st.divider()
                     
                     # Mini-formulario dentro del popover
@@ -355,10 +356,12 @@ def render_tickets(tickets_df: pd.DataFrame):
                     new_notes = st.text_area(
                         "Notas",
                         value=ticket.notes,
-                        height=80,
+                        height=100,
                         key=f"pop_notes_{ticket.id}",
                         placeholder="Añade notas internas..."
                     )
+                    
+                    st.divider()
                     
                     # Botón guardar en popover
                     if st.button("💾 Guardar", key=f"pop_save_{ticket.id}", use_container_width=True, type="primary"):

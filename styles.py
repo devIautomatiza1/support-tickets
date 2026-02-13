@@ -59,8 +59,15 @@ class StyleManager:
                 padding: 1.25rem;
                 transition: all 0.3s ease;
                 position: relative;
-                overflow: hidden;
+                overflow: visible;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .premium-ticket-card .ticket-actions {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                z-index: 10;
             }
 
             .premium-ticket-card:hover {
@@ -291,6 +298,8 @@ class StyleManager:
             /* ===== POPOVER PREMIUM ===== */
             [data-testid="popoverContainer"] {
                 backdrop-filter: blur(16px);
+                width: 100% !important;
+                min-width: 420px !important;
             }
 
             .popover-form {
@@ -311,6 +320,15 @@ class StyleManager:
                 text-transform: uppercase;
                 color: var(--text-muted);
                 letter-spacing: 0.5px;
+            }
+
+            /* Expandir selectores y textareas dentro del popover */
+            [data-testid="popoverContainer"] .stSelectbox {
+                width: 100%;
+            }
+
+            [data-testid="popoverContainer"] .stTextArea {
+                width: 100%;
             }
         </style>
         """, unsafe_allow_html=True)
