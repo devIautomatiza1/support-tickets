@@ -232,6 +232,16 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(61, 99, 255, 0.4);
     }
     
+    /* Botón de edición (secundario) */
+    .stButton:has(button[data-testid*="edit_btn"]) button {
+        background-color: #64748B;
+    }
+    
+    .stButton:has(button[data-testid*="edit_btn"]) button:hover {
+        background-color: #475569;
+        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+    
     /* Métricas */
     [data-testid="metric-container"] {
         background: #1E293B;
@@ -376,6 +386,50 @@ def update_ticket(ticket_id: int, status: str, notes: str) -> bool:
     except Exception as e:
         st.error(f"Error al actualizar ticket: {str(e)}")
         return False
+
+@st.dialog("Editar Ticket")
+def edit_ticket_modal(ticket):
+    """Modal para editar ticket"""
+    status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+    priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        current_status_label = {"new": "Nuevo", "in_progress": "En progreso", "closed": "Cerrado", "won": "Ganado"}.get(ticket.get('status', 'new'), "Nuevo")
+        status_display = st.selectbox(
+            "Estado",
+            list(status_map.keys()),
+            index=list(status_map.keys()).index(current_status_label) if current_status_label in status_map.keys() else 0,
+            key=f"modal_status_{ticket.get('id')}"
+        )
+        new_status = status_map[status_display]
+    
+    with col2:
+        current_priority_label = {"Low": "Baja", "Medium": "Media", "High": "Alta"}.get(ticket.get('priority', 'Medium'), "Media")
+        priority_display = st.selectbox(
+            "Prioridad",
+            list(priority_map.keys()),
+            index=list(priority_map.keys()).index(current_priority_label) if current_priority_label in priority_map.keys() else 0,
+            key=f"modal_priority_{ticket.get('id')}"
+        )
+        new_priority = priority_map[priority_display]
+    
+    new_notes = st.text_area(
+        "Notas",
+        value=ticket.get('notes', '') or '',
+        key=f"modal_notes_{ticket.get('id')}",
+        height=100
+    )
+    
+    col1, col2 = st.columns([0.7, 0.3])
+    with col2:
+        if st.button("Guardar", key=f"modal_save_{ticket.get('id')}", use_container_width=True):
+            if update_ticket(ticket.get('id'), new_status, new_notes):
+                st.success("Actualizado correctamente")
+                st.rerun()
+            else:
+                st.error("Error al actualizar")
 
 # ============================================================================
 # INTERFAZ DE USUARIO
@@ -553,47 +607,13 @@ else:
         
         st.markdown(card_html, unsafe_allow_html=True)
         
-        # Botón para expandir y editar
-        with st.expander(f"Editar #{ticket.get('ticket_number', 'N/A')} - {title}", expanded=False):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-                current_status_label = {"new": "Nuevo", "in_progress": "En progreso", "closed": "Cerrado", "won": "Ganado"}.get(ticket.get('status', 'new'), "Nuevo")
-                status_display = st.selectbox(
-                    "Estado",
-                    list(status_map.keys()),
-                    index=list(status_map.keys()).index(current_status_label) if current_status_label in status_map.keys() else 0,
-                    key=f"status_{ticket.get('id')}"
-                )
-                new_status = status_map[status_display]
-            
-            with col2:
-                priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-                current_priority_label = {"Low": "Baja", "Medium": "Media", "High": "Alta"}.get(ticket.get('priority', 'Medium'), "Media")
-                priority_display = st.selectbox(
-                    "Prioridad",
-                    list(priority_map.keys()),
-                    index=list(priority_map.keys()).index(current_priority_label) if current_priority_label in priority_map.keys() else 0,
-                    key=f"priority_{ticket.get('id')}"
-                )
-                new_priority = priority_map[priority_display]
-            
-            new_notes = st.text_area(
-                "Notas",
-                value=ticket.get('notes', '') or '',
-                key=f"notes_{ticket.get('id')}",
-                height=100
-            )
-            
-            col1, col2 = st.columns([0.7, 0.3])
-            with col2:
-                if st.button("Guardar", key=f"save_{ticket.get('id')}", use_container_width=True):
-                    if update_ticket(ticket.get('id'), new_status, new_notes):
-                        st.success("Actualizado correctamente")
-                        st.rerun()
-                    else:
-                        st.error("Error al actualizar")
+        # Botón para abrir modal de edición
+        col1, col2 = st.columns([0.85, 0.15])
+        with col2:
+            if st.button("Editar", key=f"edit_btn_{ticket.get('id')}", use_container_width=True):
+                edit_ticket_modal(ticket)
+        
+        st.markdown("")
 
 # ============================================================================
 # PANEL DE DIAGNÓSTICO - DEBUG
