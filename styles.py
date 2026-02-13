@@ -95,8 +95,6 @@ class StyleManager:
                 right: 0.75rem;
                 z-index: 20;
             }
-
-            .ticket-popover-btn {
                 background: transparent;
                 border: none;
                 color: var(--text-muted);
@@ -259,130 +257,12 @@ class StyleManager:
                 margin: 0.5rem 0 0 0;
             }
 
-            /* ===== POPOVER PREMIUM - CORREGIDO ===== */
-            div[data-testid="stPopover"] {
-                background: transparent !important;
-            }
-
-            div[data-testid="stPopover"] > div:first-child {
+            /* ===== MODALES ===== */
+            [role="dialog"] {
                 background: rgba(15, 17, 23, 0.95) !important;
                 backdrop-filter: blur(20px) !important;
                 border: 1px solid rgba(59, 130, 246, 0.2) !important;
-                border-radius: 16px !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
-                min-width: 600px !important;
-                width: 600px !important;
-                max-width: 600px !important;
-                padding: 1.5rem !important;
-                z-index: 999999 !important;
-            }
-
-            /* Contenido del popover */
-            div[data-testid="stPopover"] .stMarkdown {
-                color: var(--text-primary) !important;
-            }
-
-            div[data-testid="stPopover"] h3 {
-                color: var(--text-primary) !important;
-                font-size: 1.5rem !important;
-                font-weight: 700 !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            div[data-testid="stPopover"] .stCaption {
-                color: var(--text-muted) !important;
-                font-size: 1rem !important;
-                margin-bottom: 1rem !important;
-            }
-
-            div[data-testid="stPopover"] .stDivider {
-                background: rgba(255, 255, 255, 0.1) !important;
-                margin: 1rem 0 !important;
-            }
-
-            /* Inputs dentro del popover */
-            div[data-testid="stPopover"] .stSelectbox,
-            div[data-testid="stPopover"] .stTextArea {
-                width: 100% !important;
-                margin-bottom: 1rem !important;
-            }
-
-            div[data-testid="stPopover"] .stSelectbox > div {
-                background: rgba(10, 12, 18, 0.8) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-                font-size: 1rem !important;
-                height: 48px !important;
-            }
-
-            div[data-testid="stPopover"] .stSelectbox select {
-                color: var(--text-primary) !important;
-                font-size: 1rem !important;
-            }
-
-            div[data-testid="stPopover"] .stTextArea textarea {
-                background: rgba(10, 12, 18, 0.8) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-                font-size: 1rem !important;
-                min-height: 120px !important;
-                padding: 0.75rem !important;
-            }
-
-            div[data-testid="stPopover"] .stTextArea textarea:focus,
-            div[data-testid="stPopover"] .stSelectbox > div:focus-within {
-                border-color: var(--accent) !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
-            }
-
-            /* Labels dentro del popover */
-            div[data-testid="stPopover"] label {
-                color: var(--text-muted) !important;
-                font-size: 0.85rem !important;
-                font-weight: 600 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
-                margin-bottom: 0.25rem !important;
-            }
-
-            /* Botón dentro del popover */
-            div[data-testid="stPopover"] .stButton > button {
-                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-                border: none !important;
-                color: white !important;
-                font-weight: 600 !important;
-                font-size: 1rem !important;
-                border-radius: 12px !important;
-                padding: 0.75rem 1.5rem !important;
-                width: 100% !important;
-                height: auto !important;
-                margin-top: 1rem !important;
-                transition: all 0.3s !important;
-            }
-
-            div[data-testid="stPopover"] .stButton > button:hover {
-                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
-            }
-
-            /* Botón de los tres puntos */
-            .stPopoverEmoji {
-                background: rgba(255, 255, 255, 0.05) !important;
-                border: 1px solid var(--border) !important;
-                border-radius: 8px !important;
-                padding: 0.35rem 0.75rem !important;
-                color: var(--text-muted) !important;
-                font-size: 1.1rem !important;
-                cursor: pointer !important;
-                transition: all 0.2s !important;
-            }
-
-            .stPopoverEmoji:hover {
-                background: rgba(59, 130, 246, 0.1) !important;
-                color: var(--accent-light) !important;
+                border-radius: 24px !important;
             }
 
             /* ===== BOTONES ===== */
@@ -401,7 +281,7 @@ class StyleManager:
                 box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
             }
 
-            /* ===== INPUTS GLOBALES ===== */
+            /* ===== INPUTS ===== */
             input, textarea, select {
                 background: rgba(10, 12, 18, 0.6) !important;
                 border: 1.5px solid var(--border) !important;
@@ -412,6 +292,83 @@ class StyleManager:
             input:focus, textarea:focus, select:focus {
                 border-color: var(--accent) !important;
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+            }
+
+            /* ===== POPOVER PREMIUM ===== */
+            [data-testid="popoverContainer"] {
+                backdrop-filter: blur(16px);
+                width: 700px !important;
+                min-width: 700px !important;
+                max-width: 700px !important;
+                position: fixed !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+                border: 1px solid rgba(59, 130, 246, 0.2) !important;
+                border-radius: 16px !important;
+                z-index: 100 !important;
+                padding: 2rem !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] h3 {
+                font-size: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stCaption {
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stDivider {
+                margin: 1.5rem 0 !important;
+            }
+
+            [data-testid="popoverContainer"] label {
+                font-size: 0.95rem !important;
+                font-weight: 700 !important;
+            }
+
+            .popover-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .popover-section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .popover-section label {
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+            }
+
+            /* Expandir selectores y textareas dentro del popover */
+            [data-testid="popoverContainer"] .stSelectbox,
+            [data-testid="popoverContainer"] .stTextArea,
+            [data-testid="popoverContainer"] .stContainer {
+                width: 100%;
+            }
+
+            [data-testid="popoverContainer"] .stSelectbox select,
+            [data-testid="popoverContainer"] .stSelectbox > div {
+                height: 45px !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stTextArea textarea {
+                min-height: 150px !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stButton > button {
+                height: 50px !important;
+                font-size: 1.05rem !important;
             }
         </style>
         """, unsafe_allow_html=True)
