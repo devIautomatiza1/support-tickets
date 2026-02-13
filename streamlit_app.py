@@ -424,7 +424,7 @@ def edit_ticket_modal(ticket):
     
     col1, col2 = st.columns([0.7, 0.3])
     with col2:
-        if st.button("Guardar", key=f"modal_save_{ticket.get('id')}", use_container_width=True):
+        if st.button("Guardar", key=f"modal_save_{ticket.get('id')}", width='stretch'):
             if update_ticket(ticket.get('id'), new_status, new_notes):
                 st.success("Actualizado correctamente")
                 st.rerun()
@@ -488,7 +488,7 @@ selected_status = [k for k, v in status_display_map.items() if v == status_displ
 selected_priority = [k for k, v in priority_display_map.items() if v == priority_display][0]
 
 # Botón de actualizar
-if st.sidebar.button("Actualizar", use_container_width=True):
+if st.sidebar.button("Actualizar", width='stretch'):
     st.rerun()
 
 st.sidebar.markdown("")
@@ -610,7 +610,7 @@ else:
         # Botón para abrir modal de edición
         col1, col2 = st.columns([0.85, 0.15])
         with col2:
-            if st.button("Editar", key=f"edit_btn_{ticket.get('id')}", use_container_width=True):
+            if st.button("Editar", key=f"edit_btn_{ticket.get('id')}", width='stretch'):
                 edit_ticket_modal(ticket)
         
         st.markdown("")
@@ -658,7 +658,7 @@ with st.expander("🔧 Debug & Conexión", expanded=False):
                 response = client.table("opportunities").select("*").limit(3).execute()
                 if response.data:
                     st.success("✅ Tabla 'opportunities' accesible")
-                    st.dataframe(pd.DataFrame(response.data), use_container_width=True)
+                    st.dataframe(pd.DataFrame(response.data), width='stretch')
                 else:
                     st.warning("⚠️ La tabla está vacía o no contiene datos")
             else:
@@ -674,7 +674,7 @@ with st.expander("🔧 Debug & Conexión", expanded=False):
                 response = client.table("recordings").select("*").limit(3).execute()
                 if response.data:
                     st.success("✅ Tabla 'recordings' accesible")
-                    st.dataframe(pd.DataFrame(response.data), use_container_width=True)
+                    st.dataframe(pd.DataFrame(response.data), width='stretch')
                 else:
                     st.warning("⚠️ La tabla está vacía o no contiene datos")
             else:
