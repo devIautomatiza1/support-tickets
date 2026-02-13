@@ -127,7 +127,7 @@ st.markdown("""
         font-weight: 500;
         color: var(--text-primary);
         line-height: 1.3;
-        margin: 0.25rem 0 0 0;
+        margin: 0.25rem 0 0.5rem 0;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -135,20 +135,28 @@ st.markdown("""
         min-height: 2.2rem;
     }
 
-    /* Expander styling */
-    .streamlit-expanderHeader {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: var(--radius-sm) !important;
-        color: var(--text-secondary) !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
-        margin-top: 0.25rem !important;
+    /* Botón de editar dentro de la tarjeta */
+    .edit-button-container {
+        margin-top: 0.25rem;
+        width: 100%;
     }
     
-    .streamlit-expanderHeader:hover {
-        border-color: var(--border-hover) !important;
-        color: var(--text-primary) !important;
+    .stButton > button {
+        background: var(--accent-soft) !important;
+        color: var(--accent) !important;
+        border: 1px solid rgba(59,130,246,0.3) !important;
+        border-radius: var(--radius-sm) !important;
+        font-size: 0.75rem !important;
+        font-weight: 500 !important;
+        padding: 0.25rem 0.5rem !important;
+        width: 100% !important;
+        transition: var(--transition) !important;
+    }
+    
+    .stButton > button:hover {
+        background: rgba(59,130,246,0.2) !important;
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
     }
 
     /* Métricas */
@@ -172,13 +180,18 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* Form styling */
-    .stForm {
-        background: var(--bg-secondary);
-        padding: 1rem;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-        margin-top: 0.5rem;
+    /* Modal styling */
+    div[data-testid="stDialog"] > div {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius-lg) !important;
+        padding: 1.5rem !important;
+    }
+    
+    div[data-testid="stDialog"] h1, 
+    div[data-testid="stDialog"] h2, 
+    div[data-testid="stDialog"] h3 {
+        color: var(--text-primary) !important;
     }
     
     /* Divider */
@@ -256,13 +269,97 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
+# MODAL DE EDICIÓN
+# ============================================================================
+@st.dialog("✏️ Editar Ticket", width="large")
+def edit_ticket_modal(ticket_dict: Dict[str, Any]):
+    """Modal para editar ticket con todos los datos"""
+    
+    # Extraer datos
+    ticket_id = ticket_dict.get("id")
+    ticket_num = ticket_dict.get("ticket_number", "N/A")
+    title = ticket_dict.get("title", "Sin título")
+    description = ticket_dict.get("description", "").strip()
+    status = ticket_dict.get("status", "new").lower()
+    priority = ticket_dict.get("priority", "Medium")
+    notes = ticket_dict.get("notes", "") or ""
+    created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
+    recording_id = ticket_dict.get("recording_id", "N/A")
+    
+    # Encabezado del modal
+    st.markdown(f"### #{ticket_num} - {title}")
+    
+    # Información no editable en dos columnas
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"**📅 Creado:** {created_at}")
+        st.markdown(f"**🎙️ Grabación:** `{recording_id[:12]}...`" if recording_id != "N/A" else "**🎙️ Grabación:** N/A")
+    with col2:
+        st.markdown(f"**📌 Estado actual:** {status}")
+        st.markdown(f"**⚡ Prioridad actual:** {priority}")
+    
+    st.markdown("---")
+    
+    # Descripción completa
+    st.markdown("#### 📝 Descripción")
+    st.markdown(f"""
+    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; color: var(--text-secondary);">
+        {description if description else '<em>Sin descripción</em>'}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Formulario de edición
+    with st.form(key=f"modal_edit_form_{ticket_id}"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
+            status_idx = ["new", "in_progress", "closed", "won"].index(status) if status in ["new", "in_progress", "closed", "won"] else 0
+            new_status_display = st.selectbox("Estado", status_options, index=status_idx)
+            status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+            new_status = status_map[new_status_display]
+        
+        with col2:
+            priority_options = ["Baja", "Media", "Alta"]
+            priority_idx = ["Low", "Medium", "High"].index(priority) if priority in ["Low", "Medium", "High"] else 1
+            new_priority_display = st.selectbox("Prioridad", priority_options, index=priority_idx)
+            priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+            new_priority = priority_map[new_priority_display]
+        
+        new_notes = st.text_area(
+            "📋 Notas",
+            value=notes,
+            height=120,
+            placeholder="Agregar notas o actualizaciones..."
+        )
+        
+        # Botones
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            submitted = st.form_submit_button("💾 Guardar Cambios", use_container_width=True, type="primary")
+        with col3:
+            cancel = st.form_submit_button("❌ Cancelar", use_container_width=True)
+        
+        if submitted:
+            if update_ticket(ticket_id, new_status, new_notes, new_priority):
+                st.success("✅ Ticket actualizado correctamente")
+                st.rerun()
+            else:
+                st.error("❌ Error al actualizar el ticket")
+        
+        if cancel:
+            st.rerun()
+
+# ============================================================================
 # FUNCIÓN COMPACTA CON FRAGMENT - Grid de 3 columnas
 # ============================================================================
 @st.fragment
 def render_ticket_grid(tickets_df: pd.DataFrame):
     """
     Renderiza tickets en grid de 3 columnas con tarjetas ultra-compactas.
-    Cada tarjeta tiene badge de estado + título y un expander con edición.
+    Cada tarjeta tiene badge de estado + título y un botón para abrir modal.
     """
     if tickets_df.empty:
         st.info("🎫 No hay tickets disponibles")
@@ -280,9 +377,6 @@ def render_ticket_grid(tickets_df: pd.DataFrame):
             ticket_num = ticket_dict.get("ticket_number", "N/A")
             title = ticket_dict.get("title", "Sin título")[:60]
             status = ticket_dict.get("status", "new").lower()
-            priority = ticket_dict.get("priority", "Medium")
-            description = ticket_dict.get("description", "").strip()
-            notes = ticket_dict.get("notes", "") or ""
             
             # Configuración de badge
             badge_config = {
@@ -308,50 +402,16 @@ def render_ticket_grid(tickets_df: pd.DataFrame):
             
             st.markdown(card_html, unsafe_allow_html=True)
             
-            # Expander con formulario de edición
-            with st.expander(f"✏️ Editar #{ticket_num}", expanded=False):
-                with st.form(key=f"edit_form_{ticket_id}"):
-                    # Preview de descripción
-                    if description:
-                        st.caption(f"📝 {description[:100]}{'...' if len(description) > 100 else ''}")
-                    
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
-                        status_idx = ["new", "in_progress", "closed", "won"].index(status) if status in ["new", "in_progress", "closed", "won"] else 0
-                        new_status_display = st.selectbox("Estado", status_options, index=status_idx)
-                        status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-                        new_status = status_map[new_status_display]
-                    
-                    with col2:
-                        priority_options = ["Baja", "Media", "Alta"]
-                        priority_idx = ["Low", "Medium", "High"].index(priority) if priority in ["Low", "Medium", "High"] else 1
-                        new_priority_display = st.selectbox("Prioridad", priority_options, index=priority_idx)
-                        priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-                        new_priority = priority_map[new_priority_display]
-                    
-                    new_notes = st.text_area(
-                        "📋 Notas",
-                        value=notes,
-                        height=80,
-                        placeholder="Actualizar notas..."
-                    )
-                    
-                    submitted = st.form_submit_button("💾 Guardar cambios", use_container_width=True)
-                    
-                    if submitted:
-                        if update_ticket(ticket_id, new_status, new_notes, new_priority):
-                            st.success("✅ Actualizado", icon="✅")
-                            st.rerun(scope="fragment")
-                        else:
-                            st.error("❌ Error al actualizar")
+            # Botón de editar dentro de la tarjeta (NO expander)
+            if st.button("✏️ Editar", key=f"edit_btn_{ticket_id}", use_container_width=True):
+                st.session_state.ticket_to_edit = ticket_dict
+                st.rerun()
 
 # ============================================================================
 # INTERFAZ PRINCIPAL
 # ============================================================================
 st.title("🎫 Dashboard de Tickets")
-st.markdown("##### Gestión de oportunidades • *Expande cada ticket para editar*")
+st.markdown("##### Gestión de oportunidades")
 st.divider()
 
 # --- SIDEBAR: FILTROS Y ESTADÍSTICAS ---
@@ -425,6 +485,11 @@ if tickets.empty:
 else:
     st.markdown(f"### 🎟️ {len(tickets)} tickets encontrados")
     render_ticket_grid(tickets)
+
+# --- MODAL DE EDICIÓN (se activa cuando hay un ticket seleccionado) ---
+if "ticket_to_edit" in st.session_state and st.session_state.ticket_to_edit is not None:
+    edit_ticket_modal(st.session_state.ticket_to_edit)
+    st.session_state.ticket_to_edit = None
 
 # ============================================================================
 # PANEL DE DIAGNÓSTICO
