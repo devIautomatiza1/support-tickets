@@ -123,6 +123,18 @@ class StyleManager:
                 opacity: 1;
             }
 
+            /* ===== POPOVER BUTTON INVISIBLE ===== */
+            /* Ocultar botones de popover vacíos */
+            button:empty,
+            button[aria-label=""]:last-of-type {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+            }
+
             /* ===== TICKETS MALFORMADOS ===== */
             .ticket-card-warning {
                 border-color: rgba(245, 158, 11, 0.4);
