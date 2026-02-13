@@ -405,9 +405,9 @@ class StyleManager:
                 border: 1px solid var(--border-accent) !important;
                 border-radius: 24px !important;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                padding: 2rem !important;
-                min-width: 600px !important;
-                max-width: 700px !important;
+                padding: 2.5rem !important;
+                min-width: 850px !important;
+                max-width: 1000px !important;
                 animation: modalFadeIn 0.2s ease !important;
                 transform-origin: center !important;
                 position: fixed !important;
@@ -416,7 +416,7 @@ class StyleManager:
                 transform: translate(-50%, -50%) !important;
                 margin: 0 !important;
                 overflow-y: auto !important;
-                max-height: 80vh !important;
+                max-height: 85vh !important;
             }
 
             @keyframes modalFadeIn {
@@ -431,16 +431,16 @@ class StyleManager:
             }
             
             [data-testid="stPopoverBody"] > h3 {
-                margin: 0 0 0.5rem 0 !important;
+                margin: 0 0 1rem 0 !important;
                 padding: 0 !important;
-                font-size: 1.5rem !important;
+                font-size: 1.75rem !important;
                 font-weight: 700 !important;
                 color: var(--text-primary) !important;
             }
             
             [data-testid="stPopoverBody"] > .stCaption {
-                margin-bottom: 1.5rem !important;
-                padding-bottom: 1.5rem !important;
+                margin-bottom: 2rem !important;
+                padding-bottom: 2rem !important;
                 border-bottom: 1px solid var(--border-medium) !important;
             }
 
@@ -458,12 +458,12 @@ class StyleManager:
             }
 
             [data-testid="stPopoverBody"] label {
-                font-size: 0.75rem !important;
+                font-size: 0.85rem !important;
                 font-weight: 600 !important;
                 color: var(--text-tertiary) !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.03em !important;
-                margin-bottom: 0.5rem !important;
+                margin-bottom: 0.75rem !important;
             }
 
             [data-testid="stPopoverBody"] .stSelectbox > div,
@@ -472,7 +472,9 @@ class StyleManager:
                 border: 1px solid var(--border-medium) !important;
                 border-radius: 12px !important;
                 color: var(--text-primary) !important;
-                margin-bottom: 1rem !important;
+                margin-bottom: 1.5rem !important;
+                padding: 1rem !important;
+                font-size: 1rem !important;
             }
 
             [data-testid="stPopoverBody"] .stButton > button {
@@ -481,9 +483,10 @@ class StyleManager:
                 color: white !important;
                 font-weight: 600 !important;
                 border-radius: 12px !important;
-                padding: 0.75rem !important;
+                padding: 1rem !important;
                 width: 100% !important;
-                margin-top: 1rem !important;
+                margin-top: 2rem !important;
+                font-size: 1rem !important;
             }
 
             [data-testid="stPopoverBody"] .stButton > button:hover {
