@@ -80,6 +80,30 @@ class StyleManager:
                 box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3);
             }
 
+            /* ===== TICKETS MALFORMADOS ===== */
+            .ticket-card-warning {
+                border-color: rgba(245, 158, 11, 0.4);
+                background: rgba(245, 158, 11, 0.05);
+            }
+
+            .ticket-card-warning:hover {
+                border-color: rgba(245, 158, 11, 0.6);
+                background: rgba(245, 158, 11, 0.1);
+                box-shadow: 0 8px 20px -4px rgba(245, 158, 11, 0.2);
+            }
+
+            .ticket-warning {
+                color: #F59E0B;
+                font-size: 0.9rem;
+                margin-right: 0.5rem;
+                animation: blink 2s ease-in-out infinite;
+            }
+
+            @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.6; }
+            }
+
             /* ===== TICKET CARD CLICKEABLE ===== */
             .ticket-card-clickable {
                 cursor: pointer;

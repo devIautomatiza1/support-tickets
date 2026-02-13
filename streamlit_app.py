@@ -274,20 +274,49 @@ def escape_html(text: str) -> str:
     return text
 
 
+def sanitize_text(text: str) -> str:
+    """Limpia texto malformado"""
+    if not text:
+        return ""
+    text = str(text).strip()
+    # Remover comillas al inicio/final
+    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+        text = text[1:-1]
+    # Remover HTML tags
+    import re
+    text = re.sub(r'<[^>]+>', '', text)
+    # Remover caracteres repetidos erráticos (aaaaaaa)
+    text = re.sub(r'([a-z])\1{4,}', r'\1', text)
+    return text.strip()
+
+
+def detect_malformed_ticket(ticket: Ticket) -> bool:
+    """Detecta si un ticket está malformado"""
+    # Título sin [IA] o muy corto
+    if not ticket.title.startswith("[IA]") or len(ticket.title) < 10:
+        return True
+    # Description muy corta o vacía
+    if len(ticket.description) < 5:
+        return True
+    # Notes vacías o solo un placeholder
+    if not ticket.notes or len(ticket.notes) < 5 or ticket.notes.lower() in ["sad", "n/a", "none"]:
+        return True
+    return False
+
+
 @st.fragment
 def render_ticket_card(ticket: Ticket):
-    """Renderiza una tarjeta de ticket minimalista"""
+    """Renderiza una tarjeta de ticket minimalista - maneja tickets bien formados y defectuosos"""
+    
+    is_malformed = detect_malformed_ticket(ticket)
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
-    display_title = escape_html(title_parts[0])
-    person = escape_html(title_parts[1]) if len(title_parts) > 1 else ""
+    display_title = escape_html(sanitize_text(title_parts[0]))
+    person = escape_html(sanitize_text(title_parts[1])) if len(title_parts) > 1 else ""
     
-    # Limpiar y acortar descripción
-    desc = ticket.description.strip()
-    # Remover comillas al inicio si existen
-    if desc.startswith('"') and desc.endswith('"'):
-        desc = desc[1:-1]
+    # Limpiar descripción
+    desc = sanitize_text(ticket.description)
     desc_preview = escape_html(desc[:100])
     
     # Mapeo de estados
@@ -302,11 +331,15 @@ def render_ticket_card(ticket: Ticket):
     # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
     
+    # Clase adicional si está malformado
+    malformed_class = " ticket-card-warning" if is_malformed else ""
+    
     # HTML de la tarjeta con escape de HTML
     card_html = f"""
-    <div class="ticket-card">
+    <div class="ticket-card{malformed_class}">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
+            {f'<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''}
             <div class="ticket-menu" id="menu-{ticket.id}">
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
