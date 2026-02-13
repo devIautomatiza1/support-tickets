@@ -375,9 +375,9 @@ def render_ticket_card(ticket: Ticket):
     """
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Botón popover oculto - se abre al clickear la tarjeta
-    with st.popover("", use_container_width=False, help=""):
-        st.markdown(f"### Editar ticket #{ticket.ticket_number}")
+    # Popover para edición
+    with st.popover("Editar", use_container_width=True):
+        st.markdown(f"### Editar ticket #{ticket.ticket_number}", unsafe_allow_html=True)
         st.caption(escape_html(display_title))
         
         st.divider()
