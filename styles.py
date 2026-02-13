@@ -303,14 +303,16 @@ class StyleManager:
                 border: 1px solid var(--border-accent) !important;
                 border-radius: 24px !important;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                padding: 1.5rem !important;
-                min-width: 400px !important;
+                padding: 0 !important;
+                min-width: 600px !important;
+                max-width: 700px !important;
                 animation: modalFadeIn 0.2s ease !important;
                 transform-origin: top center !important;
                 position: absolute !important;
                 inset: auto auto auto 50% !important;
                 transform: translateX(-50%) !important;
                 margin: 0 !important;
+                overflow: hidden !important;
             }
 
             @keyframes modalFadeIn {
@@ -322,6 +324,20 @@ class StyleManager:
                     opacity: 1;
                     transform: translateX(-50%) scale(1) translateY(0);
                 }
+            }
+            
+            [data-testid="stPopoverBody"] .modal-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 1.5rem !important;
+                border-bottom: 1px solid var(--border-medium) !important;
+            }
+            
+            [data-testid="stPopoverBody"] .modal-content {
+                padding: 1.5rem !important;
+                max-height: 70vh !important;
+                overflow-y: auto !important;
             }
 
             [data-testid="stPopoverBody"] h3 {
