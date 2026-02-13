@@ -879,6 +879,9 @@ class StyleManager:
             }
         </style>
         """
+    
+    @staticmethod
+    def inject_all():
         """Inyecta todos los estilos CSS incluyendo Bootstrap y estilos avanzados"""
         # Bootstrap 5 CDN
         st.markdown("""
