@@ -306,17 +306,18 @@ def detect_malformed_ticket(ticket: Ticket) -> bool:
 
 @st.fragment
 def render_ticket_card(ticket: Ticket):
-    """Renderiza una tarjeta de ticket minimalista - maneja tickets bien formados y defectuosos"""
-    
-    is_malformed = detect_malformed_ticket(ticket)
+    """Renderiza una tarjeta de ticket minimalista"""
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
-    display_title = escape_html(sanitize_text(title_parts[0]))
-    person = escape_html(sanitize_text(title_parts[1])) if len(title_parts) > 1 else ""
+    display_title = escape_html(title_parts[0])
+    person = escape_html(title_parts[1]) if len(title_parts) > 1 else ""
     
-    # Limpiar descripción
-    desc = sanitize_text(ticket.description)
+    # Limpiar y acortar descripción
+    desc = ticket.description.strip()
+    # Remover comillas al inicio si existen
+    if desc.startswith('"') and desc.endswith('"'):
+        desc = desc[1:-1]
     desc_preview = escape_html(desc[:100])
     
     # Mapeo de estados
@@ -331,15 +332,11 @@ def render_ticket_card(ticket: Ticket):
     # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
     
-    # Clase adicional si está malformado
-    malformed_class = " ticket-card-warning" if is_malformed else ""
-    
     # HTML de la tarjeta con escape de HTML
     card_html = f"""
-    <div class="ticket-card{malformed_class}">
+    <div class="ticket-card">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
-            {f'<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''}
             <div class="ticket-menu" id="menu-{ticket.id}">
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
