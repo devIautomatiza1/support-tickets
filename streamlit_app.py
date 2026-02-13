@@ -312,12 +312,20 @@ def render_ticket_card(ticket: Ticket):
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
-    display_title = escape_html(sanitize_text(title_parts[0]))
-    person = escape_html(sanitize_text(title_parts[1])) if len(title_parts) > 1 else ""
+    display_title = title_parts[0].strip()
+    person = title_parts[1].strip() if len(title_parts) > 1 else ""
     
     # Limpiar descripción
-    desc = sanitize_text(ticket.description)
-    desc_preview = escape_html(desc[:100])
+    desc = ticket.description.strip()
+    if desc.startswith('"') and desc.endswith('"'):
+        desc = desc[1:-1]
+    
+    # Limpiar caracteres especiales y HTML
+    import re
+    desc = re.sub(r'<[^>]+>', '', desc)  # Remover tags HTML
+    desc = re.sub(r'([a-z])\1{4,}', r'\1', desc)  # Remover caracteres repetidos
+    
+    desc_preview = desc[:100]
     
     # Mapeo de estados
     badge_map = {
@@ -333,20 +341,22 @@ def render_ticket_card(ticket: Ticket):
     
     # Clase adicional si está malformado
     malformed_class = " ticket-card-warning" if is_malformed else ""
+    warning_icon = '<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''
+    person_html = f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''
     
-    # HTML de la tarjeta con escape de HTML
+    # HTML de la tarjeta
     card_html = f"""
     <div class="ticket-card{malformed_class}">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
-            {f'<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''}
+            {warning_icon}
             <div class="ticket-menu" id="menu-{ticket.id}">
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
         </div>
         <div class="ticket-title">{display_title}</div>
-        {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
-        <div class="ticket-description">"{desc_preview}{'...' if len(desc) > 100 else ''}"</div>
+        {person_html}
+        <div class="ticket-description">{escape_html(desc_preview)}{'...' if len(desc) > 100 else ''}</div>
         <div class="ticket-footer">
             <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
             <div class="priority-indicator">
