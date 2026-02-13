@@ -230,8 +230,9 @@ def render_metrics(tickets_df: pd.DataFrame):
 
 
 @st.fragment
+@st.fragment
 def render_ticket_card(ticket: Ticket):
-    """Renderiza una tarjeta de ticket minimalista"""
+    """Renderiza una tarjeta de ticket minimalista con botón de edición mejorado"""
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
@@ -250,17 +251,19 @@ def render_ticket_card(ticket: Ticket):
     # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
     
-    # HTML de la tarjeta
+    # HTML de la tarjeta con botón de edición mejorado
     card_html = f"""
     <div class="ticket-card">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
-            <div class="ticket-menu" id="menu-{ticket.id}">
-                <span style="color: var(--text-tertiary);">⋯</span>
+            <div class="edit-button-container" id="edit-{ticket.id}">
+                <div class="edit-button" title="Editar ticket">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
             </div>
         </div>
         <div class="ticket-title">{display_title}</div>
-        {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
+        {f'<div class="ticket-person"><i class="far fa-user"></i> {person}</div>' if person else ''}
         <div class="ticket-description">"{ticket.description[:100]}{'...' if len(ticket.description) > 100 else ''}"</div>
         <div class="ticket-footer">
             <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
@@ -274,39 +277,62 @@ def render_ticket_card(ticket: Ticket):
     
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Popover para edición
+    # Popover para edición - con diseño mejorado
     col1, col2, col3 = st.columns([0.1, 0.8, 0.1])
     with col2:
-        with st.popover("Editar", use_container_width=True):
-            st.markdown(f"### {ticket.ticket_number}")
-            st.caption(display_title)
+        with st.popover("", use_container_width=True):
+            # Encabezado del modal
+            st.markdown(f"""
+            <div class="modal-header">
+                <h3>Editar Ticket</h3>
+                <div class="stCaption">{ticket.ticket_number} · {display_title}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Badge de información
+            st.markdown(f"""
+            <div class="info-badge">
+                <i class="fas fa-info-circle"></i>
+                <span>Modifica el estado, prioridad o añade notas internas</span>
+            </div>
+            """, unsafe_allow_html=True)
             
             # Formulario de edición
             status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
             priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
             
+            st.markdown('<div class="field-group">', unsafe_allow_html=True)
             new_status = st.selectbox(
                 "Estado",
                 list(Status.display_names().values()),
                 index=list(Status.display_names().values()).index(status_label),
                 key=f"status_{ticket.id}"
             )
+            st.markdown('</div>', unsafe_allow_html=True)
             
+            st.markdown('<div class="field-group">', unsafe_allow_html=True)
             new_priority = st.selectbox(
                 "Prioridad",
                 list(Priority.display_names().values()),
                 index=list(Priority.display_names().values()).index(priority_label),
                 key=f"priority_{ticket.id}"
             )
+            st.markdown('</div>', unsafe_allow_html=True)
             
+            st.markdown('<div class="field-group">', unsafe_allow_html=True)
             new_notes = st.text_area(
-                "Notas",
+                "Notas internas",
                 value=ticket.notes,
-                placeholder="Añade notas internas...",
-                key=f"notes_{ticket.id}"
+                placeholder="Añade información relevante sobre el ticket...",
+                key=f"notes_{ticket.id}",
+                height=120
             )
+            st.markdown('</div>', unsafe_allow_html=True)
             
-            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+            st.markdown('<div class="modal-divider"></div>', unsafe_allow_html=True)
+            
+            # Botón de guardar con icono
+            if st.button("💾 Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
                 supabase = SupabaseService()
                 if supabase.update_ticket(
                     ticket.id,
@@ -314,12 +340,11 @@ def render_ticket_card(ticket: Ticket):
                     new_notes,
                     Priority.from_display(new_priority)
                 ):
-                    st.success("✓ Actualizado")
+                    st.success("✓ Ticket actualizado correctamente")
                     time.sleep(0.5)
                     st.rerun()
                 else:
-                    st.error("Error al guardar")
-
+                    st.error("✗ Error al actualizar el ticket")
 
 def render_tickets_grid(tickets_df: pd.DataFrame):
     """Renderiza el grid de tickets"""
