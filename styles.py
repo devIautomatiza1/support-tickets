@@ -80,6 +80,49 @@ class StyleManager:
                 box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3);
             }
 
+            /* ===== TARJETAS INTERACTIVAS CON HOVER EDITAR ===== */
+            .ticket-card-interactive {
+                position: relative;
+                cursor: pointer;
+                overflow: hidden;
+            }
+
+            .ticket-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(59, 130, 246, 0.15);
+                opacity: 0;
+                z-index: 1;
+                transition: opacity 0.2s ease;
+                pointer-events: none;
+                border-radius: 12px;
+            }
+
+            .ticket-card-interactive:hover .ticket-overlay {
+                opacity: 1;
+            }
+
+            .ticket-edit-hint {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 0.95rem;
+                opacity: 0;
+                z-index: 2;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            .ticket-card-interactive:hover .ticket-edit-hint {
+                opacity: 1;
+            }
+
             /* ===== TICKETS MALFORMADOS ===== */
             .ticket-card-warning {
                 border-color: rgba(245, 158, 11, 0.4);
