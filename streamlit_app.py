@@ -568,42 +568,40 @@ else:
         created_date = ticket.get('created_at', 'N/A')[:10]
         recording_id = str(ticket.get('recording_id', 'N/A'))[:10]
         
-        card_html = f'''
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div style="font-weight: 700; font-size: 1em; color: #F1F5F9;">#{ticket_num}</div>
-                <div class="status-badge {status_class}">{status_label}</div>
+        card_html = f'''<div class="ticket-card">
+    <div class="ticket-header">
+        <div style="font-weight: 700; font-size: 1em; color: #F1F5F9;">#{ticket_num}</div>
+        <div class="status-badge {status_class}">{status_label}</div>
+    </div>
+    
+    <div class="ticket-body">
+        <div class="ticket-title">{title}</div>
+        <div class="ticket-description">{desc}</div>
+        
+        <div class="ticket-meta">
+            <div class="meta-item">
+                <span class="meta-label">Estado</span>
+                <span class="meta-value">{status_label.title()}</span>
             </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-title">{title}</div>
-                <div class="ticket-description">{desc}</div>
-                
-                <div class="ticket-meta">
-                    <div class="meta-item">
-                        <span class="meta-label">Estado</span>
-                        <span class="meta-value">{status_label.title()}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Prioridad</span>
-                        <span class="meta-value">{priority_label.title()}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Creado</span>
-                        <span class="meta-value">{created_date}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Grabacion</span>
-                        <span class="meta-value" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
-                    </div>
-                </div>
+            <div class="meta-item">
+                <span class="meta-label">Prioridad</span>
+                <span class="meta-value">{priority_label.title()}</span>
             </div>
-            
-            <div class="ticket-footer">
-                <span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else '<em>Sin notas</em>'}</span>
+            <div class="meta-item">
+                <span class="meta-label">Creado</span>
+                <span class="meta-value">{created_date}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Grabacion</span>
+                <span class="meta-value" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
             </div>
         </div>
-        '''
+    </div>
+    
+    <div class="ticket-footer">
+        <span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else '<em>Sin notas</em>'}</span>
+    </div>
+</div>'''
         
         st.markdown(card_html, unsafe_allow_html=True)
         
