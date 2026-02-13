@@ -79,6 +79,51 @@ class StyleManager:
                 transform: translateY(-1px);
             }
 
+            /* ===== TICKET CARD CLICKEABLE ===== */
+            .ticket-card-clickable {
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .ticket-hover-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(59, 130, 246, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                border-radius: 16px;
+                backdrop-filter: blur(2px);
+                pointer-events: none;
+            }
+
+            .ticket-card-clickable:hover .ticket-hover-overlay {
+                opacity: 1;
+            }
+
+            .ticket-hover-text {
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 0.95rem;
+                text-align: center;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
             .ticket-header {
                 display: flex;
                 align-items: flex-start;
@@ -314,6 +359,11 @@ class StyleManager:
 
             [data-testid="stPopoverBody"] .stButton > button:hover {
                 background: #2563EB !important;
+            }
+
+            /* ===== BOTÓN INVISIBLE PARA CLICK DETECTION ===== */
+            [data-testid="stVerticalBlock"] > div > .stButton > button[aria-label=""] {
+                display: none !important;
             }
 
             /* ===== CONNECTION STATUS ===== */

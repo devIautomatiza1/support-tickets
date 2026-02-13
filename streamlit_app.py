@@ -231,7 +231,7 @@ def render_metrics(tickets_df: pd.DataFrame):
 
 @st.fragment
 def render_ticket_card(ticket: Ticket):
-    """Renderiza una tarjeta de ticket minimalista"""
+    """Renderiza una tarjeta de ticket minimalista - clickeable"""
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
@@ -250,9 +250,15 @@ def render_ticket_card(ticket: Ticket):
     # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
     
-    # HTML de la tarjeta
+    # Crear una clave única para esta tarjeta
+    ticket_key = f"ticket_{ticket.id}_open"
+    
+    # HTML de la tarjeta - ahora con hover y clickeable
     card_html = f"""
-    <div class="ticket-card">
+    <div class="ticket-card ticket-card-clickable" id="ticket-{ticket.id}" style="cursor: pointer;">
+        <div class="ticket-hover-overlay">
+            <span class="ticket-hover-text">👆 Pulsa para abrir</span>
+        </div>
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
             <div class="ticket-menu" id="menu-{ticket.id}">
@@ -274,49 +280,57 @@ def render_ticket_card(ticket: Ticket):
     
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Popover para edición
-    with st.popover("Editar"):
-        st.markdown(f"### {ticket.ticket_number}")
-        st.caption(display_title)
-        
-        # Formulario de edición
-        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-        
-        new_status = st.selectbox(
-            "Estado",
-            list(Status.display_names().values()),
-            index=list(Status.display_names().values()).index(status_label),
-            key=f"status_{ticket.id}"
-        )
-        
-        new_priority = st.selectbox(
-            "Prioridad",
-            list(Priority.display_names().values()),
-            index=list(Priority.display_names().values()).index(priority_label),
-            key=f"priority_{ticket.id}"
-        )
-        
-        new_notes = st.text_area(
-            "Notas",
-            value=ticket.notes,
-            placeholder="Añade notas internas...",
-            key=f"notes_{ticket.id}"
-        )
-        
-        if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
-            supabase = SupabaseService()
-            if supabase.update_ticket(
-                ticket.id,
-                Status.from_display(new_status),
-                new_notes,
-                Priority.from_display(new_priority)
-            ):
-                st.success("✓ Actualizado")
-                time.sleep(0.5)
-                st.rerun()
-            else:
-                st.error("Error al guardar")
+    # Botón invisible para capturar click
+    col1, col2, col3 = st.columns([1, 10, 1])
+    with col2:
+        if st.button("", key=f"open_{ticket.id}", use_container_width=True, label_visibility="collapsed"):
+            st.session_state[ticket_key] = True
+    
+    # Popover para edición - se abre si se detectó el click
+    if st.session_state.get(ticket_key, False):
+        with st.popover("Editar", use_container_width=False):
+            st.markdown(f"### {ticket.ticket_number}")
+            st.caption(display_title)
+            
+            # Formulario de edición
+            status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+            priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+            
+            new_status = st.selectbox(
+                "Estado",
+                list(Status.display_names().values()),
+                index=list(Status.display_names().values()).index(status_label),
+                key=f"status_{ticket.id}"
+            )
+            
+            new_priority = st.selectbox(
+                "Prioridad",
+                list(Priority.display_names().values()),
+                index=list(Priority.display_names().values()).index(priority_label),
+                key=f"priority_{ticket.id}"
+            )
+            
+            new_notes = st.text_area(
+                "Notas",
+                value=ticket.notes,
+                placeholder="Añade notas internas...",
+                key=f"notes_{ticket.id}"
+            )
+            
+            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+                supabase = SupabaseService()
+                if supabase.update_ticket(
+                    ticket.id,
+                    Status.from_display(new_status),
+                    new_notes,
+                    Priority.from_display(new_priority)
+                ):
+                    st.success("✓ Actualizado")
+                    time.sleep(0.5)
+                    st.session_state[ticket_key] = False
+                    st.rerun()
+                else:
+                    st.error("Error al guardar")
 
 
 def render_tickets_grid(tickets_df: pd.DataFrame):
