@@ -63,13 +63,6 @@ class StyleManager:
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             }
 
-            .premium-ticket-card .ticket-actions {
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-                z-index: 10;
-            }
-
             .premium-ticket-card:hover {
                 border-color: rgba(59, 130, 246, 0.4);
                 background: linear-gradient(145deg, rgba(26, 28, 35, 0.8), rgba(26, 28, 35, 0.6));
@@ -87,30 +80,6 @@ class StyleManager:
 
             .ticket-header-left {
                 flex: 1;
-            }
-
-            .ticket-popover-wrapper {
-                position: absolute;
-                top: 0.75rem;
-                right: 0.75rem;
-                z-index: 20;
-            }
-                background: transparent;
-                border: none;
-                color: var(--text-muted);
-                font-size: 1.1rem;
-                cursor: pointer;
-                padding: 0.25rem 0.5rem;
-                border-radius: 6px;
-                transition: all 0.2s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .ticket-popover-btn:hover {
-                background: rgba(59, 130, 246, 0.1);
-                color: var(--accent-light);
             }
 
             .ticket-number {
@@ -257,15 +226,151 @@ class StyleManager:
                 margin: 0.5rem 0 0 0;
             }
 
-            /* ===== MODALES ===== */
-            [role="dialog"] {
-                background: rgba(15, 17, 23, 0.95) !important;
-                backdrop-filter: blur(20px) !important;
-                border: 1px solid rgba(59, 130, 246, 0.2) !important;
-                border-radius: 24px !important;
+            /* ===== MODAL GRANDE - CORREGIDO ===== */
+            /* Este es el modal que aparece al hacer clic en los tres puntos */
+            div[class*="stModal"] {
+                background: transparent !important;
             }
 
-            /* ===== BOTONES ===== */
+            div[class*="stModal"] > div {
+                background: rgba(15, 17, 23, 0.98) !important;
+                backdrop-filter: blur(20px) !important;
+                border: 1px solid rgba(59, 130, 246, 0.3) !important;
+                border-radius: 28px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+                min-width: 800px !important;
+                width: 800px !important;
+                max-width: 800px !important;
+                padding: 2.5rem !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 999999 !important;
+            }
+
+            /* Título del modal */
+            div[class*="stModal"] h3 {
+                color: var(--text-primary) !important;
+                font-size: 2rem !important;
+                font-weight: 700 !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Subtítulo */
+            div[class*="stModal"] .stCaption {
+                color: var(--accent-light) !important;
+                font-size: 1.3rem !important;
+                margin-bottom: 2rem !important;
+            }
+
+            /* Divisor */
+            div[class*="stModal"] .stDivider {
+                background: rgba(255, 255, 255, 0.1) !important;
+                margin: 2rem 0 !important;
+            }
+
+            /* Labels */
+            div[class*="stModal"] label {
+                color: var(--text-muted) !important;
+                font-size: 1rem !important;
+                font-weight: 600 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Selectores */
+            div[class*="stModal"] .stSelectbox {
+                margin-bottom: 2rem !important;
+            }
+
+            div[class*="stModal"] .stSelectbox > div {
+                background: rgba(10, 12, 18, 0.9) !important;
+                border: 1.5px solid var(--border) !important;
+                border-radius: 16px !important;
+                height: 60px !important;
+            }
+
+            div[class*="stModal"] .stSelectbox select {
+                color: var(--text-primary) !important;
+                font-size: 1.2rem !important;
+                padding: 0 1rem !important;
+            }
+
+            /* TextArea */
+            div[class*="stModal"] .stTextArea {
+                margin-bottom: 2rem !important;
+            }
+
+            div[class*="stModal"] .stTextArea textarea {
+                background: rgba(10, 12, 18, 0.9) !important;
+                border: 1.5px solid var(--border) !important;
+                border-radius: 16px !important;
+                color: var(--text-primary) !important;
+                font-size: 1.2rem !important;
+                min-height: 200px !important;
+                padding: 1rem !important;
+                line-height: 1.6 !important;
+            }
+
+            /* Botón Guardar */
+            div[class*="stModal"] .stButton > button {
+                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
+                border: none !important;
+                color: white !important;
+                font-weight: 600 !important;
+                font-size: 1.3rem !important;
+                border-radius: 16px !important;
+                padding: 1rem 2rem !important;
+                width: 100% !important;
+                height: auto !important;
+                margin-top: 1rem !important;
+                transition: all 0.3s !important;
+                box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3) !important;
+            }
+
+            div[class*="stModal"] .stButton > button:hover {
+                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.5) !important;
+            }
+
+            /* Botón de cierre (X) */
+            div[class*="stModal"] button[aria-label="Close"] {
+                background: rgba(255, 255, 255, 0.1) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 1.2rem !important;
+                color: var(--text-muted) !important;
+            }
+
+            div[class*="stModal"] button[aria-label="Close"]:hover {
+                background: rgba(239, 68, 68, 0.2) !important;
+                color: #ef4444 !important;
+            }
+
+            /* Botón de los tres puntos (sin cambios) */
+            .stPopoverEmoji {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: 10px !important;
+                padding: 0.5rem 0.9rem !important;
+                color: var(--text-muted) !important;
+                font-size: 1.2rem !important;
+                cursor: pointer !important;
+                transition: all 0.2s !important;
+            }
+
+            .stPopoverEmoji:hover {
+                background: rgba(59, 130, 246, 0.15) !important;
+                color: var(--accent-light) !important;
+                border-color: rgba(59, 130, 246, 0.4) !important;
+            }
+
+            /* ===== BOTONES GENERALES ===== */
             .stButton > button {
                 background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
                 border: none !important;
@@ -281,7 +386,7 @@ class StyleManager:
                 box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
             }
 
-            /* ===== INPUTS ===== */
+            /* ===== INPUTS GENERALES ===== */
             input, textarea, select {
                 background: rgba(10, 12, 18, 0.6) !important;
                 border: 1.5px solid var(--border) !important;
@@ -294,81 +399,17 @@ class StyleManager:
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
             }
 
-            /* ===== POPOVER PREMIUM ===== */
+            /* Eliminar estilos antiguos que interferían */
+            [role="dialog"] {
+                all: unset;
+            }
+
             [data-testid="popoverContainer"] {
-                backdrop-filter: blur(16px);
-                width: 700px !important;
-                min-width: 700px !important;
-                max-width: 700px !important;
-                position: fixed !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
-                border: 1px solid rgba(59, 130, 246, 0.2) !important;
-                border-radius: 16px !important;
-                z-index: 100 !important;
-                padding: 2rem !important;
-                font-size: 1rem !important;
+                all: unset;
             }
 
-            [data-testid="popoverContainer"] h3 {
-                font-size: 1.5rem !important;
-                margin-bottom: 1rem !important;
-            }
-
-            [data-testid="popoverContainer"] .stCaption {
-                font-size: 1.1rem !important;
-                margin-bottom: 1rem !important;
-            }
-
-            [data-testid="popoverContainer"] .stDivider {
-                margin: 1.5rem 0 !important;
-            }
-
-            [data-testid="popoverContainer"] label {
-                font-size: 0.95rem !important;
-                font-weight: 700 !important;
-            }
-
-            .popover-form {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .popover-section {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .popover-section label {
-                font-size: 0.75rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                color: var(--text-muted);
-                letter-spacing: 0.5px;
-            }
-
-            /* Expandir selectores y textareas dentro del popover */
-            [data-testid="popoverContainer"] .stSelectbox,
-            [data-testid="popoverContainer"] .stTextArea,
-            [data-testid="popoverContainer"] .stContainer {
-                width: 100%;
-            }
-
-            [data-testid="popoverContainer"] .stSelectbox select,
-            [data-testid="popoverContainer"] .stSelectbox > div {
-                height: 45px !important;
-                font-size: 1rem !important;
-            }
-
-            [data-testid="popoverContainer"] .stTextArea textarea {
-                min-height: 150px !important;
-                font-size: 1rem !important;
-            }
-
-            [data-testid="popoverContainer"] .stButton > button {
-                height: 50px !important;
-                font-size: 1.05rem !important;
+            div[data-testid="stPopover"] {
+                all: unset;
             }
         </style>
         """, unsafe_allow_html=True)
