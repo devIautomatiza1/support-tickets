@@ -297,15 +297,35 @@ class StyleManager:
             /* ===== POPOVER PREMIUM ===== */
             [data-testid="popoverContainer"] {
                 backdrop-filter: blur(16px);
-                width: 550px !important;
-                min-width: 550px !important;
-                max-width: 550px !important;
+                width: 700px !important;
+                min-width: 700px !important;
+                max-width: 700px !important;
                 position: fixed !important;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
                 border: 1px solid rgba(59, 130, 246, 0.2) !important;
                 border-radius: 16px !important;
                 z-index: 100 !important;
-                padding: 1.5rem !important;
+                padding: 2rem !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] h3 {
+                font-size: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stCaption {
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stDivider {
+                margin: 1.5rem 0 !important;
+            }
+
+            [data-testid="popoverContainer"] label {
+                font-size: 0.95rem !important;
+                font-weight: 700 !important;
             }
 
             .popover-form {
@@ -335,8 +355,20 @@ class StyleManager:
                 width: 100%;
             }
 
+            [data-testid="popoverContainer"] .stSelectbox select,
+            [data-testid="popoverContainer"] .stSelectbox > div {
+                height: 45px !important;
+                font-size: 1rem !important;
+            }
+
             [data-testid="popoverContainer"] .stTextArea textarea {
-                min-height: 120px !important;
+                min-height: 150px !important;
+                font-size: 1rem !important;
+            }
+
+            [data-testid="popoverContainer"] .stButton > button {
+                height: 50px !important;
+                font-size: 1.05rem !important;
             }
         </style>
         """, unsafe_allow_html=True)
