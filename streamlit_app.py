@@ -358,37 +358,32 @@ else:
                 st.markdown(f"<div style='font-size: 2em; margin-top: 10px;'>{priority_icon}</div>", unsafe_allow_html=True)
             
             with col2:
-                st.markdown(f"""
-                <div class="ticket-card">
+                # Limpiar descripción y notas
+                desc = ticket.get('description', '').replace('"', '').strip()
+                notes = (ticket.get('notes', '') or '').replace('\n', '<br>')
+                
+                card_html = f"""<div class="ticket-card">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div style="flex: 1;">
-                            <h3 style="margin: 0; color: #ffffff;">{ticket.get('ticket_number', 'N/A')} - {ticket.get('title', 'Sin título')}</h3>
-                            <p style="margin: 5px 0; color: rgba(255,255,255,0.7); font-size: 0.9em;">{ticket.get('description', '')}</p>
+                        <div style="flex: 1; margin-right: 10px;">
+                            <h3 style="margin: 0 0 5px 0; color: #ffffff; font-size: 1.1em;">{ticket.get('ticket_number', 'N/A')} - {ticket.get('title', 'Sin título')}</h3>
+                            <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.9em; line-height: 1.4;">{desc}</p>
                         </div>
-                        <div style="text-align: right;">
-                            <span class="status-badge {status_class}">{status_icon} {status_label}</span>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <div class="status-badge {status_class}" style="white-space: nowrap;">{status_icon} {status_label}</div>
                         </div>
                     </div>
-                    
                     <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; margin-bottom: 10px;">
-                        <div>
-                            <span style="color: rgba(255,255,255,0.5);">📅 Creado:</span><br>
-                            <span style="color: rgba(255,255,255,0.9);">{ticket.get('created_at', 'N/A')[:10]}</span>
-                        </div>
-                        <div>
-                            <span style="color: rgba(255,255,255,0.5);">🎙️ Grabación:</span><br>
-                            <span style="color: rgba(255,255,255,0.9);">{ticket.get('recording_id', 'N/A')}</span>
-                        </div>
+                        <div><span style="color: rgba(255,255,255,0.5);">📅 Creado:</span><br><span style="color: rgba(255,255,255,0.9);">{ticket.get('created_at', 'N/A')[:10]}</span></div>
+                        <div><span style="color: rgba(255,255,255,0.5);">🎙️ Grabación:</span><br><span style="color: rgba(255,255,255,0.9);" title="{ticket.get('recording_id', 'N/A')}">{str(ticket.get('recording_id', 'N/A'))[:12]}...</span></div>
                     </div>
-                    
-                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                        <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.85em;"><strong>Notas:</strong></p>
-                        <p style="margin: 5px 0; color: rgba(255,255,255,0.9); font-size: 0.85em;">{ticket.get('notes', 'Sin notas') or 'Sin notas'}</p>
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 0;">
+                        <p style="margin: 0 0 5px 0; color: rgba(255,255,255,0.7); font-size: 0.85em;"><strong>Notas:</strong></p>
+                        <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 0.85em; max-height: 120px; overflow-y: auto; line-height: 1.4;">{notes if notes else '<em>Sin notas</em>'}</p>
                     </div>
-                </div>
-                """, unsafe_allow_html=True)
+                </div>"""
+                
+                st.markdown(card_html, unsafe_allow_html=True)
             
             # Botón para expandir y editar
             with st.expander(f"✏️ Editar Ticket {ticket.get('ticket_number', 'N/A')}", expanded=False):
