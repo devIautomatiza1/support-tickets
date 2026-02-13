@@ -334,7 +334,41 @@ class StyleManager:
                 border-radius: 50%;
                 margin-right: 0.5rem;
             }
+
+            /* ===== POPOVER CENTRADO ===== */
+            [data-testid="stPopover"] {
+                position: fixed !important;
+                left: 50% !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                z-index: 9999 !important;
+            }
+
+            [data-testid="stPopoverBody"] {
+                max-width: 500px;
+                margin: 0 auto;
+            }
         </style>
+        
+        <script>
+        function centerPopovers() {
+            const popovers = document.querySelectorAll('[data-testid="stPopover"]');
+            popovers.forEach(popover => {
+                popover.style.position = 'fixed';
+                popover.style.left = '50%';
+                popover.style.top = '50%';
+                popover.style.transform = 'translate(-50%, -50%)';
+                popover.style.zIndex = '9999';
+            });
+        }
+        
+        // Ejecutar cuando se abra un popover
+        const observer = new MutationObserver(centerPopovers);
+        observer.observe(document.body, { childList: true, subtree: true });
+        
+        // Ejecutar inmediatamente
+        centerPopovers();
+        </script>
         """, unsafe_allow_html=True)
 
 
