@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # ============================================================================
-# SISTEMA DE DISEÑO MODERNO - VERSIÓN MEJORADA
+# SISTEMA DE DISEÑO MODERNO - VERSIÓN COMPACTA
 # ============================================================================
 st.markdown("""
 <style>
@@ -140,24 +140,24 @@ st.markdown("""
         min-height: 2rem;
     }
 
-    /* ===== MODAL MEJORADO - MÁS ANCHO, MENOS ALTO ===== */
+    /* ===== MODAL COMPACTO - SIN SCROLL ===== */
     div[data-testid="stDialog"] {
         display: flex !important;
-        align-items: flex-start !important;
+        align-items: center !important;
         justify-content: center !important;
-        padding: 0.5rem 0 !important;
+        padding: 1rem 0 !important;
     }
     
     div[data-testid="stDialog"] > div {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
         border-radius: 20px !important;
-        padding: 1.5rem 2rem !important;
+        padding: 1.5rem 1.75rem !important;
         box-shadow: var(--shadow) !important;
-        max-width: 750px !important;  /* ← MÁS ANCHO */
+        max-width: 600px !important;
         width: 100% !important;
         margin: 0 auto !important;
-        max-height: 85vh !important;  /* ← MENOS ALTO */
+        max-height: 90vh !important;
         overflow-y: auto !important;
     }
     
@@ -166,15 +166,15 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Header del modal */
+    /* Header del modal - COMPACTO */
     .modal-header {
-        margin-bottom: 0.75rem;
+        margin-bottom: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: baseline;
         flex-wrap: wrap;
         border-bottom: 1px solid var(--border);
-        padding-bottom: 0.6rem;
+        padding-bottom: 0.75rem;
     }
     
     .modal-title {
@@ -195,9 +195,9 @@ st.markdown("""
         border: 1px solid var(--border);
     }
 
-    /* Descripción - SIN LÍNEAS EN BLANCO */
+    /* Descripción - COMPACTA */
     .description-section {
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
     
     .section-title {
@@ -206,19 +206,18 @@ st.markdown("""
         color: var(--text-tertiary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
     }
     
     .description-box {
         background: var(--bg-secondary);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 0.75rem 1rem;
+        padding: 0.9rem 1rem;
         color: var(--text-secondary);
         font-size: 0.85rem;
         line-height: 1.5;
         white-space: pre-wrap;
-        margin: 0;  /* ← SIN MARGEN EXTRA */
     }
 
     /* Estado y Prioridad - COMPACTO */
@@ -226,13 +225,13 @@ st.markdown("""
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
-        margin: 1rem 0;
+        margin-bottom: 1.25rem;
     }
     
     .info-card {
         background: var(--bg-secondary);
         border-radius: 12px;
-        padding: 0.85rem;
+        padding: 0.9rem;
         border: 1px solid var(--border);
     }
     
@@ -242,7 +241,7 @@ st.markdown("""
         color: var(--text-tertiary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.35rem;
     }
     
     .current-value {
@@ -251,7 +250,7 @@ st.markdown("""
         border-radius: 16px;
         font-size: 0.7rem;
         font-weight: 600;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.75rem;
     }
     
     .select-label {
@@ -262,17 +261,17 @@ st.markdown("""
 
     /* Select boxes - COMPACTOS */
     .stSelectbox {
-        margin-bottom: 0 !important;
+        margin-bottom: 0.25rem !important;
     }
     
     .stSelectbox [data-baseweb="select"] {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
         border-radius: 8px !important;
-        min-height: 1.8rem !important;
+        min-height: 2rem !important;
     }
     
-    /* Text area - MÁS GRANDE EN ANCHO, MENOS EN ALTO */
+    /* Text area - COMPACTO */
     .stTextArea {
         margin-top: 0.25rem;
     }
@@ -282,20 +281,19 @@ st.markdown("""
         border: 1px solid var(--border) !important;
         border-radius: 12px !important;
         color: var(--text-primary) !important;
-        font-size: 0.85rem !important;
-        line-height: 1.6 !important;
-        padding: 0.9rem !important;
-        min-height: 160px !important;
-        max-height: 200px !important;
-        width: 100% !important;
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
+        padding: 0.75rem !important;
+        min-height: 120px !important;
+        max-height: 150px !important;
         font-family: 'SF Mono', 'JetBrains Mono', monospace !important;
     }
     
-    /* Botones */
+    /* Botones - COMPACTOS */
     .stButton > button {
         border-radius: 8px !important;
         font-size: 0.8rem !important;
-        padding: 0.35rem 1rem !important;
+        padding: 0.4rem 1rem !important;
         transition: var(--transition) !important;
         font-weight: 600 !important;
     }
@@ -316,10 +314,10 @@ st.markdown("""
         border: none;
         height: 1px;
         background: var(--border);
-        margin: 0.75rem 0;
+        margin: 1rem 0;
     }
     
-    /* Métricas */
+    /* Métricas - COMPACTAS */
     [data-testid="metric-container"] {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -327,13 +325,12 @@ st.markdown("""
         padding: 0.6rem;
     }
     
-    /* Eliminar márgenes extra de Streamlit */
-    .stMarkdown {
-        margin-bottom: 0 !important;
+    [data-testid="metric-container"] label {
+        font-size: 0.6rem !important;
     }
     
-    div[data-testid="stVerticalBlock"] {
-        gap: 0 !important;
+    [data-testid="metric-container"] [data-testid="metric-value"] {
+        font-size: 1.1rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -403,11 +400,11 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - MÁS ANCHO, MENOS ALTO, SIN LÍNEAS EN BLANCO
+# MODAL DE EDICIÓN - COMPACTO Y SIN SCROLL
 # ============================================================================
 @st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional - MÁS ANCHO, MENOS ALTO, SIN LÍNEAS EN BLANCO"""
+    """Modal profesional - COMPACTO, SIN SCROLL EXCESIVO"""
     
     # Extraer datos
     ticket_id = ticket_dict.get("id")
@@ -417,10 +414,6 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     current_priority = ticket_dict.get("priority", "Medium")
     notes = ticket_dict.get("notes", "") or ""
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
-    
-    # Limpiar descripción - eliminar líneas en blanco múltiples
-    if description:
-        description = "\n".join([line for line in description.split("\n") if line.strip()])
     
     # === HEADER COMPACTO ===
     st.markdown(f"""
@@ -432,7 +425,7 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     </div>
     """, unsafe_allow_html=True)
     
-    # === DESCRIPCIÓN - SIN LÍNEAS EN BLANCO ===
+    # === DESCRIPCIÓN COMPACTA ===
     st.markdown("""
     <div class="section-title">DESCRIPCIÓN</div>
     """, unsafe_allow_html=True)
@@ -443,9 +436,9 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     </div>
     """, unsafe_allow_html=True)
     
-    # === ESTADO Y PRIORIDAD ===
+    # === ESTADO Y PRIORIDAD COMPACTOS ===
     st.markdown("""
-    <div style="margin-top: 1rem; margin-bottom: 0.25rem;">
+    <div style="margin-top: 1.25rem; margin-bottom: 0.75rem;">
         <span class="section-title">ESTADO Y PRIORIDAD</span>
     </div>
     """, unsafe_allow_html=True)
@@ -501,9 +494,9 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         new_priority = st.selectbox("", priority_options, index=priority_idx, key=f"priority_{ticket_id}", label_visibility="collapsed")
         priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
     
-    # === NOTAS - MÁS ANCHAS, MEJOR VISIBILIDAD ===
+    # === NOTAS - MÁS COMPACTAS ===
     st.markdown("""
-    <div style="margin-top: 1rem; margin-bottom: 0.25rem;">
+    <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
         <span class="section-title">NOTAS</span>
     </div>
     """, unsafe_allow_html=True)
@@ -512,13 +505,13 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         new_notes = st.text_area(
             "",
             value=notes,
-            height=160,
-            placeholder="✨ Tema: ...\n📌 Descripción: ...\n👤 Mencionado: ...\n💬 Contexto: ...\n📊 Confianza: ...",
+            height=120,
+            placeholder="⭐️ Tema / 📌 Descripción / 👤 Mencionado / 💬 Contexto / 📊 Confianza",
             key=f"notes_{ticket_id}",
             label_visibility="collapsed"
         )
         
-        st.markdown("<div style='margin-top: 0.75rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1, 1, 1])
         
