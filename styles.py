@@ -480,6 +480,99 @@ class StyleManager:
                 border-radius: 50%;
                 margin-right: 0.5rem;
             }
+
+            /* ===== POPOVER / MODAL MINIMALISTA ===== */
+            [data-testid="popover"] {
+                background: var(--bg-secondary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 16px !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+            }
+
+            /* Stylear inputs y textareas dentro del popover */
+            [data-testid="popover"] input,
+            [data-testid="popover"] textarea,
+            [data-testid="popover"] select {
+                background: var(--bg-tertiary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 10px !important;
+                color: var(--text-primary) !important;
+                padding: 0.75rem !important;
+                font-family: 'Inter', sans-serif !important;
+                transition: all 0.2s ease !important;
+            }
+
+            [data-testid="popover"] input:focus,
+            [data-testid="popover"] textarea:focus,
+            [data-testid="popover"] select:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+                background: var(--bg-tertiary) !important;
+            }
+
+            /* Labels dentro del popover */
+            [data-testid="popover"] label {
+                color: var(--text-primary) !important;
+                font-weight: 500 !important;
+                font-size: 0.85rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            /* Separadores entre campos */
+            [data-testid="popover"] [data-testid="element-container"]:not(:last-child) {
+                margin-bottom: 1.25rem !important;
+                padding-bottom: 1.25rem !important;
+                border-bottom: 1px solid var(--border-light) !important;
+            }
+
+            /* Botones dentro del popover */
+            [data-testid="popover"] button[kind="primary"] {
+                background: var(--accent) !important;
+                border: none !important;
+                border-radius: 10px !important;
+                color: white !important;
+                font-weight: 600 !important;
+                padding: 0.75rem 1.25rem !important;
+                transition: all 0.2s ease !important;
+                width: 100% !important;
+                margin-top: 1rem !important;
+            }
+
+            [data-testid="popover"] button[kind="primary"]:hover {
+                background: #2563eb !important;
+                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3) !important;
+                transform: translateY(-1px) !important;
+            }
+
+            [data-testid="popover"] button[kind="primary"]:active {
+                transform: translateY(0) !important;
+            }
+
+            /* Selectbox (dropdown) dentro del popover */
+            [data-testid="popover"] [data-testid="selectbox"] {
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popover"] [role="combobox"] {
+                background: var(--bg-tertiary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 10px !important;
+                color: var(--text-primary) !important;
+            }
+
+            /* Heading dentro del popover */
+            [data-testid="popover"] h3 {
+                color: var(--text-primary) !important;
+                font-size: 1.1rem !important;
+                font-weight: 700 !important;
+                margin-bottom: 0.75rem !important;
+            }
+
+            [data-testid="popover"] p {
+                color: var(--text-secondary) !important;
+                font-size: 0.85rem !important;
+                margin-bottom: 1.5rem !important;
+            }
         </style>
         """, unsafe_allow_html=True)
 
