@@ -16,97 +16,204 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Aplicar tema glassmorphism
+# Aplicar tema minimalista profesional moderno
 st.markdown("""
 <style>
-    /* Fondo y tema oscuro */
+    /* Colores profesionales */
+    :root {
+        --primary: #3D63FF;
+        --secondary: #6B7280;
+        --success: #10B981;
+        --warning: #F59E0B;
+        --danger: #EF4444;
+        --bg-dark: #0F172A;
+        --bg-light: #1E293B;
+        --border: #334155;
+        --text-primary: #F1F5F9;
+        --text-secondary: #CBD5E1;
+    }
+    
+    /* Fondo limpio y moderno */
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+        background: linear-gradient(to bottom, #0F172A, #1a1f35);
     }
     
+    /* Sidebar profesional */
     [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: #1E293B;
+        border-right: 1px solid #334155;
     }
     
-    /* Cards glassmorphism */
+    /* Tarjetas minimalistas */
     .ticket-card {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        transition: all 0.3s ease;
+        background: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
     }
     
     .ticket-card:hover {
-        background: rgba(255, 255, 255, 0.12);
-        border-color: rgba(255, 255, 255, 0.25);
-        transform: translateY(-2px);
+        background: #334155;
+        border-color: #64748B;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     
+    /* Container debug */
     .debug-container {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 15px;
-        padding: 20px;
-        margin-top: 20px;
+        background: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 16px;
     }
     
-    /* Estilos de texto */
+    /* Tipografía profesional */
     h1, h2, h3 {
-        color: #ffffff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        color: #F1F5F9;
+        font-weight: 600;
+        letter-spacing: -0.5px;
     }
     
-    .stMarkdown {
-        color: rgba(255, 255, 255, 0.9);
+    h1 {
+        font-size: 2em;
+        margin-bottom: 4px;
     }
     
-    /* Status badges */
+    h2 {
+        font-size: 1.5em;
+        margin-top: 16px;
+        margin-bottom: 12px;
+    }
+    
+    h3 {
+        font-size: 1.1em;
+        margin: 0;
+    }
+    
+    /* Texto general */
+    body, p, span, div {
+        color: #F1F5F9;
+    }
+    
+    /* Status badges - Minimalistas */
     .status-badge {
         display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85em;
-        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.8em;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .status-open {
-        background: rgba(255, 107, 107, 0.3);
-        color: #ff6b6b;
-        border: 1px solid rgba(255, 107, 107, 0.5);
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #FCA5A5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
     }
     
     .status-progress {
-        background: rgba(255, 193, 7, 0.3);
-        color: #ffc107;
-        border: 1px solid rgba(255, 193, 7, 0.5);
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #FCD34D;
+        border: 1px solid rgba(245, 158, 11, 0.3);
     }
     
     .status-closed {
-        background: rgba(76, 175, 80, 0.3);
-        color: #4caf50;
-        border: 1px solid rgba(76, 175, 80, 0.5);
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #6EE7B7;
+        border: 1px solid rgba(16, 185, 129, 0.3);
     }
     
+    /* Prioridades */
     .priority-high {
-        color: #ff6b6b;
-        font-weight: bold;
+        color: #FCA5A5;
+        font-weight: 600;
     }
     
     .priority-medium {
-        color: #ffc107;
-        font-weight: bold;
+        color: #FCD34D;
+        font-weight: 600;
     }
     
     .priority-low {
-        color: #4caf50;
-        font-weight: bold;
+        color: #6EE7B7;
+        font-weight: 600;
+    }
+    
+    /* Dividers */
+    hr {
+        border: none;
+        border-top: 1px solid #334155;
+        margin: 12px 0;
+    }
+    
+    /* Selectboxes y inputs */
+    .stSelectbox, .stTextArea {
+        background-color: #1E293B !important;
+    }
+    
+    .stSelectbox [data-baseweb="select"] {
+        background-color: #1E293B;
+        border-color: #334155;
+    }
+    
+    /* Botones */
+    .stButton > button {
+        background-color: #3D63FF;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+    }
+    
+    .stButton > button:hover {
+        background-color: #4F46E5;
+        box-shadow: 0 4px 12px rgba(61, 99, 255, 0.4);
+    }
+    
+    /* Métricas */
+    [data-testid="metric-container"] {
+        background: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 12px;
+    }
+    
+    /* Info boxes */
+    .stInfo {
+        background-color: rgba(61, 99, 255, 0.1) !important;
+        border: 1px solid #3D63FF !important;
+        border-radius: 6px !important;
+    }
+    
+    .stSuccess {
+        background-color: rgba(16, 185, 129, 0.1) !important;
+        border: 1px solid #10B981 !important;
+        border-radius: 6px !important;
+    }
+    
+    .stError {
+        background-color: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid #EF4444 !important;
+        border-radius: 6px !important;
+    }
+    
+    .stWarning {
+        background-color: rgba(245, 158, 11, 0.1) !important;
+        border: 1px solid #F59E0B !important;
+        border-radius: 6px !important;
+    }
+    
+    /* Expandable sections */
+    .streamlit-expanderHeader {
+        background: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        color: #F1F5F9;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -218,16 +325,16 @@ def update_ticket(ticket_id: int, status: str, notes: str) -> bool:
 # ============================================================================
 
 # Título principal
-st.title("🎫 Dashboard de Tickets de Soporte")
-st.markdown("*Sistema integrado con Supabase para gestión de tickets*")
-st.markdown("---")
+st.title("🎫 Dashboard de Tickets")
+st.markdown("_Gestión de oportunidades de negocio_")
+st.markdown("")
 
 # ============================================================================
 # BARRA LATERAL - FILTROS
 # ============================================================================
 
-st.sidebar.title("🎛️ Filtros")
-st.sidebar.markdown("---")
+st.sidebar.title("Filtros")
+st.sidebar.markdown("")
 
 # Obtener tickets para estadísticas
 all_tickets = fetch_tickets()
@@ -239,28 +346,28 @@ priority_options = ["Todos", "Low", "Medium", "High"]
 # Mapeo para mostrar en español
 status_display_map = {
     "Todos": "Todos",
-    "new": "🆕 Nuevo",
-    "in_progress": "⏳ En progreso",
-    "closed": "✅ Cerrado",
-    "won": "🎉 Ganado"
+    "new": "Nuevo",
+    "in_progress": "En progreso",
+    "closed": "Cerrado",
+    "won": "Ganado"
 }
 
 priority_display_map = {
     "Todos": "Todos",
-    "Low": "📍 Baja",
-    "Medium": "📌 Media",
-    "High": "⚠️ Alta"
+    "Low": "Baja",
+    "Medium": "Media",
+    "High": "Alta"
 }
 
 # Selectores con display en español
 status_display = st.sidebar.selectbox(
-    "📊 Filtrar por Estado",
+    "Estado",
     [status_display_map[s] for s in status_options],
     key="status_filter"
 )
 
 priority_display = st.sidebar.selectbox(
-    "🎯 Filtrar por Prioridad",
+    "Prioridad",
     [priority_display_map[p] for p in priority_options],
     key="priority_filter"
 )
@@ -270,10 +377,12 @@ selected_status = [k for k, v in status_display_map.items() if v == status_displ
 selected_priority = [k for k, v in priority_display_map.items() if v == priority_display][0]
 
 # Botón de actualizar
-if st.sidebar.button("🔄 Actualizar", use_container_width=True):
+if st.sidebar.button("Actualizar", use_container_width=True):
     st.rerun()
 
-st.sidebar.markdown("---")
+st.sidebar.markdown("")
+st.sidebar.divider()
+st.sidebar.markdown("")
 
 # Mostrar estadísticas
 col1, col2, col3 = st.sidebar.columns(3)
@@ -286,9 +395,9 @@ if not all_tickets.empty:
     ganados = len(all_tickets[all_tickets["status"] == "won"])
     
     with col2:
-        st.metric("🆕 Nuevos", nuevos)
+        st.metric("Nuevos", nuevos)
     with col3:
-        st.metric("🎉 Ganados", ganados)
+        st.metric("Ganados", ganados)
 
 # ============================================================================
 # CONTENIDO PRINCIPAL - VISTA DE TARJETAS
@@ -301,10 +410,10 @@ tickets = fetch_tickets(
 )
 
 if tickets.empty:
-    st.info("📭 No hay tickets disponibles con los filtros seleccionados.")
+    st.info("No hay tickets disponibles con los filtros seleccionados.")
 else:
-    st.subheader(f"📋 Tickets ({len(tickets)})")
-    st.markdown("---")
+    st.subheader(f"Tickets ({len(tickets)})")
+    st.markdown("")
     
     # Crear contenedor para tarjetas
     for idx, ticket in tickets.iterrows():
@@ -362,26 +471,28 @@ else:
                 desc = ticket.get('description', '').replace('"', '').strip()
                 notes = (ticket.get('notes', '') or '').replace('\n', '<br>')
                 
-                card_html = f"""<div class="ticket-card">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div style="flex: 1; margin-right: 10px;">
-                            <h3 style="margin: 0 0 5px 0; color: #ffffff; font-size: 1.1em;">{ticket.get('ticket_number', 'N/A')} - {ticket.get('title', 'Sin título')}</h3>
-                            <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.9em; line-height: 1.4;">{desc}</p>
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <div class="status-badge {status_class}" style="white-space: nowrap;">{status_icon} {status_label}</div>
-                        </div>
-                    </div>
-                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em; margin-bottom: 10px;">
-                        <div><span style="color: rgba(255,255,255,0.5);">📅 Creado:</span><br><span style="color: rgba(255,255,255,0.9);">{ticket.get('created_at', 'N/A')[:10]}</span></div>
-                        <div><span style="color: rgba(255,255,255,0.5);">🎙️ Grabación:</span><br><span style="color: rgba(255,255,255,0.9);" title="{ticket.get('recording_id', 'N/A')}">{str(ticket.get('recording_id', 'N/A'))[:12]}...</span></div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 0;">
-                        <p style="margin: 0 0 5px 0; color: rgba(255,255,255,0.7); font-size: 0.85em;"><strong>Notas:</strong></p>
-                        <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 0.85em; max-height: 120px; overflow-y: auto; line-height: 1.4;">{notes if notes else '<em>Sin notas</em>'}</p>
-                    </div>
-                </div>"""
+                # Preparar datos para la tarjeta
+                ticket_num = ticket.get('ticket_number', 'N/A')
+                title = ticket.get('title', 'Sin título')
+                created_date = ticket.get('created_at', 'N/A')[:10]
+                recording_id = str(ticket.get('recording_id', 'N/A'))[:12]
+                full_recording_id = ticket.get('recording_id', 'N/A')
+                notes_text = notes if notes else '<span style="color: #64748B; font-style: italic;">Sin notas</span>'
+                
+                card_html = f'<div class="ticket-card">'
+                card_html += f'<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px;">'
+                card_html += f'<div style="flex: 1;"><h3 style="margin: 0 0 4px 0; font-size: 1em;">{ticket_num} - {title}</h3>'
+                card_html += f'<p style="margin: 0; color: #CBD5E1; font-size: 0.9em; line-height: 1.4;">{desc}</p></div>'
+                card_html += f'<div class="status-badge {status_class}" style="white-space: nowrap; flex-shrink: 0;">{status_icon} {status_label}</div></div>'
+                card_html += '<hr>'
+                card_html += f'<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85em; margin-bottom: 11px;">'
+                card_html += f'<div><span style="color: #94A3B8;">Created</span><br><span style="color: #F1F5F9; font-weight: 500;">{created_date}</span></div>'
+                card_html += f'<div><span style="color: #94A3B8;">Recording</span><br><span style="color: #F1F5F9; font-weight: 500;" title="{full_recording_id}">{recording_id}...</span></div>'
+                card_html += '</div>'
+                card_html += f'<div style="background: #0F172A; padding: 10px; border-radius: 6px; border: 1px solid #334155;">'
+                card_html += f'<p style="margin: 0 0 6px 0; color: #94A3B8; font-size: 0.85em; font-weight: 500;">Notes</p>'
+                card_html += f'<p style="margin: 0; color: #CBD5E1; font-size: 0.85em; max-height: 120px; overflow-y: auto; line-height: 1.5;">{notes_text}</p>'
+                card_html += '</div></div>'
                 
                 st.markdown(card_html, unsafe_allow_html=True)
             
@@ -428,13 +539,10 @@ else:
 # PANEL DE DIAGNÓSTICO - DEBUG
 # ============================================================================
 
-st.markdown("---")
+st.markdown("")
+st.divider()
 
-with st.expander("🛠️ Debug & Estado de Conexión", expanded=False):
-    st.markdown("""
-    <div class="debug-container">
-    """, unsafe_allow_html=True)
-    
+with st.expander("🔧 Debug & Conexión", expanded=False):
     debug_col1, debug_col2 = st.columns(2)
     
     with debug_col1:
@@ -513,15 +621,3 @@ with st.expander("🛠️ Debug & Estado de Conexión", expanded=False):
         except Exception as e:
             st.warning("⚠️ Esquema information_schema puede requerir permisos especiales")
             st.code(str(e), language="text")
-    
-    st.markdown("""
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.subheader("📝 Información de Triaje")
-    st.write("""
-    - **Conexión exitosa (✅)**: El dashboard puede acceder a Supabase
-    - **Conexión fallida (❌)**: Verifica las credenciales en el código
-    - **Tablas no encontradas**: Verifica que existan 'opportunities' y 'recordings'
-    """)
