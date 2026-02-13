@@ -16,435 +16,112 @@ st.set_page_config(
 )
 
 # ============================================================================
-# SISTEMA DE DISEÑO MODERNO - VERSIÓN COMPACTA
+# TAILWIND CSS VÍA CDN - DISEÑO LIMPIO
 # ============================================================================
 st.markdown("""
-<style>
-    /* ===== TOKENS ===== */
-    :root {
-        --bg-primary: #0A0C10;
-        --bg-secondary: #111316;
-        --bg-card: #16181C;
-        --border: #2A2C30;
-        --border-hover: #404448;
-        --text-primary: #E8E9EA;
-        --text-secondary: #8B8E94;
-        --text-tertiary: #5E6269;
-        --accent: #3B82F6;
-        --accent-soft: rgba(59, 130, 246, 0.1);
-        --success: #10B981;
-        --warning: #F59E0B;
-        --danger: #EF4444;
-        --radius-lg: 16px;
-        --radius-md: 12px;
-        --radius-sm: 8px;
-        --shadow: 0 20px 40px -12px rgba(0,0,0,0.4);
-        --shadow-hover: 0 25px 50px -12px rgba(59,130,246,0.3);
-        --transition: all 0.2s ease;
-    }
-
-    [data-testid="stAppViewContainer"] { 
-        background: var(--bg-primary); 
-    }
-    
-    [data-testid="stSidebar"] { 
-        background: var(--bg-secondary); 
-        border-right: 1px solid var(--border); 
-    }
-
-    /* ===== GRID DE TARJETAS ===== */
-    div.row-widget.stHorizontal {
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-
-    /* ===== TARJETA COMPACTA ===== */
-    .ticket-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 0.85rem;
-        transition: var(--transition);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .ticket-card:hover {
-        border-color: var(--border-hover);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        transform: translateY(-2px);
-        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
-    }
-
-    .ticket-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.4rem;
-    }
-    
-    .ticket-number {
-        font-family: 'SF Mono', 'JetBrains Mono', monospace;
-        font-size: 0.65rem;
-        font-weight: 500;
-        color: var(--text-tertiary);
-        letter-spacing: 0.02em;
-    }
-
-    /* Badges minimalistas */
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.6rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        border: 1px solid transparent;
-        white-space: nowrap;
-    }
-    
-    .badge-new { 
-        background: rgba(239,68,68,0.08); 
-        color: #F87171; 
-        border-color: rgba(239,68,68,0.2); 
-    }
-    
-    .badge-progress { 
-        background: rgba(245,158,11,0.08); 
-        color: #FBBF24; 
-        border-color: rgba(245,158,11,0.2); 
-    }
-    
-    .badge-won { 
-        background: rgba(16,185,129,0.08); 
-        color: #34D399; 
-        border-color: rgba(16,185,129,0.2); 
-    }
-    
-    .badge-closed { 
-        background: rgba(107,114,128,0.08); 
-        color: #9CA3AF; 
-        border-color: rgba(107,114,128,0.2); 
-    }
-
-    .ticket-title {
-        font-size: 0.8rem;
-        font-weight: 450;
-        color: var(--text-primary);
-        line-height: 1.3;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 2rem;
-    }
-
-    /* ===== MODAL COMPACTO ===== */
-    div[data-testid="stDialog"] {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 1rem 0 !important;
-    }
-    
-    div[data-testid="stDialog"] > div {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 20px !important;
-        padding: 1.5rem 1.75rem !important;
-        box-shadow: var(--shadow) !important;
-        max-width: 600px !important;
-        width: 100% !important;
-        margin: 0 auto !important;
-        max-height: 90vh !important;
-        overflow-y: auto !important;
-    }
-    
-    /* Ocultar título por defecto */
-    div[data-testid="stDialog"] [data-testid="stMarkdownContainer"] h2 {
-        display: none !important;
-    }
-
-    /* Header del modal */
-    .modal-header {
-        margin-bottom: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        flex-wrap: wrap;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.75rem;
-    }
-    
-    .modal-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        line-height: 1.3;
-        letter-spacing: -0.02em;
-    }
-    
-    .modal-date {
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-        font-family: 'SF Mono', 'JetBrains Mono', monospace;
-        background: var(--bg-secondary);
-        padding: 0.2rem 0.6rem;
-        border-radius: 16px;
-        border: 1px solid var(--border);
-    }
-
-    /* Descripción */
-    .description-section {
-        margin-bottom: 1.25rem;
-    }
-    
-    .section-title {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--text-tertiary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.5rem;
-    }
-    
-    .description-box {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 0.9rem 1rem;
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-        line-height: 1.5;
-        white-space: pre-wrap;
-    }
-
-    /* Estado y Prioridad */
-    .status-priority-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-    }
-    
-    .info-card {
-        background: var(--bg-secondary);
-        border-radius: 12px;
-        padding: 0.9rem;
-        border: 1px solid var(--border);
-    }
-    
-    .info-label {
-        font-size: 0.6rem;
-        font-weight: 600;
-        color: var(--text-tertiary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.35rem;
-    }
-    
-    .current-value {
-        display: inline-block;
-        padding: 0.2rem 0.75rem;
-        border-radius: 16px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-    }
-    
-    .select-label {
-        font-size: 0.6rem;
-        color: var(--text-tertiary);
-        margin-bottom: 0.2rem;
-    }
-
-    /* Select boxes */
-    .stSelectbox {
-        margin-bottom: 0.25rem !important;
-    }
-    
-    .stSelectbox [data-baseweb="select"] {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 8px !important;
-        min-height: 2rem !important;
-        transition: var(--transition) !important;
-    }
-    
-    .stSelectbox [data-baseweb="select"]:hover {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
-        background: var(--bg-card) !important;
-    }
-    
-    /* Text area */
-    .stTextArea {
-        margin-top: 0.25rem;
-    }
-    
-    .stTextArea textarea {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 12px !important;
-        color: var(--text-primary) !important;
-        font-size: 0.8rem !important;
-        line-height: 1.5 !important;
-        padding: 0.75rem !important;
-        min-height: 120px !important;
-        max-height: 150px !important;
-        font-family: 'SF Mono', 'JetBrains Mono', monospace !important;
-        transition: var(--transition) !important;
-    }
-    
-    .stTextArea textarea:hover {
-        border-color: var(--border-hover) !important;
-    }
-    
-    .stTextArea textarea:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
-    }
-
-    /* ===== BOTONES CON HOVER MEJORADOS ===== */
-    
-    /* Botón EDITAR en tarjetas */
-    .stButton > button {
-        border-radius: 8px !important;
-        font-size: 0.75rem !important;
-        padding: 0.35rem 0.75rem !important;
-        transition: var(--transition) !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-        width: 100% !important;
-        background: transparent !important;
-        color: var(--text-secondary) !important;
-        border: 1px solid var(--border) !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .stButton > button:hover {
-        background: var(--accent-soft) !important;
-        border-color: var(--accent) !important;
-        color: var(--accent) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(59,130,246,0.2) !important;
-    }
-    
-    .stButton > button:active {
-        transform: translateY(0) !important;
-    }
-    
-    /* Botón ACTUALIZAR en sidebar */
-    .stButton > button[key*="ACTUALIZAR"] {
-        background: transparent !important;
-        border: 1px solid var(--border) !important;
-        padding: 0.5rem 1rem !important;
-        font-size: 0.8rem !important;
-    }
-    
-    .stButton > button[key*="ACTUALIZAR"]:hover {
-        background: var(--accent) !important;
-        border-color: var(--accent) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
-    }
-    
-    /* Botón Guardar cambios (primario) */
-    .stButton > button[kind="primary"] {
-        background: var(--accent) !important;
-        color: white !important;
-        border: none !important;
-        box-shadow: 0 2px 8px rgba(59,130,246,0.2) !important;
-    }
-    
-    .stButton > button[kind="primary"]:hover {
-        background: #2563EB !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important;
-    }
-    
-    .stButton > button[kind="primary"]:active {
-        transform: translateY(0) !important;
-        box-shadow: 0 2px 8px rgba(59,130,246,0.2) !important;
-    }
-    
-    /* Botón Cancelar */
-    .stButton > button:not([kind="primary"]) {
-        background: transparent !important;
-        color: var(--text-secondary) !important;
-        border: 1px solid var(--border) !important;
-    }
-    
-    .stButton > button:not([kind="primary"]):hover {
-        background: var(--bg-secondary) !important;
-        border-color: var(--border-hover) !important;
-        color: var(--text-primary) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-    }
-    
-    /* Botones de diagnóstico */
-    .stButton > button:has(span:contains("Ver")) {
-        font-size: 0.7rem !important;
-        padding: 0.25rem 0.5rem !important;
-    }
-    
-    .stButton > button:has(span:contains("Ver")):hover {
-        background: var(--accent-soft) !important;
-        border-color: var(--accent) !important;
-        color: var(--accent) !important;
-    }
-
-    hr {
-        border: none;
-        height: 1px;
-        background: var(--border);
-        margin: 1rem 0;
-    }
-    
-    /* Métricas */
-    [data-testid="metric-container"] {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 0.6rem;
-        transition: var(--transition) !important;
-    }
-    
-    [data-testid="metric-container"]:hover {
-        border-color: var(--border-hover) !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-    }
-    
-    [data-testid="metric-container"] label {
-        font-size: 0.6rem !important;
-    }
-    
-    [data-testid="metric-container"] [data-testid="metric-value"] {
-        font-size: 1.1rem !important;
-    }
-    
-    /* Expander */
-    .streamlit-expanderHeader {
-        background: var(--bg-card) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 8px !important;
-        transition: var(--transition) !important;
-    }
-    
-    .streamlit-expanderHeader:hover {
-        border-color: var(--border-hover) !important;
-        background: var(--bg-secondary) !important;
-    }
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Ocultar elementos por defecto de Streamlit */
+        #MainMenu, footer, header {
+            display: none !important;
+        }
+        
+        .stApp {
+            background: #0A0C10 !important;
+        }
+        
+        /* Personalización de scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #111316;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #2A2C30;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #404448;
+        }
+        
+        /* Ocultar etiquetas de Streamlit que no queremos */
+        .st-emotion-cache-16idsys, .st-emotion-cache-1dp5vir {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
 """, unsafe_allow_html=True)
 
 # ============================================================================
-# CREDENCIALES Y FUNCIONES SUPABASE - USANDO SECRETS
+# COMPONENTES REUTILIZABLES CON TAILWIND
+# ============================================================================
+
+def tailwind_card(content: str, class_name: str = ""):
+    """Wrapper para tarjetas con Tailwind"""
+    return f"""
+    <div class="bg-[#16181C] border border-[#2A2C30] rounded-xl p-4 hover:border-[#404448] hover:shadow-lg hover:shadow-black/40 transition-all duration-200 {class_name}">
+        {content}
+    </div>
+    """
+
+def tailwind_badge(status: str):
+    """Badges con Tailwind"""
+    badges = {
+        "new": {"bg": "bg-red-500/10", "text": "text-red-400", "border": "border-red-500/20", "label": "NUEVO"},
+        "in_progress": {"bg": "bg-yellow-500/10", "text": "text-yellow-400", "border": "border-yellow-500/20", "label": "PROGRESO"},
+        "won": {"bg": "bg-green-500/10", "text": "text-green-400", "border": "border-green-500/20", "label": "GANADO"},
+        "closed": {"bg": "bg-gray-500/10", "text": "text-gray-400", "border": "border-gray-500/20", "label": "CERRADO"}
+    }
+    style = badges.get(status.lower(), badges["new"])
+    return f"""
+    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {style['bg']} {style['text']} border {style['border']}">
+        {style['label']}
+    </span>
+    """
+
+def tailwind_priority_badge(priority: str):
+    """Badge de prioridad con Tailwind"""
+    priorities = {
+        "High": {"bg": "bg-red-500/10", "text": "text-red-400", "border": "border-red-500/20", "label": "Alta"},
+        "Medium": {"bg": "bg-yellow-500/10", "text": "text-yellow-400", "border": "border-yellow-500/20", "label": "Media"},
+        "Low": {"bg": "bg-green-500/10", "text": "text-green-400", "border": "border-green-500/20", "label": "Baja"}
+    }
+    style = priorities.get(priority, priorities["Medium"])
+    return f"""
+    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {style['bg']} {style['text']} border {style['border']}">
+        {style['label']}
+    </span>
+    """
+
+def tailwind_metric(label: str, value: str, change: str = None):
+    """Métrica con Tailwind"""
+    return f"""
+    <div class="bg-[#16181C] border border-[#2A2C30] rounded-lg p-4 hover:border-[#404448] transition-all">
+        <div class="text-[#8B8E94] text-xs font-medium uppercase tracking-wider">{label}</div>
+        <div class="text-[#E8E9EA] text-2xl font-semibold mt-1">{value}</div>
+        {f'<div class="text-[#8B8E94] text-xs mt-1">{change}</div>' if change else ''}
+    </div>
+    """
+
+# ============================================================================
+# CREDENCIALES Y FUNCIONES SUPABASE
 # ============================================================================
 
 def get_supabase_connection():
@@ -453,7 +130,7 @@ def get_supabase_connection():
         SUPABASE_URL = st.secrets["SUPABASE_URL"]
         SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
         return create_client(SUPABASE_URL, SUPABASE_KEY)
-    except:
+    except Exception as e:
         return None
 
 def test_connection():
@@ -489,7 +166,7 @@ def fetch_tickets(status_filter=None, priority_filter=None):
             df.columns = df.columns.str.lower()
             return df
         return pd.DataFrame()
-    except:
+    except Exception as e:
         return pd.DataFrame()
 
 def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None) -> bool:
@@ -504,298 +181,316 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
             
         client.table("opportunities").update(data).eq("id", ticket_id).execute()
         return True
-    except:
+    except Exception as e:
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - COMPACTO Y SIN SCROLL
+# COMPONENTES DE UI CON TAILWIND
 # ============================================================================
-@st.dialog("Editar ticket", width="large")
-def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional - COMPACTO, SIN SCROLL EXCESIVO"""
+
+def render_ticket_card(ticket: Dict[str, Any]):
+    """Renderiza una tarjeta de ticket con Tailwind"""
+    ticket_id = ticket.get("id")
+    ticket_num = ticket.get("ticket_number", "N/A")
+    title = ticket.get("title", "Sin título")
+    status = ticket.get("status", "new").lower()
+    priority = ticket.get("priority", "Medium")
     
-    # Extraer datos
-    ticket_id = ticket_dict.get("id")
-    title = ticket_dict.get("title", "Sin título")
-    description = ticket_dict.get("description", "").strip()
-    current_status = ticket_dict.get("status", "new").lower()
-    current_priority = ticket_dict.get("priority", "Medium")
-    notes = ticket_dict.get("notes", "") or ""
-    created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
-    
-    # Limpiar descripción - eliminar líneas en blanco múltiples
-    if description:
-        description = "\n".join([line for line in description.split("\n") if line.strip()])
-    
-    # === HEADER COMPACTO ===
-    st.markdown(f"""
-    <div class="modal-header">
-        <div>
-            <span class="modal-title">{title}</span>
+    card_content = f"""
+    <div class="flex flex-col h-full">
+        <div class="flex justify-between items-start mb-3">
+            <span class="text-[#5E6269] text-xs font-mono">#{ticket_num}</span>
+            <div class="flex items-center gap-2">
+                {tailwind_priority_badge(priority)}
+                {tailwind_badge(status)}
+            </div>
         </div>
-        <span class="modal-date">{created_at}</span>
+        <div class="text-[#E8E9EA] text-sm font-medium line-clamp-2 mb-4 flex-grow">
+            {title}
+        </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
     
-    # === DESCRIPCIÓN COMPACTA ===
-    st.markdown("""
-    <div class="section-title">DESCRIPCIÓN</div>
-    """, unsafe_allow_html=True)
+    return tailwind_card(card_content)
+
+def render_modal_content(ticket: Dict[str, Any]):
+    """Renderiza el contenido del modal con Tailwind"""
+    ticket_id = ticket.get("id")
+    title = ticket.get("title", "Sin título")
+    description = ticket.get("description", "").strip()
+    current_status = ticket.get("status", "new").lower()
+    current_priority = ticket.get("priority", "Medium")
+    notes = ticket.get("notes", "") or ""
+    created_at = ticket.get("created_at", "")[:10] if ticket.get("created_at") else "N/A"
     
-    st.markdown(f"""
-    <div class="description-box">
-        {description if description else 'Sin descripción'}
-    </div>
-    """, unsafe_allow_html=True)
+    status_options = {
+        "new": "Nuevo",
+        "in_progress": "En progreso",
+        "closed": "Cerrado",
+        "won": "Ganado"
+    }
     
-    # === ESTADO Y PRIORIDAD COMPACTOS ===
-    st.markdown("""
-    <div style="margin-top: 1.25rem; margin-bottom: 0.75rem;">
-        <span class="section-title">ESTADO Y PRIORIDAD</span>
-    </div>
-    """, unsafe_allow_html=True)
+    priority_options = ["Low", "Medium", "High"]
+    priority_labels = ["Baja", "Media", "Alta"]
     
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Estado actual
-        status_colors = {
-            "new": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171", "label": "Nuevo"},
-            "in_progress": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24", "label": "En progreso"},
-            "closed": {"bg": "rgba(107,114,128,0.1)", "color": "#9CA3AF", "label": "Cerrado"},
-            "won": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399", "label": "Ganado"}
-        }
-        status_style = status_colors.get(current_status, status_colors["new"])
-        
+    # Usar componentes nativos de Streamlit para el formulario
+    with st.container():
+        # Header con Tailwind
         st.markdown(f"""
-        <div class="info-card">
-            <div class="info-label">ESTADO ACTUAL</div>
-            <span class="current-value" style="background: {status_style['bg']}; color: {status_style['color']};">
-                {status_style['label']}
-            </span>
-            <div class="select-label">CAMBIAR A</div>
+        <div class="flex justify-between items-center pb-4 border-b border-[#2A2C30] mb-6">
+            <div>
+                <h2 class="text-[#E8E9EA] text-xl font-semibold">{title}</h2>
+                <p class="text-[#5E6269] text-xs mt-1">Creado: {created_at}</p>
+            </div>
+            {tailwind_badge(current_status)}
         </div>
         """, unsafe_allow_html=True)
         
-        status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
-        status_idx = ["new", "in_progress", "closed", "won"].index(current_status) if current_status in ["new", "in_progress", "closed", "won"] else 0
-        new_status = st.selectbox("", status_options, index=status_idx, key=f"status_{ticket_id}", label_visibility="collapsed")
-        status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-    
-    with col2:
-        # Prioridad actual
-        priority_colors = {
-            "Low": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399", "label": "Baja"},
-            "Medium": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24", "label": "Media"},
-            "High": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171", "label": "Alta"}
-        }
-        priority_style = priority_colors.get(current_priority, priority_colors["Medium"])
-        
-        st.markdown(f"""
-        <div class="info-card">
-            <div class="info-label">PRIORIDAD ACTUAL</div>
-            <span class="current-value" style="background: {priority_style['bg']}; color: {priority_style['color']};">
-                {priority_style['label']}
-            </span>
-            <div class="select-label">CAMBIAR A</div>
-        </div>
+        # Descripción
+        st.markdown("""
+        <div class="mb-6">
+            <p class="text-[#8B8E94] text-xs font-semibold uppercase tracking-wider mb-2">Descripción</p>
+            <div class="bg-[#111316] border border-[#2A2C30] rounded-lg p-4 text-[#E8E9EA] text-sm whitespace-pre-wrap">
         """, unsafe_allow_html=True)
         
-        priority_options = ["Baja", "Media", "Alta"]
-        priority_idx = ["Low", "Medium", "High"].index(current_priority) if current_priority in ["Low", "Medium", "High"] else 1
-        new_priority = st.selectbox("", priority_options, index=priority_idx, key=f"priority_{ticket_id}", label_visibility="collapsed")
-        priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-    
-    # === NOTAS - MÁS COMPACTAS ===
-    st.markdown("""
-    <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
-        <span class="section-title">NOTAS</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    with st.form(key=f"edit_modal_form_{ticket_id}"):
-        new_notes = st.text_area(
-            "",
-            value=notes,
-            height=120,
-            placeholder="⭐️ Tema / 📌 Descripción / 👤 Mencionado / 💬 Contexto / 📊 Confianza",
-            key=f"notes_{ticket_id}",
-            label_visibility="collapsed"
-        )
+        if description:
+            st.markdown(f"{description}</div></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("Sin descripción</div></div>", unsafe_allow_html=True)
         
-        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+        # Formulario de edición
+        col1, col2 = st.columns(2)
         
-        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            st.markdown('<p class="text-[#8B8E94] text-xs font-semibold uppercase tracking-wider mb-2">Estado</p>', unsafe_allow_html=True)
+            status_index = list(status_options.keys()).index(current_status) if current_status in status_options else 0
+            new_status_label = st.selectbox(
+                "Estado",
+                list(status_options.values()),
+                index=status_index,
+                key=f"modal_status_{ticket_id}",
+                label_visibility="collapsed"
+            )
+            status_map_reverse = {v: k for k, v in status_options.items()}
+            new_status = status_map_reverse[new_status_label]
         
         with col2:
-            saved = st.form_submit_button(
-                "Guardar cambios", 
-                use_container_width=True,
-                type="primary"
+            st.markdown('<p class="text-[#8B8E94] text-xs font-semibold uppercase tracking-wider mb-2">Prioridad</p>', unsafe_allow_html=True)
+            priority_index = priority_options.index(current_priority) if current_priority in priority_options else 1
+            new_priority_label = st.selectbox(
+                "Prioridad",
+                priority_labels,
+                index=priority_index,
+                key=f"modal_priority_{ticket_id}",
+                label_visibility="collapsed"
             )
+            priority_map = {v: k for k, v in zip(priority_labels, priority_options)}
+            new_priority = priority_map[new_priority_label]
+        
+        # Notas
+        st.markdown('<p class="text-[#8B8E94] text-xs font-semibold uppercase tracking-wider mb-2 mt-4">Notas</p>', unsafe_allow_html=True)
+        new_notes = st.text_area(
+            "Notas",
+            value=notes,
+            placeholder="⭐️ Tema / 📌 Descripción / 👤 Mencionado / 💬 Contexto / 📊 Confianza",
+            key=f"modal_notes_{ticket_id}",
+            label_visibility="collapsed",
+            height=150
+        )
+        
+        # Botones
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("Guardar cambios", key=f"modal_save_{ticket_id}", type="primary", use_container_width=True):
+                if update_ticket(ticket_id, new_status, new_notes, new_priority):
+                    st.success("✅ Ticket actualizado correctamente")
+                    st.session_state.modal_ticket = None
+                    st.rerun()
         
         with col3:
-            cancelled = st.form_submit_button(
-                "Cancelar", 
-                use_container_width=True
-            )
-        
-        if saved:
-            if update_ticket(
-                ticket_id, 
-                status_map[new_status], 
-                new_notes, 
-                priority_map[new_priority]
-            ):
-                st.success("✓ Actualizado")
+            if st.button("Cancelar", key=f"modal_cancel_{ticket_id}", use_container_width=True):
+                st.session_state.modal_ticket = None
                 st.rerun()
-            else:
-                st.error("Error")
-        
-        if cancelled:
-            st.rerun()
 
-# ============================================================================
-# GRID DE TARJETAS
-# ============================================================================
-@st.fragment
+@st.dialog("Editar ticket", width="large")
+def edit_ticket_modal(ticket_dict: Dict[str, Any]):
+    """Modal de edición con Tailwind"""
+    render_modal_content(ticket_dict)
+
 def render_ticket_grid(tickets_df: pd.DataFrame):
-    """Grid de tickets con diseño minimalista"""
-    
+    """Grid de tickets con Tailwind"""
     if tickets_df.empty:
         st.info("No hay tickets disponibles")
         return
     
-    num_columns = 3
-    columns = st.columns(num_columns, gap="small")
+    # Crear grid con Tailwind
+    st.markdown("""
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    """, unsafe_allow_html=True)
     
-    for idx, (_, ticket) in enumerate(tickets_df.iterrows()):
-        with columns[idx % num_columns]:
-            ticket_dict = ticket.to_dict()
-            
-            ticket_num = ticket_dict.get("ticket_number", "N/A")
-            title = ticket_dict.get("title", "Sin título")[:60]
-            status = ticket_dict.get("status", "new").lower()
-            
-            badge_map = {
-                "new": {"class": "badge-new", "label": "NUEVO"},
-                "in_progress": {"class": "badge-progress", "label": "PROGRESO"},
-                "won": {"class": "badge-won", "label": "GANADO"},
-                "closed": {"class": "badge-closed", "label": "CERRADO"}
-            }
-            badge = badge_map.get(status, badge_map["new"])
-            
-            card_html = f"""
-            <div class="ticket-card">
-                <div class="ticket-header">
-                    <span class="ticket-number">#{ticket_num}</span>
-                    <span class="badge {badge['class']}">{badge['label']}</span>
-                </div>
-                <div class="ticket-title">{title}</div>
-            </div>
-            """
-            
-            st.markdown(card_html, unsafe_allow_html=True)
-            
-            if st.button("EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
-                st.session_state.edit_ticket = ticket_dict
+    for _, ticket in tickets_df.iterrows():
+        ticket_dict = ticket.to_dict()
+        ticket_id = ticket_dict.get("id")
+        
+        # Renderizar tarjeta
+        st.markdown(render_ticket_card(ticket_dict), unsafe_allow_html=True)
+        
+        # Botón de edición con Tailwind
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("✏️ Editar", key=f"edit_btn_{ticket_id}", use_container_width=True):
+                st.session_state.modal_ticket = ticket_dict
                 st.rerun()
+    
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============================================================================
 # INTERFAZ PRINCIPAL
 # ============================================================================
-st.title("Dashboard")
-st.markdown("<h3 style='color: var(--text-secondary); font-weight: 400; margin-top: -0.5rem;'>Gestión de oportunidades</h3>", unsafe_allow_html=True)
-st.divider()
 
-# --- SIDEBAR ---
-with st.sidebar:
-    st.markdown("## Filtros")
+def main():
+    # Header
+    st.markdown("""
+    <div class="mb-8">
+        <h1 class="text-[#E8E9EA] text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p class="text-[#8B8E94] text-sm mt-1">Gestión de oportunidades y tickets</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    all_tickets = fetch_tickets()
+    # Sidebar con Tailwind
+    with st.sidebar:
+        st.markdown("""
+        <div class="p-4">
+            <h2 class="text-[#E8E9EA] text-lg font-semibold mb-6">Filtros</h2>
+        """, unsafe_allow_html=True)
+        
+        # Obtener todos los tickets para estadísticas
+        all_tickets = fetch_tickets()
+        
+        # Filtros
+        status_filter = st.selectbox(
+            "Estado",
+            ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
+            key="sidebar_status"
+        )
+        
+        priority_filter = st.selectbox(
+            "Prioridad",
+            ["Todos", "Baja", "Media", "Alta"],
+            key="sidebar_priority"
+        )
+        
+        # Mapeo de filtros
+        status_map = {
+            "Todos": "Todos",
+            "Nuevo": "new",
+            "En progreso": "in_progress",
+            "Cerrado": "closed",
+            "Ganado": "won"
+        }
+        priority_map = {
+            "Todos": "Todos",
+            "Baja": "Low",
+            "Media": "Medium",
+            "Alta": "High"
+        }
+        
+        selected_status = status_map[status_filter]
+        selected_priority = priority_map[priority_filter]
+        
+        # Botón actualizar con Tailwind
+        st.markdown("""
+        <style>
+            div.stButton > button:first-child {
+                background-color: #3B82F6 !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 8px !important;
+                padding: 0.5rem 1rem !important;
+                font-weight: 500 !important;
+                transition: all 0.2s !important;
+            }
+            div.stButton > button:first-child:hover {
+                background-color: #2563EB !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🔄 Actualizar", key="refresh_btn", use_container_width=True):
+            st.rerun()
+        
+        # Estadísticas con Tailwind
+        if not all_tickets.empty:
+            st.markdown("""
+            <div class="mt-8">
+                <h3 class="text-[#E8E9EA] text-sm font-semibold uppercase tracking-wider mb-4">Estadísticas</h3>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.markdown(tailwind_metric("Total", str(len(all_tickets))), unsafe_allow_html=True)
+            with col2:
+                nuevos = len(all_tickets[all_tickets["status"] == "new"])
+                st.markdown(tailwind_metric("Nuevos", str(nuevos)), unsafe_allow_html=True)
+            with col3:
+                ganados = len(all_tickets[all_tickets["status"] == "won"])
+                st.markdown(tailwind_metric("Ganados", str(ganados)), unsafe_allow_html=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
     
-    status_filter = st.selectbox(
-        "Estado",
-        ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
-        key="status_filter"
+    # Grid de tickets
+    tickets = fetch_tickets(
+        status_filter=selected_status if selected_status != "Todos" else None,
+        priority_filter=selected_priority if selected_priority != "Todos" else None
     )
     
-    priority_filter = st.selectbox(
-        "Prioridad",
-        ["Todos", "Baja", "Media", "Alta"],
-        key="priority_filter"
-    )
+    if tickets.empty:
+        st.markdown("""
+        <div class="bg-[#16181C] border border-[#2A2C30] rounded-lg p-8 text-center">
+            <p class="text-[#8B8E94]">No hay tickets con los filtros seleccionados.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-[#8B8E94] text-sm">{len(tickets)} tickets encontrados</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        render_ticket_grid(tickets)
     
-    status_map = {
-        "Todos": "Todos", "Nuevo": "new", "En progreso": "in_progress", 
-        "Cerrado": "closed", "Ganado": "won"
-    }
-    priority_map = {
-        "Todos": "Todos", "Baja": "Low", "Media": "Medium", "Alta": "High"
-    }
+    # Modal
+    if "modal_ticket" in st.session_state and st.session_state.modal_ticket:
+        edit_ticket_modal(st.session_state.modal_ticket)
+        st.session_state.modal_ticket = None
     
-    selected_status = status_map[status_filter]
-    selected_priority = priority_map[priority_filter]
-    
-    if st.button("ACTUALIZAR", key="ACTUALIZAR", use_container_width=True):
-        st.rerun()
-    
-    st.divider()
-    
-    st.markdown("## Estadísticas")
-    if not all_tickets.empty:
-        col1, col2, col3 = st.columns(3)
+    # Diagnóstico
+    with st.expander("🔧 Diagnóstico del sistema"):
+        success, msg, count = test_connection()
+        
+        if success:
+            st.success(f"✅ {msg} — {count} registros")
+        else:
+            st.error(f"❌ {msg}")
+        
+        col1, col2 = st.columns(2)
         with col1:
-            st.metric("Total", len(all_tickets))
+            if st.button("📋 Ver opportunities", key="debug_opps"):
+                client = get_supabase_connection()
+                if client:
+                    data = client.table("opportunities").select("*").limit(3).execute().data
+                    if data:
+                        st.dataframe(pd.DataFrame(data), use_container_width=True)
         with col2:
-            st.metric("Nuevos", len(all_tickets[all_tickets["status"] == "new"]))
-        with col3:
-            st.metric("Ganados", len(all_tickets[all_tickets["status"] == "won"]))
-    else:
-        st.info("Sin datos")
+            if st.button("🎙️ Ver recordings", key="debug_recs"):
+                client = get_supabase_connection()
+                if client:
+                    data = client.table("recordings").select("*").limit(3).execute().data
+                    if data:
+                        st.dataframe(pd.DataFrame(data), use_container_width=True)
 
-# --- GRID DE TICKETS ---
-tickets = fetch_tickets(
-    status_filter=selected_status if selected_status != "Todos" else None,
-    priority_filter=selected_priority if selected_priority != "Todos" else None
-)
-
-if tickets.empty:
-    st.info("No hay tickets con los filtros seleccionados.")
-else:
-    st.markdown(f"#### {len(tickets)} tickets encontrados")
-    render_ticket_grid(tickets)
-
-# --- MODAL ---
-if "edit_ticket" in st.session_state and st.session_state.edit_ticket:
-    edit_ticket_modal(st.session_state.edit_ticket)
-    st.session_state.edit_ticket = None
-
-# ============================================================================
-# DIAGNÓSTICO
-# ============================================================================
-with st.expander("Diagnóstico del sistema", expanded=False):
-    success, msg, count = test_connection()
-    
-    if success:
-        st.success(f"{msg} — {count} registros")
-    else:
-        st.error(msg)
-    
-    st.caption(f"URL: Configurada en secrets")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📋 Ver opportunities", key="ver_opp"):
-            client = get_supabase_connection()
-            if client:
-                data = client.table("opportunities").select("*").limit(3).execute().data
-                if data:
-                    st.dataframe(pd.DataFrame(data))
-    with col2:
-        if st.button("🎙️ Ver recordings", key="ver_rec"):
-            client = get_supabase_connection()
-            if client:
-                data = client.table("recordings").select("*").limit(3).execute().data
-                if data:
-                    st.dataframe(pd.DataFrame(data))
+if __name__ == "__main__":
+    main()
