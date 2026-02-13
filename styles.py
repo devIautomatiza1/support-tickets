@@ -123,40 +123,6 @@ class StyleManager:
                 opacity: 1;
             }
 
-            /* ===== POPOVER BUTTON INVISIBLE ===== */
-            /* Ocultar botones de popover vacíos */
-            button[popovertarget]:empty,
-            button[aria-label=""]:last-of-type {
-                display: none !important;
-                width: 0 !important;
-                height: 0 !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                border: none !important;
-            }
-
-            /* Alternative: hide via parent */
-            [data-testid="popover"] ~ [role="button"][aria-label=""],
-            [data-testid="popover"] ~ button:has-text("") {
-                display: none !important;
-            }
-
-            /* Script para abrir modal al clickear tarjeta */
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const tickets = document.querySelectorAll('.ticket-card-interactive');
-                    tickets.forEach(card => {
-                        card.addEventListener('click', function(e) {
-                            if (!e.target.closest('.ticket-menu')) {
-                                // Buscar el botón popover más cercano y clickearlo
-                                const button = card.nextElementSibling?.querySelector('button');
-                                if (button) button.click();
-                            }
-                        });
-                    });
-                });
-            </script>
-
             /* ===== TICKETS MALFORMADOS ===== */
             .ticket-card-warning {
                 border-color: rgba(245, 158, 11, 0.4);
