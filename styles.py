@@ -410,15 +410,9 @@ class StyleManager:
                 display: flex !important;
                 flex-direction: column !important;
                 gap: 1rem !important;
-                max-width: 600px !important;
-                min-width: 550px !important;
+                width: 550px !important;
                 max-height: 85vh !important;
                 overflow-y: auto !important;
-                position: fixed !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                z-index: 99999 !important;
             }
 
             /* Scrollbar personalizado para el popover */
