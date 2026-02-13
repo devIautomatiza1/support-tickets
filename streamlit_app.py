@@ -280,15 +280,13 @@ def render_ticket_card(ticket: Ticket):
     
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Botón invisible para capturar click
-    col1, col2, col3 = st.columns([1, 10, 1])
-    with col2:
-        if st.button("_", key=f"open_{ticket.id}", use_container_width=True):
-            st.session_state[ticket_key] = True
+    # Botón super invisible para capturar click
+    if st.button("", key=f"open_{ticket.id}", use_container_width=True):
+        st.session_state[ticket_key] = not st.session_state.get(ticket_key, False)
     
-    # Popover para edición - se abre si se detectó el click
+    # Popover abierto cuando se clickea la tarjeta
     if st.session_state.get(ticket_key, False):
-        with st.popover("Editar", use_container_width=False):
+        with st.popover("", use_container_width=False):
             st.markdown(f"### {ticket.ticket_number}")
             st.caption(display_title)
             
@@ -317,17 +315,26 @@ def render_ticket_card(ticket: Ticket):
                 key=f"notes_{ticket.id}"
             )
             
-            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
-                supabase = SupabaseService()
-                if supabase.update_ticket(
-                    ticket.id,
-                    Status.from_display(new_status),
-                    new_notes,
-                    Priority.from_display(new_priority)
-                ):
-                    st.success("✓ Actualizado")
-                    time.sleep(0.5)
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Cancelar", key=f"cancel_{ticket.id}", use_container_width=True):
                     st.session_state[ticket_key] = False
+                    st.rerun()
+            with col2:
+                if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+                    supabase = SupabaseService()
+                    if supabase.update_ticket(
+                        ticket.id,
+                        Status.from_display(new_status),
+                        new_notes,
+                        Priority.from_display(new_priority)
+                    ):
+                        st.success("✓ Actualizado")
+                        time.sleep(0.5)
+                        st.session_state[ticket_key] = False
+                        st.rerun()
+                    else:
+                        st.error("Error al guardar")
                     st.rerun()
                 else:
                     st.error("Error al guardar")
