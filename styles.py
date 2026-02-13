@@ -1,13 +1,13 @@
 """
 Sistema de estilos "Beautiful SaaS" - Inspirado en Linear, Vercel y Raycast.
-Enfoque: Minimalismo extremo, tipografía perfecta y micro-interacciones.
+Enfoque: Minimalismo extremo, tipografï¿½a perfecta y micro-interacciones.
 """
 
 import streamlit as st
 
 
 class StyleManager:
-    """Gestor de estilos - Estética Linear"""
+    """Gestor de estilos - Estï¿½tica Linear"""
     
     @staticmethod
     @st.cache_data
