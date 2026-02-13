@@ -13,6 +13,7 @@ import base64
 from pathlib import Path
 import time
 from PIL import Image
+from io import BytesIO
 
 from styles import StyleManager, ComponentStyles
 
@@ -20,13 +21,23 @@ from styles import StyleManager, ComponentStyles
 # Configuración
 icon_image = Image.open("icon.jpeg")
 st.set_page_config(
-    page_title="FlowTickets",
+    page_title="Soporte Oportunidades",
     page_icon=icon_image,
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 StyleManager.inject_all()
+
+# Convertir imagen a base64
+def get_image_base64(image_path):
+    img = Image.open(image_path)
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_base64 = base64.b64encode(buffered.getvalue()).decode()
+    return img_base64
+
+icon_base64 = get_image_base64("icon.jpeg")
 
 # Session state
 if "search_filter" not in st.session_state:
@@ -352,15 +363,13 @@ def main():
     # SIDEBAR
     with st.sidebar:
         # Logo y título
-        st.markdown("""
+        st.markdown(f"""
         <div style="padding: 0.5rem 0 1.5rem 0;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div style="background: var(--accent); width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-weight: 700;">⚡</span>
-                </div>
+                <img src="data:image/jpeg;base64,{icon_base64}" style="width: 32px; height: 32px; border-radius: 10px;" />
                 <div>
-                    <div style="font-weight: 700; color: var(--text-primary);">FlowTickets</div>
-                    <div style="font-size: 0.7rem; color: var(--text-tertiary);">IAutomatiza</div>
+                    <div style="font-weight: 700; color: var(--text-primary);">Soporte Oportunidades</div>
+                    <div style="font-size: 0.7rem; color: var(--text-tertiary);">Automatiza</div>
                 </div>
             </div>
         </div>
