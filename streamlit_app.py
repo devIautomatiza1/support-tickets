@@ -35,9 +35,11 @@ st.markdown("""
         --success: #10B981;
         --warning: #F59E0B;
         --danger: #EF4444;
-        --radius-lg: 12px;
-        --radius-md: 8px;
-        --radius-sm: 6px;
+        --purple: #8B5CF6;
+        --pink: #EC4899;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
         --shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         --transition: all 0.2s ease;
     }
@@ -72,7 +74,8 @@ st.markdown("""
     .ticket-card:hover {
         border-color: var(--border-hover);
         box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
     }
 
     .ticket-header {
@@ -148,9 +151,9 @@ st.markdown("""
     }
     
     div[data-testid="stDialog"] > div {
-        background: var(--bg-card) !important;
+        background: linear-gradient(145deg, var(--bg-card), #1A1E24) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 20px !important;
+        border-radius: 24px !important;
         padding: 2rem !important;
         box-shadow: var(--shadow) !important;
         max-width: 700px !important;
@@ -158,145 +161,185 @@ st.markdown("""
         margin: 0 auto !important;
     }
     
-    /* Ocultar título por defecto pero mantenerlo para que no de error */
+    /* Ocultar título por defecto */
     div[data-testid="stDialog"] [data-testid="stMarkdownContainer"] h2 {
         display: none !important;
     }
 
     /* Header del modal */
     .modal-header {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
         text-align: left;
+        position: relative;
     }
     
     .modal-title {
-        font-size: 1.35rem;
-        font-weight: 450;
+        font-size: 1.5rem;
+        font-weight: 600;
         color: var(--text-primary);
         line-height: 1.4;
         margin: 0 0 0.5rem 0;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #fff, var(--text-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
     .modal-divider {
-        height: 2px;
-        width: 50px;
-        background: var(--accent);
-        opacity: 0.5;
-        margin: 0.75rem 0 0 0;
-    }
-
-    /* Info cards */
-    .info-card {
-        background: var(--bg-secondary);
-        border-radius: 12px;
-        padding: 1.25rem;
-        height: 100%;
-    }
-    
-    .info-label {
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-tertiary);
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    
-    .info-value {
-        font-size: 0.95rem;
-        color: var(--text-primary);
-        font-weight: 400;
-    }
-    
-    .badge-status, .badge-priority {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 500;
-        margin-top: 0.25rem;
+        height: 4px;
+        width: 80px;
+        background: linear-gradient(90deg, var(--accent), var(--purple));
+        border-radius: 4px;
+        margin: 0.5rem 0 0 0;
     }
 
     /* Descripción */
     .description-box {
-        background: var(--bg-secondary);
+        background: linear-gradient(145deg, var(--bg-secondary), #0F1115);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.25rem;
+        border-radius: 16px;
+        padding: 1.5rem;
         color: var(--text-secondary);
-        font-size: 0.9rem;
-        line-height: 1.6;
+        font-size: 0.95rem;
+        line-height: 1.7;
         white-space: pre-wrap;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--accent);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     /* Formulario */
-    .form-card {
-        background: var(--bg-secondary);
-        border-radius: 12px;
-        padding: 1.5rem;
+    .form-section {
+        background: linear-gradient(145deg, var(--bg-secondary), #0F1115);
+        border-radius: 20px;
+        padding: 1.75rem;
         margin-top: 0.5rem;
+        border: 1px solid var(--border);
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title-icon {
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        padding: 0.25rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Select boxes */
+    .stSelectbox {
+        margin-bottom: 1rem;
+    }
+    
+    .stSelectbox label {
+        color: var(--text-tertiary) !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+    
     .stSelectbox [data-baseweb="select"] {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 8px !important;
+        border-radius: 12px !important;
+        transition: var(--transition) !important;
     }
     
-    /* Text area */
+    .stSelectbox [data-baseweb="select"]:hover {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
+    }
+    
+    /* Text area - MÁS GRANDE */
+    .stTextArea {
+        margin-top: 1rem;
+    }
+    
+    .stTextArea label {
+        color: var(--text-tertiary) !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+    
     .stTextArea textarea {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 8px !important;
+        border-radius: 16px !important;
         color: var(--text-primary) !important;
-        font-size: 0.85rem !important;
+        font-size: 0.9rem !important;
+        line-height: 1.6 !important;
+        padding: 1rem !important;
+        min-height: 200px !important;
+        transition: var(--transition) !important;
     }
     
     .stTextArea textarea:focus {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 2px rgba(59,130,246,0.1) !important;
+        box-shadow: 0 0 0 4px rgba(59,130,246,0.15) !important;
+        background: var(--bg-card) !important;
     }
 
     /* Botones */
     .stButton > button {
-        border-radius: 8px !important;
-        font-size: 0.8rem !important;
-        padding: 0.5rem 1rem !important;
+        border-radius: 12px !important;
+        font-size: 0.9rem !important;
+        padding: 0.6rem 1.5rem !important;
         transition: var(--transition) !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
     }
     
     .stButton > button[kind="primary"] {
-        background: var(--accent) !important;
+        background: linear-gradient(135deg, var(--accent), var(--purple)) !important;
         color: white !important;
         border: none !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
     }
     
     .stButton > button[kind="primary"]:hover {
-        background: #2563EB !important;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important;
     }
     
     .stButton > button:not([kind="primary"]) {
         background: transparent !important;
         color: var(--text-secondary) !important;
         border: 1px solid var(--border) !important;
+        backdrop-filter: blur(10px);
     }
     
     .stButton > button:not([kind="primary"]):hover {
         background: var(--bg-card) !important;
-        border-color: var(--border-hover) !important;
+        border-color: var(--accent) !important;
         color: var(--text-primary) !important;
     }
 
     hr {
         border: none;
-        border-top: 1px solid var(--border);
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--border), transparent);
         margin: 1.5rem 0;
-        opacity: 0.7;
+    }
+    
+    /* Métricas */
+    [data-testid="metric-container"] {
+        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -367,24 +410,22 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - CORREGIDO (CON TÍTULO)
+# MODAL DE EDICIÓN - LIMPIO Y COLORIDO
 # ============================================================================
-@st.dialog("Editar ticket", width="large")  # ← TÍTULO OBLIGATORIO
+@st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional sin información duplicada"""
+    """Modal profesional - SIN INFORMACIÓN DUPLICADA"""
     
     # Extraer datos
     ticket_id = ticket_dict.get("id")
-    ticket_num = ticket_dict.get("ticket_number", "N/A")
     title = ticket_dict.get("title", "Sin título")
     description = ticket_dict.get("description", "").strip()
     current_status = ticket_dict.get("status", "new").lower()
     current_priority = ticket_dict.get("priority", "Medium")
     notes = ticket_dict.get("notes", "") or ""
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
-    recording_id = ticket_dict.get("recording_id", "N/A")
     
-    # === HEADER - TÍTULO DEL TICKET ===
+    # === SOLO TÍTULO - NADA MÁS ===
     st.markdown(f"""
     <div class="modal-header">
         <div class="modal-title">{title}</div>
@@ -392,65 +433,14 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     </div>
     """, unsafe_allow_html=True)
     
-    # === INFO GRID - SIN DUPLICIDAD ===
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown(f"""
-        <div class="info-card">
-            <div style="margin-bottom: 1.25rem;">
-                <div class="info-label">📅 CREADO</div>
-                <div class="info-value">{created_at}</div>
-            </div>
-            <div>
-                <div class="info-label">🎙️ GRABACIÓN</div>
-                <div class="info-value" style="font-family: monospace; font-size: 0.85rem; color: var(--text-secondary);">
-                    {recording_id[:12]}...{recording_id[-6:] if len(recording_id) > 12 else ''}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        # Estilos para badges
-        status_styles = {
-            "new": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171", "label": "NUEVO"},
-            "in_progress": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24", "label": "EN PROGRESO"},
-            "won": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399", "label": "GANADO"},
-            "closed": {"bg": "rgba(107,114,128,0.08)", "color": "#9CA3AF", "label": "CERRADO"}
-        }
-        status_style = status_styles.get(current_status, status_styles["new"])
-        
-        priority_styles = {
-            "Low": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399", "label": "BAJA"},
-            "Medium": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24", "label": "MEDIA"},
-            "High": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171", "label": "ALTA"}
-        }
-        priority_style = priority_styles.get(current_priority, priority_styles["Medium"])
-        
-        st.markdown(f"""
-        <div class="info-card">
-            <div style="margin-bottom: 1.25rem;">
-                <div class="info-label">📌 ESTADO</div>
-                <span style="display: inline-block; padding: 0.25rem 0.75rem; margin-top: 0.25rem; background: {status_style['bg']}; border: 1px solid rgba(239,68,68,0.2); border-radius: 20px; font-size: 0.7rem; color: {status_style['color']}; text-transform: uppercase; font-weight: 500;">
-                    {status_style['label']}
-                </span>
-            </div>
-            <div>
-                <div class="info-label">⚡ PRIORIDAD</div>
-                <span style="display: inline-block; padding: 0.25rem 0.75rem; margin-top: 0.25rem; background: {priority_style['bg']}; border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; font-size: 0.7rem; color: {priority_style['color']}; font-weight: 500;">
-                    {priority_style['label']}
-                </span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("<hr>", unsafe_allow_html=True)
-    
-    # === DESCRIPCIÓN ===
+    # === SOLO DESCRIPCIÓN - SIN ESTADO/PRIORIDAD/GRABACIÓN ===
     st.markdown("""
-    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 0.75rem;">
-        📝 DESCRIPCIÓN
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <span style="background: linear-gradient(135deg, var(--accent), var(--purple)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
+            <span style="color: white; font-size: 0.8rem;">📝</span>
+        </span>
+        <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">DESCRIPCIÓN</span>
+        <span style="color: var(--text-tertiary); font-size: 0.75rem;">· {created_at}</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -460,10 +450,13 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     </div>
     """, unsafe_allow_html=True)
     
-    # === FORMULARIO DE EDICIÓN ===
+    # === FORMULARIO DE EDICIÓN - TODO EN UN MISMO LUGAR ===
     st.markdown("""
-    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 1rem;">
-        ✏️ EDITAR TICKET
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;">
+        <span style="background: linear-gradient(135deg, var(--purple), var(--pink)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
+            <span style="color: white; font-size: 0.8rem;">✏️</span>
+        </span>
+        <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">EDITAR TICKET</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -473,38 +466,91 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         with col1:
             status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
             status_idx = ["new", "in_progress", "closed", "won"].index(current_status) if current_status in ["new", "in_progress", "closed", "won"] else 0
-            new_status = st.selectbox("Cambiar estado", status_options, index=status_idx)
+            
+            status_colors = {
+                "Nuevo": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171"},
+                "En progreso": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24"},
+                "Cerrado": {"bg": "rgba(107,114,128,0.1)", "color": "#9CA3AF"},
+                "Ganado": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399"}
+            }
+            
+            st.markdown(f"""
+            <div style="margin-bottom: 0.5rem;">
+                <span style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">ESTADO ACTUAL</span><br>
+                <span style="display: inline-block; margin-top: 0.25rem; padding: 0.25rem 0.75rem; background: {status_colors[status_options[status_idx]]['bg']}; border-radius: 20px; font-size: 0.7rem; color: {status_colors[status_options[status_idx]]['color']}; font-weight: 600;">
+                    {status_options[status_idx]}
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            new_status = st.selectbox("Cambiar a", status_options, index=status_idx, key=f"status_{ticket_id}")
             status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
         
         with col2:
             priority_options = ["Baja", "Media", "Alta"]
             priority_idx = ["Low", "Medium", "High"].index(current_priority) if current_priority in ["Low", "Medium", "High"] else 1
-            new_priority = st.selectbox("Cambiar prioridad", priority_options, index=priority_idx)
+            
+            priority_colors = {
+                "Baja": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399"},
+                "Media": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24"},
+                "Alta": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171"}
+            }
+            
+            st.markdown(f"""
+            <div style="margin-bottom: 0.5rem;">
+                <span style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">PRIORIDAD ACTUAL</span><br>
+                <span style="display: inline-block; margin-top: 0.25rem; padding: 0.25rem 0.75rem; background: {priority_colors[priority_options[priority_idx]]['bg']}; border-radius: 20px; font-size: 0.7rem; color: {priority_colors[priority_options[priority_idx]]['color']}; font-weight: 600;">
+                    {priority_options[priority_idx]}
+                </span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            new_priority = st.selectbox("Cambiar a", priority_options, index=priority_idx, key=f"priority_{ticket_id}")
             priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
         
-        st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
-        
-        new_notes = st.text_area(
-            "Notas",
-            value=notes,
-            height=150,
-            placeholder="Agregar notas, enlaces o actualizaciones..."
-        )
-        
+        # === NOTAS - MUCHO MÁS GRANDE ===
         st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
         
+        st.markdown("""
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <span style="background: linear-gradient(135deg, var(--success), var(--accent)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
+                <span style="color: white; font-size: 0.8rem;">📋</span>
+            </span>
+            <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">NOTAS Y COMENTARIOS</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        new_notes = st.text_area(
+            "",
+            value=notes,
+            height=250,
+            placeholder="""Ejemplo:
+✨ Tema: Infraestructura
+📌 Descripción: Recursos tecnológicos, herramientas, sistemas, equipos
+👤 Mencionado por: Jaime
+💬 Contexto: Estimamos que necesitamos unos $75,000...
+📊 Confianza: 85%
+
+Agrega aquí más notas, enlaces o actualizaciones...""",
+            key=f"notes_{ticket_id}",
+            label_visibility="collapsed"
+        )
+        
+        st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+        
+        # === BOTONES ===
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
             saved = st.form_submit_button(
-                "Guardar cambios", 
+                "💾 Guardar cambios", 
                 use_container_width=True,
                 type="primary"
             )
         
         with col3:
             cancelled = st.form_submit_button(
-                "Cancelar", 
+                "✕ Cancelar", 
                 use_container_width=True
             )
         
@@ -565,7 +611,7 @@ def render_ticket_grid(tickets_df: pd.DataFrame):
             
             st.markdown(card_html, unsafe_allow_html=True)
             
-            if st.button("EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
+            if st.button("✏️ EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
                 st.session_state.edit_ticket = ticket_dict
                 st.rerun()
 
@@ -605,7 +651,7 @@ with st.sidebar:
     selected_status = status_map[status_filter]
     selected_priority = priority_map[priority_filter]
     
-    if st.button("ACTUALIZAR", use_container_width=True):
+    if st.button("🔄 ACTUALIZAR", use_container_width=True):
         st.rerun()
     
     st.divider()
