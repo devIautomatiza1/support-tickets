@@ -24,8 +24,6 @@ st.set_page_config(
 StyleManager.inject_all()
 
 # Session state init
-if "edit_ticket" not in st.session_state:
-    st.session_state.edit_ticket = None
 if "search_filter" not in st.session_state:
     st.session_state.search_filter = ""
 
@@ -271,7 +269,7 @@ def render_metrics_dashboard(tickets_df: pd.DataFrame):
 
 @st.fragment
 def render_tickets(tickets_df: pd.DataFrame):
-    """Renderiza los tickets en grid - SOLO UN BOTÓN DE EDITAR"""
+    """Renderiza los tickets en grid 3D minimalista con edición integrada en popover"""
     if tickets_df.empty:
         st.markdown("""
         <div class="glass" style="text-align: center; padding: 4rem 2rem;">
@@ -282,12 +280,12 @@ def render_tickets(tickets_df: pd.DataFrame):
         """, unsafe_allow_html=True)
         return
     
-    cols = st.columns(3, gap="medium")
+    cols = st.columns(3, gap="large")
     for idx, (_, row) in enumerate(tickets_df.iterrows()):
         with cols[idx % 3]:
             ticket = Ticket.from_dict(row.to_dict())
             
-            # Extraer el nombre de la persona del título si está en formato "[XX] Nombre - Persona"
+            # Extraer persona del título si existe
             title_parts = ticket.title.split(" - ")
             display_title = ticket.title
             person = ""
@@ -297,126 +295,81 @@ def render_tickets(tickets_df: pd.DataFrame):
             
             # Descripción truncada
             description = ticket.description[:80] + "..." if len(ticket.description) > 80 else ticket.description
-            
-            # Fecha formateada
             date_str = ticket.created_at[:10] if ticket.created_at else "2026-02-13"
             
-            # Renderizar tarjeta
-            st.markdown(
-                ComponentStyles.premium_ticket_card(
-                    ticket.ticket_number,
-                    display_title,
-                    description,
-                    ticket.status,
-                    ticket.priority,
-                    date_str,
-                    person
-                ),
-                unsafe_allow_html=True
-            )
+            # Mapeo de estados y colores
+            status_map = {
+                "new": ("badge-new", "NUEVO"),
+                "in_progress": ("badge-in-progress", "EN PROGRESO"),
+                "won": ("badge-won", "GANADO"),
+                "closed": ("badge-closed", "CERRADO")
+            }
+            badge_class, status_text = status_map.get(ticket.status, ("badge-new", "NUEVO"))
             
-            # ÚNICO BOTÓN: Editar
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("✎ Editar ticket", key=f"edit_{ticket.id}", use_container_width=True):
-                    st.session_state.edit_ticket = ticket
-                    st.rerun()
+            # Renderizar tarjeta premium
+            st.markdown(f"""
+            <div class="premium-ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-header-left">
+                        <div class="ticket-number">#{ticket.ticket_number}</div>
+                        <div class="ticket-title">{display_title}</div>
+                        {'<div class="ticket-person">👤 ' + person + '</div>' if person else ''}
+                    </div>
+                </div>
+                <div class="ticket-description">"{description}"</div>
+                <div class="ticket-footer">
+                    <span class="badge badge-sm {badge_class}">{status_text}</span>
+                    <span>📅 {date_str}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Popover discreto con icono de tres puntos
+            col1, col2 = st.columns([0.2, 0.8], gap="small")
+            with col1:
+                with st.popover("⋯", use_container_width=True):
+                    st.markdown(f"### #{ticket.ticket_number}")
+                    st.write(display_title)
+                    st.divider()
+                    
+                    # Mini-formulario dentro del popover
+                    status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+                    priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+                    
+                    new_status_label = st.selectbox(
+                        "Estado",
+                        list(Status.display_names().values()),
+                        index=list(Status.display_names().values()).index(status_label),
+                        key=f"pop_status_{ticket.id}"
+                    )
+                    new_status = Status.from_display(new_status_label)
+                    
+                    new_priority_label = st.selectbox(
+                        "Prioridad",
+                        list(Priority.display_names().values()),
+                        index=list(Priority.display_names().values()).index(priority_label),
+                        key=f"pop_priority_{ticket.id}"
+                    )
+                    new_priority = Priority.from_display(new_priority_label)
+                    
+                    new_notes = st.text_area(
+                        "Notas",
+                        value=ticket.notes,
+                        height=80,
+                        key=f"pop_notes_{ticket.id}",
+                        placeholder="Añade notas internas..."
+                    )
+                    
+                    # Botón guardar en popover
+                    if st.button("💾 Guardar", key=f"pop_save_{ticket.id}", use_container_width=True, type="primary"):
+                        supabase = SupabaseService()
+                        if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
+                            st.success("✅ Actualizado")
+                            st.rerun()
+                        else:
+                            st.error("❌ Error al guardar")
 
 
-@st.dialog("✏️ Editar Ticket", width="large")
-def edit_modal(ticket: Ticket):
-    """Modal de edición premium"""
-    
-    # Header con gradiente
-    st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(37,99,235,0.2) 0%, transparent 100%); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="background: var(--accent); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 1.25rem;">🎫</span>
-            </div>
-            <div>
-                <h3 style="margin: 0; color: var(--text-primary);">#{ticket.ticket_number} - {ticket.title}</h3>
-                <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.85rem;">{ticket.created_at[:10] if ticket.created_at else 'Fecha no disponible'}</p>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Información actual
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("**📊 Estado actual**")
-        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-        status_color = Status.colors().get(Status(ticket.status), "#64748b")
-        st.markdown(f'<span style="background: {status_color}20; color: {status_color}; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">{status_label}</span>', unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("**⚡ Prioridad actual**")
-        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-        priority_color = Priority.colors().get(Priority(ticket.priority), "#ffa500")
-        st.markdown(f'<span style="background: {priority_color}20; color: {priority_color}; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">{priority_label}</span>', unsafe_allow_html=True)
-    
-    st.divider()
-    
-    # Descripción actual
-    st.markdown("**📝 Descripción**")
-    st.markdown(f'<div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">{ticket.description or "Sin descripción"}</div>', unsafe_allow_html=True)
-    
-    # Formulario de edición
-    st.markdown("### ✏️ Modificar ticket")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("**Nuevo estado**")
-        new_status_label = st.selectbox(
-            "Seleccionar estado", 
-            list(Status.display_names().values()),
-            index=list(Status.display_names().values()).index(status_label),
-            key="status_select",
-            label_visibility="collapsed"
-        )
-        new_status = Status.from_display(new_status_label)
-    
-    with col2:
-        st.markdown("**Nueva prioridad**")
-        new_priority_label = st.selectbox(
-            "Seleccionar prioridad",
-            list(Priority.display_names().values()),
-            index=list(Priority.display_names().values()).index(priority_label),
-            key="priority_select",
-            label_visibility="collapsed"
-        )
-        new_priority = Priority.from_display(new_priority_label)
-    
-    st.markdown("**Notas internas**")
-    new_notes = st.text_area(
-        "",
-        value=ticket.notes,
-        height=100,
-        key="notes_edit",
-        placeholder="Añade notas o comentarios internos...",
-        label_visibility="collapsed"
-    )
-    
-    # Botones de acción
-    st.divider()
-    
-    col1, col2, col3 = st.columns([1, 1, 1])
-    
-    with col1:
-        if st.button("💾 Guardar cambios", use_container_width=True, type="primary"):
-            supabase = SupabaseService()
-            if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
-                st.success("✅ Cambios guardados exitosamente")
-                st.session_state.edit_ticket = None
-                st.rerun()
-    
-    with col3:
-        if st.button("❌ Cancelar", use_container_width=True):
-            st.session_state.edit_ticket = None
-            st.rerun()
 
 
 # ============================================================================
@@ -535,12 +488,8 @@ def main():
             if not tickets.empty:
                 st.markdown(f'<p style="text-align: right; color: var(--text-muted); font-size: 0.85rem;">{status_filter} • {priority_filter}</p>', unsafe_allow_html=True)
     
-    # RENDERIZAR TICKETS (SOLO UN BOTÓN DE EDITAR)
+    # RENDERIZAR TICKETS
     render_tickets(tickets)
-    
-    # MODAL DE EDICIÓN
-    if st.session_state.edit_ticket:
-        edit_modal(st.session_state.edit_ticket)
 
 
 if __name__ == "__main__":

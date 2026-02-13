@@ -73,28 +73,62 @@ class StyleManager:
             .ticket-header {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
                 margin-bottom: 0.75rem;
+                position: relative;
+            }
+
+            .ticket-header-left {
+                flex: 1;
+            }
+
+            .ticket-header-actions {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+            }
+
+            .ticket-popover-btn {
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                font-size: 1.1rem;
+                cursor: pointer;
+                padding: 0.25rem 0.5rem;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .ticket-popover-btn:hover {
+                background: rgba(59, 130, 246, 0.1);
+                color: var(--accent-light);
             }
 
             .ticket-number {
-                font-size: 0.85rem;
-                font-weight: 600;
+                font-size: 0.75rem;
+                font-weight: 700;
                 color: var(--text-muted);
                 font-family: 'SF Mono', 'Monaco', monospace;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             .ticket-title {
                 font-size: 1rem;
-                font-weight: 600;
+                font-weight: 700;
                 color: var(--text-primary);
-                margin: 0.5rem 0;
+                margin: 0.5rem 0 0 0;
+                line-height: 1.35;
             }
 
             .ticket-person {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 color: var(--accent-light);
-                margin-bottom: 0.5rem;
+                margin-top: 0.5rem;
+                margin-bottom: 0.75rem;
                 font-weight: 500;
             }
 
@@ -130,27 +164,38 @@ class StyleManager:
             }
 
             .badge-new {
-                background: rgba(239, 68, 68, 0.15);
-                border-color: rgba(239, 68, 68, 0.4);
-                color: #fecaca;
+                background: rgba(239, 68, 68, 0.1);
+                border-color: rgba(239, 68, 68, 0.3);
+                color: #ff8b8e;
             }
 
             .badge-in-progress {
-                background: rgba(245, 158, 11, 0.15);
-                border-color: rgba(245, 158, 11, 0.4);
-                color: #fed7aa;
+                background: rgba(245, 158, 11, 0.1);
+                border-color: rgba(245, 158, 11, 0.3);
+                color: #fbb040;
             }
 
             .badge-won {
-                background: rgba(16, 185, 129, 0.15);
-                border-color: rgba(16, 185, 129, 0.4);
-                color: #a7f3d0;
+                background: rgba(16, 185, 129, 0.1);
+                border-color: rgba(16, 185, 129, 0.3);
+                color: #2dd4a4;
             }
 
             .badge-closed {
-                background: rgba(100, 116, 139, 0.15);
-                border-color: rgba(100, 116, 139, 0.4);
-                color: #e2e8f0;
+                background: rgba(100, 116, 139, 0.1);
+                border-color: rgba(100, 116, 139, 0.3);
+                color: #cbd5e1;
+            }
+
+            .badge-sm {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.35rem 0.85rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                border: 1.2px solid;
+                white-space: nowrap;
             }
 
             /* ===== STAT CARDS ===== */
@@ -242,6 +287,31 @@ class StyleManager:
                 border-color: var(--accent) !important;
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
             }
+
+            /* ===== POPOVER PREMIUM ===== */
+            [data-testid="popoverContainer"] {
+                backdrop-filter: blur(16px);
+            }
+
+            .popover-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .popover-section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .popover-section label {
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                letter-spacing: 0.5px;
+            }
         </style>
         """, unsafe_allow_html=True)
 
@@ -251,7 +321,7 @@ class ComponentStyles:
     
     @staticmethod
     def premium_ticket_card(ticket_number: str, title: str, description: str, status: str, priority: str, date: str, person: str = "") -> str:
-        """Tarjeta de ticket premium con el formato de la imagen"""
+        """Tarjeta de ticket minimalista SaaS con bordes sutiles"""
         status_map = {
             "new": "badge-new",
             "in_progress": "badge-in-progress",
@@ -269,19 +339,19 @@ class ComponentStyles:
         badge_class = status_map.get(status, "badge-new")
         status_text = status_display.get(status, "NUEVO")
         
-        person_html = f'<div class="ticket-person">👤 {person}</div>' if person else ''
-        
         return f"""
         <div class="premium-ticket-card">
             <div class="ticket-header">
-                <span class="ticket-number">#{ticket_number}</span>
-                <span class="badge {badge_class}">{status_text}</span>
+                <div class="ticket-header-left">
+                    <span class="ticket-number">#{ticket_number}</span>
+                    <div class="ticket-title">{title}</div>
+                    {f'<div class="ticket-person">👤 {person}</div>' if person else ''}
+                </div>
             </div>
-            <div class="ticket-title">{title}</div>
-            {person_html}
             <div class="ticket-description">"{description}"</div>
             <div class="ticket-footer">
-                <span>📅 {date}</span>
+                <span class="badge badge-sm {badge_class}">{status_text}</span>
+                <span style="font-size: 0.8rem;">📅 {date}</span>
             </div>
         </div>
         """
