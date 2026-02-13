@@ -377,7 +377,8 @@ def get_supabase_client():
         url = st.secrets["SUPABASE_URL"]
         key = st.secrets["SUPABASE_KEY"]
         return create_client(url, key)
-    except Exception:
+    except Exception as e:
+        st.error(f"Error conectando a Supabase: {e}")
         return None
 
 
@@ -406,9 +407,15 @@ def fetch_tickets(
 
         df = pd.DataFrame(data)
         df.columns = df.columns.str.lower()
+        
+        # ✅ Filtrar registros con ID válido
+        df = df.dropna(subset=["id"])
+        df = df[df["id"].astype(str).str.strip() != ""]
+        
         return df
 
-    except Exception:
+    except Exception as e:
+        st.error(f"Error fetching tickets: {e}")
         return pd.DataFrame()
 
 
@@ -424,7 +431,8 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: Optional[st
 
         client.table("opportunities").update(payload).eq("id", ticket_id).execute()
         return True
-    except Exception:
+    except Exception as e:
+        st.error(f"Error actualizando ticket: {e}")
         return False
 
 
@@ -436,8 +444,8 @@ def test_connection() -> Tuple[bool, str, Optional[int]]:
         res = client.table("opportunities").select("id", count="exact").limit(1).execute()
         count = getattr(res, "count", None)
         return True, "Conexión exitosa", count
-    except Exception:
-        return False, "Error de conexión", None
+    except Exception as e:
+        return False, f"Error de conexión: {e}", None
 
 
 # =============================================================================
@@ -456,16 +464,42 @@ def ui_filters_to_db(status_ui: str, priority_ui: str) -> Tuple[Optional[str], O
     return status_db, priority_db
 
 
+def safe_get_ticket_id(ticket: Dict[str, Any]) -> Optional[int]:
+    """Convierte de forma segura cualquier formato de ID a entero"""
+    raw_id = ticket.get("id")
+    
+    # Caso 1: No existe el campo
+    if raw_id is None:
+        return None
+    
+    # Caso 2: String vacío
+    if isinstance(raw_id, str) and not raw_id.strip():
+        return None
+    
+    # Caso 3: Convertir a entero
+    try:
+        return int(float(raw_id))
+    except (ValueError, TypeError):
+        return None
+
+
 # =============================================================================
-# MODAL
+# MODAL - CORREGIDO CON VALIDACIÓN DE ID
 # =============================================================================
 @st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket: Dict[str, Any]) -> None:
-    ticket_id = int(ticket.get("id"))
+    # ===== VALIDACIÓN ROBUSTA DEL ID =====
+    ticket_id = safe_get_ticket_id(ticket)
+    
+    if ticket_id is None:
+        st.error("❌ Error: Ticket sin identificador válido")
+        st.stop()
+    
+    # Si llegamos aquí, ticket_id es un int válido
     title = ticket.get("title") or "Sin título"
     description = clean_description(ticket.get("description") or "")
     created_at = (ticket.get("created_at") or "")[:10] or "N/A"
-
+    
     current_status = (ticket.get("status") or "new").lower()
     current_priority = ticket.get("priority") or "Medium"
     notes = ticket.get("notes") or ""
@@ -588,16 +622,17 @@ def edit_ticket_modal(ticket: Dict[str, Any]) -> None:
         if saved:
             ok = update_ticket(ticket_id, new_status_db, new_notes, new_priority_db)
             if ok:
-                st.success("✓ Actualizado")
+                st.success("✓ Ticket actualizado correctamente")
                 st.rerun()
-            st.error("Error al actualizar en Supabase")
+            else:
+                st.error("❌ Error al actualizar en Supabase")
 
         if cancelled:
             st.rerun()
 
 
 # =============================================================================
-# GRID
+# GRID - CORREGIDO CON VALIDACIÓN DE ID
 # =============================================================================
 @st.fragment
 def render_ticket_grid(df: pd.DataFrame, num_columns: int = 3) -> None:
@@ -609,7 +644,12 @@ def render_ticket_grid(df: pd.DataFrame, num_columns: int = 3) -> None:
     for idx, (_, row) in enumerate(df.iterrows()):
         with cols[idx % num_columns]:
             t = row.to_dict()
-            ticket_id = t.get("id")
+            
+            # ✅ Validar que el ticket tiene ID válido
+            ticket_id = safe_get_ticket_id(t)
+            if ticket_id is None:
+                continue  # Saltar tickets sin ID válido
+            
             ticket_num = t.get("ticket_number", "N/A")
             title = (t.get("title") or "Sin título")[:60]
             status = (t.get("status") or "new").lower()
