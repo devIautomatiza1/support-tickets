@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # ============================================================================
-# SISTEMA DE DISEÑO MODERNO (CSS optimizado para tarjetas compactas)
+# SISTEMA DE DISEÑO MODERNO - ICONOS MINIMALISTAS
 # ============================================================================
 st.markdown("""
 <style>
@@ -57,12 +57,12 @@ st.markdown("""
         flex-wrap: wrap;
     }
 
-    /* ===== TARJETA COMPACTA ===== */
+    /* ===== TARJETA MODERNA ===== */
     .ticket-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 0.85rem;
+        padding: 1rem;
         transition: var(--transition);
         height: 100%;
         display: flex;
@@ -76,14 +76,30 @@ st.markdown("""
         transform: translateY(-1px);
     }
 
-    /* Badge compacto */
+    /* Header con número y badge */
+    .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .ticket-number {
+        font-family: 'SF Mono', 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        letter-spacing: 0.02em;
+    }
+
+    /* Badges minimalistas - SIN EMOJIS */
     .badge {
         display: inline-flex;
         align-items: center;
-        padding: 0.15rem 0.6rem;
-        border-radius: 20px;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
         font-size: 0.65rem;
-        font-weight: 600;
+        font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         border: 1px solid transparent;
@@ -91,42 +107,35 @@ st.markdown("""
     }
     
     .badge-new { 
-        background: rgba(239,68,68,0.1); 
-        color: #FCA5A5; 
-        border-color: rgba(239,68,68,0.3); 
+        background: rgba(239,68,68,0.08); 
+        color: #F87171; 
+        border-color: rgba(239,68,68,0.2); 
     }
     
     .badge-progress { 
-        background: rgba(245,158,11,0.1); 
-        color: #FCD34D; 
-        border-color: rgba(245,158,11,0.3); 
+        background: rgba(245,158,11,0.08); 
+        color: #FBBF24; 
+        border-color: rgba(245,158,11,0.2); 
     }
     
     .badge-won { 
-        background: rgba(16,185,129,0.1); 
-        color: #6EE7B7; 
-        border-color: rgba(16,185,129,0.3); 
+        background: rgba(16,185,129,0.08); 
+        color: #34D399; 
+        border-color: rgba(16,185,129,0.2); 
     }
     
     .badge-closed { 
-        background: rgba(107,114,128,0.1); 
-        color: #D1D5DB; 
-        border-color: rgba(107,114,128,0.3); 
-    }
-
-    /* Número de ticket */
-    .ticket-number {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.7rem;
-        color: var(--text-tertiary);
+        background: rgba(107,114,128,0.08); 
+        color: #9CA3AF; 
+        border-color: rgba(107,114,128,0.2); 
     }
 
     /* Título compacto */
-    .ticket-title-compact {
-        font-size: 0.9rem;
-        font-weight: 500;
+    .ticket-title {
+        font-size: 0.85rem;
+        font-weight: 450;
         color: var(--text-primary);
-        line-height: 1.3;
+        line-height: 1.4;
         margin: 0.25rem 0 0.5rem 0;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -135,52 +144,49 @@ st.markdown("""
         min-height: 2.2rem;
     }
 
-    /* Botón de editar dentro de la tarjeta */
-    .edit-button-container {
-        margin-top: 0.25rem;
-        width: 100%;
-    }
-    
+    /* Botón de editar - diseño limpio */
     .stButton > button {
-        background: var(--accent-soft) !important;
-        color: var(--accent) !important;
-        border: 1px solid rgba(59,130,246,0.3) !important;
-        border-radius: var(--radius-sm) !important;
-        font-size: 0.75rem !important;
-        font-weight: 500 !important;
-        padding: 0.25rem 0.5rem !important;
+        background: transparent !important;
+        color: var(--text-secondary) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 4px !important;
+        font-size: 0.7rem !important;
+        font-weight: 400 !important;
+        padding: 0.2rem 0.5rem !important;
         width: 100% !important;
         transition: var(--transition) !important;
+        letter-spacing: 0.02em !important;
     }
     
     .stButton > button:hover {
-        background: rgba(59,130,246,0.2) !important;
-        border-color: var(--accent) !important;
-        color: var(--accent) !important;
+        background: var(--bg-secondary) !important;
+        border-color: var(--text-tertiary) !important;
+        color: var(--text-primary) !important;
     }
 
-    /* Métricas */
+    /* Métricas - diseño limpio */
     [data-testid="metric-container"] {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-md);
         padding: 0.75rem;
     }
     
     [data-testid="metric-container"] label {
         color: var(--text-tertiary) !important;
-        font-size: 0.7rem !important;
-        font-weight: 600 !important;
+        font-size: 0.65rem !important;
+        font-weight: 500 !important;
         text-transform: uppercase;
+        letter-spacing: 0.03em;
     }
     
     [data-testid="metric-container"] [data-testid="metric-value"] {
         color: var(--text-primary) !important;
-        font-size: 1.25rem !important;
-        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        font-weight: 450 !important;
     }
 
-    /* Modal styling */
+    /* Modal styling - minimalista */
     div[data-testid="stDialog"] > div {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
@@ -192,13 +198,49 @@ st.markdown("""
     div[data-testid="stDialog"] h2, 
     div[data-testid="stDialog"] h3 {
         color: var(--text-primary) !important;
+        font-weight: 450 !important;
     }
-    
+
+    /* Info box */
+    .info-box {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
     /* Divider */
     hr {
         border: none;
         border-top: 1px solid var(--border);
         margin: 1rem 0;
+    }
+
+    /* Select boxes */
+    .stSelectbox [data-baseweb="select"] {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+    }
+
+    /* Headers */
+    h1, h2, h3 {
+        color: var(--text-primary);
+        font-weight: 450;
+        letter-spacing: -0.01em;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 400;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -221,12 +263,12 @@ def test_connection():
     try:
         client = get_supabase_connection()
         if not client:
-            return False, "❌ No se pudo inicializar", None
+            return False, "No se pudo inicializar", None
         response = client.table("opportunities").select("count", count="exact").execute()
         count = response.count if hasattr(response, 'count') else len(response.data)
-        return True, "✅ Conexión exitosa", count
+        return True, "Conexión exitosa", count
     except Exception as e:
-        return False, f"❌ Error: {str(e)}", None
+        return False, f"Error de conexión", None
 
 def fetch_tickets(status_filter=None, priority_filter=None):
     try:
@@ -269,13 +311,12 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN
+# MODAL DE EDICIÓN - MODERNO Y LIMPIO
 # ============================================================================
-@st.dialog("✏️ Editar Ticket", width="large")
+@st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal para editar ticket con todos los datos"""
+    """Modal para editar ticket con diseño minimalista"""
     
-    # Extraer datos
     ticket_id = ticket_dict.get("id")
     ticket_num = ticket_dict.get("ticket_number", "N/A")
     title = ticket_dict.get("title", "Sin título")
@@ -286,83 +327,73 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
     recording_id = ticket_dict.get("recording_id", "N/A")
     
-    # Encabezado del modal
-    st.markdown(f"### #{ticket_num} - {title}")
+    # Header minimalista
+    st.markdown(f"### #{ticket_num}")
+    st.markdown(f"**{title}**")
     
-    # Información no editable en dos columnas
+    # Info en grid limpio
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(f"**📅 Creado:** {created_at}")
-        st.markdown(f"**🎙️ Grabación:** `{recording_id[:12]}...`" if recording_id != "N/A" else "**🎙️ Grabación:** N/A")
+        st.markdown(f"<span style='color: var(--text-tertiary); font-size: 0.7rem;'>CREADO</span><br><span style='color: var(--text-primary);'>{created_at}</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color: var(--text-tertiary); font-size: 0.7rem;'>GRABACIÓN</span><br><span style='color: var(--text-primary); font-family: monospace;'>{recording_id[:12]}...</span>", unsafe_allow_html=True)
     with col2:
-        st.markdown(f"**📌 Estado actual:** {status}")
-        st.markdown(f"**⚡ Prioridad actual:** {priority}")
+        st.markdown(f"<span style='color: var(--text-tertiary); font-size: 0.7rem;'>ESTADO</span><br><span style='color: var(--text-primary);'>{status}</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color: var(--text-tertiary); font-size: 0.7rem;'>PRIORIDAD</span><br><span style='color: var(--text-primary);'>{priority}</span>", unsafe_allow_html=True)
     
     st.markdown("---")
     
-    # Descripción completa
-    st.markdown("#### 📝 Descripción")
-    st.markdown(f"""
-    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; color: var(--text-secondary);">
-        {description if description else '<em>Sin descripción</em>'}
-    </div>
-    """, unsafe_allow_html=True)
+    # Descripción
+    st.markdown("#### Descripción")
+    st.markdown(f"<div class='info-box'>{description if description else 'Sin descripción'}</div>", unsafe_allow_html=True)
     
     st.markdown("---")
     
     # Formulario de edición
-    with st.form(key=f"modal_edit_form_{ticket_id}"):
+    with st.form(key=f"edit_form_{ticket_id}"):
         col1, col2 = st.columns(2)
         
         with col1:
             status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
             status_idx = ["new", "in_progress", "closed", "won"].index(status) if status in ["new", "in_progress", "closed", "won"] else 0
-            new_status_display = st.selectbox("Estado", status_options, index=status_idx)
+            new_status = st.selectbox("Estado", status_options, index=status_idx)
             status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-            new_status = status_map[new_status_display]
         
         with col2:
             priority_options = ["Baja", "Media", "Alta"]
             priority_idx = ["Low", "Medium", "High"].index(priority) if priority in ["Low", "Medium", "High"] else 1
-            new_priority_display = st.selectbox("Prioridad", priority_options, index=priority_idx)
+            new_priority = st.selectbox("Prioridad", priority_options, index=priority_idx)
             priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-            new_priority = priority_map[new_priority_display]
         
         new_notes = st.text_area(
-            "📋 Notas",
+            "Notas",
             value=notes,
-            height=120,
-            placeholder="Agregar notas o actualizaciones..."
+            height=100,
+            placeholder="Agregar notas..."
         )
         
-        # Botones
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
-            submitted = st.form_submit_button("💾 Guardar Cambios", use_container_width=True, type="primary")
+            saved = st.form_submit_button("Guardar cambios", use_container_width=True)
         with col3:
-            cancel = st.form_submit_button("❌ Cancelar", use_container_width=True)
+            cancelled = st.form_submit_button("Cancelar", use_container_width=True)
         
-        if submitted:
-            if update_ticket(ticket_id, new_status, new_notes, new_priority):
-                st.success("✅ Ticket actualizado correctamente")
+        if saved:
+            if update_ticket(ticket_id, status_map[new_status], new_notes, priority_map[new_priority]):
+                st.success("Actualizado")
                 st.rerun()
-            else:
-                st.error("❌ Error al actualizar el ticket")
         
-        if cancel:
+        if cancelled:
             st.rerun()
 
 # ============================================================================
-# FUNCIÓN COMPACTA CON FRAGMENT - Grid de 3 columnas
+# GRID DE TARJETAS - SIN EMOJIS, SOLO TEXTO
 # ============================================================================
 @st.fragment
 def render_ticket_grid(tickets_df: pd.DataFrame):
-    """
-    Renderiza tickets en grid de 3 columnas con tarjetas ultra-compactas.
-    Cada tarjeta tiene badge de estado + título y un botón para abrir modal.
-    """
+    """Grid de tickets con diseño minimalista"""
+    
     if tickets_df.empty:
-        st.info("🎫 No hay tickets disponibles")
+        st.info("No hay tickets disponibles")
         return
     
     num_columns = 3
@@ -372,89 +403,74 @@ def render_ticket_grid(tickets_df: pd.DataFrame):
         with columns[idx % num_columns]:
             ticket_dict = ticket.to_dict()
             
-            # Extraer datos mínimos
-            ticket_id = ticket_dict.get("id")
             ticket_num = ticket_dict.get("ticket_number", "N/A")
             title = ticket_dict.get("title", "Sin título")[:60]
             status = ticket_dict.get("status", "new").lower()
             
-            # Configuración de badge
-            badge_config = {
-                "new": {"class": "badge-new", "icon": "🆕", "label": "NUEVO"},
-                "in_progress": {"class": "badge-progress", "icon": "⚡", "label": "PROGRESO"},
-                "won": {"class": "badge-won", "icon": "🎯", "label": "GANADO"},
-                "closed": {"class": "badge-closed", "icon": "✅", "label": "CERRADO"}
+            # Badge sin emojis
+            badge_map = {
+                "new": {"class": "badge-new", "label": "NUEVO"},
+                "in_progress": {"class": "badge-progress", "label": "PROGRESO"},
+                "won": {"class": "badge-won", "label": "GANADO"},
+                "closed": {"class": "badge-closed", "label": "CERRADO"}
             }
-            config = badge_config.get(status, badge_config["new"])
+            badge = badge_map.get(status, badge_map["new"])
             
-            # Tarjeta compacta
+            # Tarjeta limpia
             card_html = f"""
             <div class="ticket-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="ticket-header">
                     <span class="ticket-number">#{ticket_num}</span>
-                    <span class="badge {config['class']}">
-                        {config['icon']} {config['label']}
-                    </span>
+                    <span class="badge {badge['class']}">{badge['label']}</span>
                 </div>
-                <div class="ticket-title-compact">{title}</div>
+                <div class="ticket-title">{title}</div>
             </div>
             """
             
             st.markdown(card_html, unsafe_allow_html=True)
             
-            # Botón de editar dentro de la tarjeta (NO expander)
-            if st.button("✏️ Editar", key=f"edit_btn_{ticket_id}", use_container_width=True):
-                st.session_state.ticket_to_edit = ticket_dict
+            # Botón de editar
+            if st.button("EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
+                st.session_state.edit_ticket = ticket_dict
                 st.rerun()
 
 # ============================================================================
 # INTERFAZ PRINCIPAL
 # ============================================================================
-st.title("🎫 Dashboard de Tickets")
-st.markdown("##### Gestión de oportunidades")
+st.title("Dashboard de Tickets")
+st.markdown("<h3>Gestión de oportunidades</h3>", unsafe_allow_html=True)
 st.divider()
 
-# --- SIDEBAR: FILTROS Y ESTADÍSTICAS ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.markdown("## Filtros")
     
-    # Obtener tickets para estadísticas
     all_tickets = fetch_tickets()
     
-    # Filtros de estado
     status_filter = st.selectbox(
         "Estado",
         ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
-        key="sidebar_status"
+        key="status_filter"
     )
     
-    # Filtros de prioridad
     priority_filter = st.selectbox(
         "Prioridad",
         ["Todos", "Baja", "Media", "Alta"],
-        key="sidebar_priority"
+        key="priority_filter"
     )
     
-    # Mapeo a valores internos
-    status_map_filter = {
-        "Todos": "Todos",
-        "Nuevo": "new",
-        "En progreso": "in_progress",
-        "Cerrado": "closed",
-        "Ganado": "won"
+    status_map = {
+        "Todos": "Todos", "Nuevo": "new", "En progreso": "in_progress", 
+        "Cerrado": "closed", "Ganado": "won"
     }
-    priority_map_filter = {
-        "Todos": "Todos",
-        "Baja": "Low",
-        "Media": "Medium",
-        "Alta": "High"
+    priority_map = {
+        "Todos": "Todos", "Baja": "Low", "Media": "Medium", "Alta": "High"
     }
     
-    selected_status = status_map_filter[status_filter]
-    selected_priority = priority_map_filter[priority_filter]
+    selected_status = status_map[status_filter]
+    selected_priority = priority_map[priority_filter]
     
-    # Botón actualizar
-    if st.button("🔄 Actualizar", use_container_width=True):
+    if st.button("ACTUALIZAR", use_container_width=True):
         st.rerun()
     
     st.divider()
@@ -466,63 +482,54 @@ with st.sidebar:
         with col1:
             st.metric("Total", len(all_tickets))
         with col2:
-            nuevos = len(all_tickets[all_tickets["status"] == "new"])
-            st.metric("Nuevos", nuevos)
+            st.metric("Nuevos", len(all_tickets[all_tickets["status"] == "new"]))
         with col3:
-            ganados = len(all_tickets[all_tickets["status"] == "won"])
-            st.metric("Ganados", ganados)
+            st.metric("Ganados", len(all_tickets[all_tickets["status"] == "won"]))
     else:
-        st.info("No hay datos disponibles")
+        st.info("Sin datos")
 
-# --- CONTENIDO PRINCIPAL: GRID DE TARJETAS COMPACTAS ---
+# --- GRID DE TICKETS ---
 tickets = fetch_tickets(
     status_filter=selected_status if selected_status != "Todos" else None,
     priority_filter=selected_priority if selected_priority != "Todos" else None
 )
 
 if tickets.empty:
-    st.info("🎫 No hay tickets con los filtros seleccionados.")
+    st.info("No hay tickets con los filtros seleccionados.")
 else:
-    st.markdown(f"### 🎟️ {len(tickets)} tickets encontrados")
+    st.markdown(f"#### {len(tickets)} tickets encontrados")
     render_ticket_grid(tickets)
 
-# --- MODAL DE EDICIÓN (se activa cuando hay un ticket seleccionado) ---
-if "ticket_to_edit" in st.session_state and st.session_state.ticket_to_edit is not None:
-    edit_ticket_modal(st.session_state.ticket_to_edit)
-    st.session_state.ticket_to_edit = None
+# --- MODAL ---
+if "edit_ticket" in st.session_state and st.session_state.edit_ticket:
+    edit_ticket_modal(st.session_state.edit_ticket)
+    st.session_state.edit_ticket = None
 
 # ============================================================================
-# PANEL DE DIAGNÓSTICO
+# DIAGNÓSTICO
 # ============================================================================
-with st.expander("🔧 Diagnóstico del sistema", expanded=False):
+with st.expander("Diagnóstico del sistema", expanded=False):
     success, msg, count = test_connection()
     
     if success:
-        st.success(f"✅ {msg} — {count} registros en opportunities")
+        st.success(f"{msg} — {count} registros")
     else:
-        st.error(f"❌ {msg}")
+        st.error(msg)
     
-    st.caption(f"**URL:** `{SUPABASE_URL[:25]}...`")
-    st.caption(f"**API Key:** `{SUPABASE_KEY[:15]}...`")
+    st.caption(f"URL: {SUPABASE_URL[:20]}...")
     
     col1, col2 = st.columns(2)
-    
     with col1:
-        if st.button("📋 Ver muestra de opportunities", use_container_width=True):
+        if st.button("Ver opportunities"):
             client = get_supabase_connection()
             if client:
                 data = client.table("opportunities").select("*").limit(3).execute().data
                 if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
-                else:
-                    st.warning("No hay datos")
-    
+                    st.dataframe(pd.DataFrame(data))
     with col2:
-        if st.button("🎙️ Ver muestra de recordings", use_container_width=True):
+        if st.button("Ver recordings"):
             client = get_supabase_connection()
             if client:
                 data = client.table("recordings").select("*").limit(3).execute().data
                 if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
-                else:
-                    st.warning("No hay datos")
+                    st.dataframe(pd.DataFrame(data))
