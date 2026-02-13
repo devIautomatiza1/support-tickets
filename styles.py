@@ -401,80 +401,87 @@ class StyleManager:
 
             /* ===== POPOVER CENTRADO EN LA PANTALLA ===== */
             [data-testid=\"stPopoverBody\"] {
-                position: fixed !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                z-index: 999999 !important;
                 background: rgba(15, 17, 23, 0.98) !important;
                 backdrop-filter: blur(20px) !important;
                 border: 1px solid rgba(59, 130, 246, 0.3) !important;
-                border-radius: 28px !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                width: 700px !important;
-                min-width: 700px !important;
-                max-width: 700px !important;
-                padding: 2.5rem !important;
+                border-radius: 20px !important;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
+                padding: 1.5rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+                max-width: 450px !important;
+                min-width: 380px !important;
+                max-height: 80vh !important;
+                overflow-y: auto !important;
             }
 
             [data-testid=\"stPopoverBody\"] h3 {
                 color: var(--text-primary) !important;
-                font-size: 2rem !important;
+                font-size: 1.25rem !important;
                 font-weight: 700 !important;
-                margin-bottom: 0.5rem !important;
+                margin: 0 0 0.25rem 0 !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stCaption {
                 color: var(--accent-light) !important;
-                font-size: 1.3rem !important;
-                margin-bottom: 2rem !important;
+                font-size: 0.95rem !important;
+                margin: 0 0 0.75rem 0 !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stDivider {
                 background: rgba(255, 255, 255, 0.1) !important;
-                margin: 2rem 0 !important;
+                margin: 0.5rem 0 !important;
+                height: 1px !important;
             }
 
             [data-testid=\"stPopoverBody\"] label {
                 color: var(--text-muted) !important;
-                font-size: 1rem !important;
+                font-size: 0.8rem !important;
                 font-weight: 600 !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
-                margin-bottom: 0.5rem !important;
+                margin: 0.5rem 0 0.25rem 0 !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stSelectbox {
-                margin-bottom: 2rem !important;
+                margin-bottom: 0.75rem !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stSelectbox > div {
                 background: rgba(10, 12, 18, 0.9) !important;
                 border: 1.5px solid var(--border) !important;
-                border-radius: 16px !important;
-                height: 60px !important;
+                border-radius: 12px !important;
+                padding: 0.5rem !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stSelectbox select,
             [data-testid=\"stPopoverBody\"] .stSelectbox input {
                 color: var(--text-primary) !important;
-                font-size: 1.2rem !important;
-                padding: 0 1rem !important;
+                font-size: 1rem !important;
+                padding: 0.4rem 0.75rem !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stTextArea {
-                margin-bottom: 2rem !important;
+                margin-bottom: 0.75rem !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stTextArea textarea {
                 background: rgba(10, 12, 18, 0.9) !important;
                 border: 1.5px solid var(--border) !important;
-                border-radius: 16px !important;
+                border-radius: 12px !important;
                 color: var(--text-primary) !important;
-                font-size: 1.2rem !important;
-                min-height: 200px !important;
-                padding: 1rem !important;
-                line-height: 1.6 !important;
+                font-size: 0.95rem !important;
+                min-height: 120px !important;
+                max-height: 200px !important;
+                padding: 0.75rem !important;
+                line-height: 1.4 !important;
+            }
+
+            [data-testid=\"stPopoverBody\"] .stButton {
+                margin-top: 0.5rem !important;
+                width: 100% !important;
+                flex-shrink: 0 !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stButton > button {
@@ -482,32 +489,19 @@ class StyleManager:
                 border: none !important;
                 color: white !important;
                 font-weight: 600 !important;
-                font-size: 1.3rem !important;
-                border-radius: 16px !important;
-                padding: 1rem 2rem !important;
+                font-size: 0.95rem !important;
+                border-radius: 12px !important;
+                padding: 0.75rem 1.5rem !important;
                 width: 100% !important;
                 height: auto !important;
-                margin-top: 1rem !important;
                 transition: all 0.3s !important;
                 box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3) !important;
             }
 
             [data-testid=\"stPopoverBody\"] .stButton > button:hover {
                 background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.5) !important;
-            }
-
-            /* Overlay para el popover centrado */
-            [data-baseweb=\"popover\"] + div {
-                background: rgba(0, 0, 0, 0.5) !important;
-                backdrop-filter: blur(8px) !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                z-index: 999998 !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 8px 12px -2px rgba(59, 130, 246, 0.4) !important;
             }
         </style>
         """, unsafe_allow_html=True)
