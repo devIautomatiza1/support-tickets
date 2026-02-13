@@ -524,97 +524,166 @@ class StyleManager:
                 margin-right: 0.5rem;
             }
 
-            /* ===== POPOVER / MODAL MINIMALISTA ===== */
+            /* ===== POPOVER / MODAL PREMIUM ===== */
             [data-testid="popover"] {
-                background: var(--bg-secondary) !important;
+                background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-secondary) 100%) !important;
                 border: 1px solid var(--border-medium) !important;
-                border-radius: 16px !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+                border-radius: 20px !important;
+                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+                padding: 2rem !important;
+                backdrop-filter: blur(10px) !important;
             }
 
-            /* Stylear inputs y textareas dentro del popover */
-            [data-testid="popover"] input,
-            [data-testid="popover"] textarea,
-            [data-testid="popover"] select {
-                background: var(--bg-tertiary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 10px !important;
-                color: var(--text-primary) !important;
-                padding: 0.75rem !important;
-                font-family: 'Inter', sans-serif !important;
-                transition: all 0.2s ease !important;
-            }
-
-            [data-testid="popover"] input:focus,
-            [data-testid="popover"] textarea:focus,
-            [data-testid="popover"] select:focus {
-                border-color: var(--accent) !important;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
-                background: var(--bg-tertiary) !important;
-            }
-
-            /* Labels dentro del popover */
-            [data-testid="popover"] label {
-                color: var(--text-primary) !important;
-                font-weight: 500 !important;
-                font-size: 0.85rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            /* Separadores entre campos */
-            [data-testid="popover"] [data-testid="element-container"]:not(:last-child) {
-                margin-bottom: 1.25rem !important;
-                padding-bottom: 1.25rem !important;
-                border-bottom: 1px solid var(--border-light) !important;
-            }
-
-            /* Botones dentro del popover */
-            [data-testid="popover"] button[kind="primary"] {
-                background: var(--accent) !important;
-                border: none !important;
-                border-radius: 10px !important;
-                color: white !important;
-                font-weight: 600 !important;
-                padding: 0.75rem 1.25rem !important;
-                transition: all 0.2s ease !important;
-                width: 100% !important;
-                margin-top: 1rem !important;
-            }
-
-            [data-testid="popover"] button[kind="primary"]:hover {
-                background: #2563eb !important;
-                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3) !important;
-                transform: translateY(-1px) !important;
-            }
-
-            [data-testid="popover"] button[kind="primary"]:active {
-                transform: translateY(0) !important;
-            }
-
-            /* Selectbox (dropdown) dentro del popover */
-            [data-testid="popover"] [data-testid="selectbox"] {
-                margin-bottom: 1rem !important;
-            }
-
-            [data-testid="popover"] [role="combobox"] {
-                background: var(--bg-tertiary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 10px !important;
-                color: var(--text-primary) !important;
-            }
-
-            /* Heading dentro del popover */
+            /* Headers dentro del popover */
             [data-testid="popover"] h3 {
                 color: var(--text-primary) !important;
-                font-size: 1.1rem !important;
+                font-size: 1.3rem !important;
                 font-weight: 700 !important;
-                margin-bottom: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
             }
 
             [data-testid="popover"] p {
                 color: var(--text-secondary) !important;
                 font-size: 0.85rem !important;
                 margin-bottom: 1.5rem !important;
+            }
+
+            /* Secciones con emojis */
+            [data-testid="popover"] [data-testid="element-container"] > div:has(> strong) {
+                margin-top: 1.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            [data-testid="popover"] strong {
+                color: var(--text-primary) !important;
+                font-size: 0.95rem !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+
+            /* Inputs y textareas */
+            [data-testid="popover"] input,
+            [data-testid="popover"] textarea,
+            [data-testid="popover"] select {
+                background: var(--bg-tertiary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-primary) !important;
+                padding: 0.875rem 1rem !important;
+                font-family: 'Inter', sans-serif !important;
+                font-size: 0.9rem !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            [data-testid="popover"] input::placeholder,
+            [data-testid="popover"] textarea::placeholder {
+                color: var(--text-tertiary) !important;
+            }
+
+            [data-testid="popover"] input:hover,
+            [data-testid="popover"] textarea:hover,
+            [data-testid="popover"] select:hover {
+                border-color: rgba(59, 130, 246, 0.4) !important;
+                background: rgba(59, 130, 246, 0.02) !important;
+            }
+
+            [data-testid="popover"] input:focus,
+            [data-testid="popover"] textarea:focus,
+            [data-testid="popover"] select:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0,0,0,0.1) !important;
+                background: var(--bg-tertiary) !important;
+                outline: none !important;
+            }
+
+            /* Labels */
+            [data-testid="popover"] label {
+                color: var(--text-primary) !important;
+                font-weight: 500 !important;
+                font-size: 0.8rem !important;
+                margin-bottom: 0.5rem !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.03em !important;
+            }
+
+            /* Dividers */
+            [data-testid="popover"] hr {
+                border: none !important;
+                height: 1px !important;
+                background: var(--border-light) !important;
+                margin: 1.5rem 0 !important;
+            }
+
+            /* Selectbox columns */
+            [data-testid="popover"] [data-testid="column"] {
+                gap: 1rem !important;
+            }
+
+            [data-testid="popover"] [data-testid="selectbox"] {
+                margin-bottom: 0 !important;
+            }
+
+            [data-testid="popover"] [role="combobox"],
+            [data-testid="popover"] select {
+                background: var(--bg-tertiary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-primary) !important;
+                padding: 0.875rem 1rem !important;
+                transition: all 0.3s ease !important;
+            }
+
+            [data-testid="popover"] [role="combobox"]:focus,
+            [data-testid="popover"] select:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+            }
+
+            /* Botón Guardar Premium */
+            [data-testid="popover"] button[kind="primary"] {
+                background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%) !important;
+                border: none !important;
+                border-radius: 12px !important;
+                color: white !important;
+                font-weight: 700 !important;
+                font-size: 0.95rem !important;
+                padding: 1rem 1.5rem !important;
+                width: 100% !important;
+                margin-top: 1.5rem !important;
+                margin-bottom: 0 !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
+                cursor: pointer !important;
+                letter-spacing: 0.02em !important;
+            }
+
+            [data-testid="popover"] button[kind="primary"]:hover {
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important;
+                transform: translateY(-2px) !important;
+            }
+
+            [data-testid="popover"] button[kind="primary"]:active {
+                transform: translateY(0) !important;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+            }
+
+            /* Ocultar botones secundarios/cancelar */
+            [data-testid="popover"] button:not([kind="primary"]) {
+                display: none !important;
+            }
+
+            /* Textarea específico */
+            [data-testid="popover"] textarea {
+                resize: vertical !important;
+                min-height: 100px !important;
             }
         </style>
         """, unsafe_allow_html=True)
