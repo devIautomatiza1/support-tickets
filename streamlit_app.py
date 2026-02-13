@@ -257,14 +257,38 @@ def render_metrics(tickets_df: pd.DataFrame):
             st.markdown(ComponentStyles.stat_card(title, value, icon, trend), unsafe_allow_html=True)
 
 
+def escape_html(text: str) -> str:
+    """Escapa caracteres especiales HTML"""
+    if not text:
+        return ""
+    text = str(text)
+    replacements = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
 @st.fragment
 def render_ticket_card(ticket: Ticket):
     """Renderiza una tarjeta de ticket minimalista"""
     
     # Extraer persona del título
     title_parts = ticket.title.split(" - ")
-    display_title = title_parts[0]
-    person = title_parts[1] if len(title_parts) > 1 else ""
+    display_title = escape_html(title_parts[0])
+    person = escape_html(title_parts[1]) if len(title_parts) > 1 else ""
+    
+    # Limpiar y acortar descripción
+    desc = ticket.description.strip()
+    # Remover comillas al inicio si existen
+    if desc.startswith('"') and desc.endswith('"'):
+        desc = desc[1:-1]
+    desc_preview = escape_html(desc[:100])
     
     # Mapeo de estados
     badge_map = {
@@ -278,7 +302,7 @@ def render_ticket_card(ticket: Ticket):
     # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
     
-    # HTML de la tarjeta
+    # HTML de la tarjeta con escape de HTML
     card_html = f"""
     <div class="ticket-card">
         <div class="ticket-header">
@@ -289,7 +313,7 @@ def render_ticket_card(ticket: Ticket):
         </div>
         <div class="ticket-title">{display_title}</div>
         {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
-        <div class="ticket-description">"{ticket.description[:100]}{'...' if len(ticket.description) > 100 else ''}"</div>
+        <div class="ticket-description">"{desc_preview}{'...' if len(desc) > 100 else ''}"</div>
         <div class="ticket-footer">
             <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
             <div class="priority-indicator">
