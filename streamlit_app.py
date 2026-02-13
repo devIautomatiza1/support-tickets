@@ -282,6 +282,25 @@ st.markdown("""
         border-radius: 6px;
         color: #F1F5F9;
     }
+    
+    /* Botón dentro del ticket card */
+    .ticket-edit-btn {
+        background-color: #64748B;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 12px;
+    }
+    
+    .ticket-edit-btn:hover {
+        background-color: #475569;
+        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -291,7 +310,6 @@ st.markdown("""
 
 SUPABASE_URL = "https://euqtlsheickstdtcfhfi.supabase.co"
 SUPABASE_KEY = "sb_publishable_cVoObJObqnsKxRIXgcft4g_ejb6VJnC"
-GEMINI_API_KEY = "AIzaSyBBD6CoJl2n2--7DWRTrdLxZMYcr_Mzk0I"
 
 # ============================================================================
 # FUNCIONES DE CONEXIÓN A SUPABASE
@@ -599,19 +617,59 @@ else:
     </div>
     
     <div class="ticket-footer">
-        <span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else '<em>Sin notas</em>'}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span><span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else 'Sin notas'}</span></span>
+            <button class="ticket-edit-btn" data-ticket-id="{ticket.get('id')}">Editar</button>
+        </div>
     </div>
 </div>'''
         
         st.markdown(card_html, unsafe_allow_html=True)
-        
-        # Botón para abrir modal de edición
-        col1, col2 = st.columns([0.85, 0.15])
-        with col2:
-            if st.button("Editar", key=f"edit_btn_{ticket.get('id')}", width='stretch'):
-                edit_ticket_modal(ticket)
-        
-        st.markdown("")
+
+# Inicializar session state para modal
+if 'edit_ticket_id' not in st.session_state:
+    st.session_state.edit_ticket_id = None
+
+# Placeholder invisible para almacenar el ID del ticket a editar
+if 'pending_edit' in st.query_params:
+    edit_id = st.query_params.get('pending_edit')
+    if edit_id and edit_id != st.session_state.edit_ticket_id:
+        st.session_state.edit_ticket_id = edit_id
+        # Buscar el ticket en la lista
+        try:
+            edit_id_int = int(edit_id)
+            matching_tickets = tickets[tickets['id'] == edit_id_int]
+            if not matching_tickets.empty:
+                selected_ticket = matching_tickets.iloc[0].to_dict()
+                edit_ticket_modal(selected_ticket)
+        except:
+            pass
+        # Limpiar query param
+        del st.query_params['pending_edit']
+
+# Script que vincula los botones HTML con query_params de Streamlit
+st.markdown("""
+<script>
+// Conectar botones HTML con query params de Streamlit
+function linkEditButtons() {
+    document.querySelectorAll('.ticket-edit-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const ticketId = this.getAttribute('data-ticket-id');
+            // Cambiar URL para que Streamlit actualice query_params
+            window.location.search = '?pending_edit=' + ticketId;
+        });
+    });
+}
+
+// Ejecutar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', linkEditButtons);
+} else {
+    linkEditButtons();
+}
+</script>
+""", unsafe_allow_html=True)
 
 # ============================================================================
 # PANEL DE DIAGNÓSTICO - DEBUG
