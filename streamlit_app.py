@@ -529,6 +529,23 @@ else:
     st.subheader(f"Tickets ({len(tickets)})")
     st.markdown("")
     
+    # Definir estilos reutilizables
+    CARD_STYLES = {
+        "container": "background: #1E293B; border: 2px solid #334155; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);",
+        "header": "background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 16px; border-bottom: 2px solid #334155; display: flex; justify-content: space-between; align-items: center; gap: 12px;",
+        "ticket_num": "font-weight: 700; font-size: 1.1em; color: #3D63FF; letter-spacing: 1px;",
+        "body": "padding: 18px;",
+        "title": "font-size: 1.15em; font-weight: 700; color: #F1F5F9; margin: 0 0 10px 0; word-break: break-word;",
+        "description": "color: #CBD5E1; font-size: 0.95em; line-height: 1.6; margin: 0 0 16px 0; word-break: break-word;",
+        "meta_grid": "display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px; background: rgba(30, 41, 59, 0.6); border-radius: 8px; border-left: 3px solid #3D63FF;",
+        "meta_item": "display: flex; flex-direction: column; gap: 6px;",
+        "meta_label": "color: #94A3B8; font-weight: 600; font-size: 0.85em;",
+        "meta_value": "color: #F1F5F9; font-weight: 600;",
+        "footer": "background: #0F172A; padding: 14px 18px; border-top: 2px solid #334155; font-size: 0.9em;",
+        "notes_label": "color: #94A3B8; font-weight: 600;",
+        "notes_value": "color: #CBD5E1;",
+    }
+    
     # Crear contenedor para tarjetas
     for idx, ticket in tickets.iterrows():
         # Determinar color de estado
@@ -573,58 +590,58 @@ else:
         ticket_id = ticket.get('id')
         
         # Determinar estilos de estado
-        status_bg_color = {
-            "status-open": "rgba(239, 68, 68, 0.15)",
-            "status-progress": "rgba(245, 158, 11, 0.15)",
-            "status-closed": "rgba(16, 185, 129, 0.15)"
-        }.get(status_class, "rgba(61, 99, 255, 0.15)")
+        status_colors = {
+            "status-open": {
+                "bg": "rgba(239, 68, 68, 0.15)",
+                "border": "rgba(239, 68, 68, 0.4)",
+                "text": "#FCA5A5"
+            },
+            "status-progress": {
+                "bg": "rgba(245, 158, 11, 0.15)",
+                "border": "rgba(245, 158, 11, 0.4)",
+                "text": "#FCD34D"
+            },
+            "status-closed": {
+                "bg": "rgba(16, 185, 129, 0.15)",
+                "border": "rgba(16, 185, 129, 0.4)",
+                "text": "#6EE7B7"
+            }
+        }
         
-        status_border_color = {
-            "status-open": "rgba(239, 68, 68, 0.4)",
-            "status-progress": "rgba(245, 158, 11, 0.4)",
-            "status-closed": "rgba(16, 185, 129, 0.4)"
-        }.get(status_class, "rgba(61, 99, 255, 0.4)")
+        colors = status_colors.get(status_class, status_colors["status-open"])
         
-        status_text_color = {
-            "status-open": "#FCA5A5",
-            "status-progress": "#FCD34D",
-            "status-closed": "#6EE7B7"
-        }.get(status_class, "#93C5FD")
-        
-        card_html = f'''<div style="background: #1E293B; border: 2px solid #334155; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); transition: all 0.3s ease;">
-    <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 16px; border-bottom: 2px solid #334155; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-        <div style="font-weight: 700; font-size: 1.1em; color: #3D63FF; letter-spacing: 1px;">#{ticket_num}</div>
-        <div style="background-color: {status_bg_color}; border: 1px solid {status_border_color}; color: {status_text_color}; padding: 6px 14px; border-radius: 8px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">{status_label}</div>
+        # Construir HTML con estilos separados
+        card_html = f'''<div style="{CARD_STYLES['container']}">
+  <div style="{CARD_STYLES['header']}">
+    <div style="{CARD_STYLES['ticket_num']}">#{ticket_num}</div>
+    <div style="background-color: {colors['bg']}; border: 1px solid {colors['border']}; color: {colors['text']}; padding: 6px 14px; border-radius: 8px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">{status_label}</div>
+  </div>
+  <div style="{CARD_STYLES['body']}">
+    <div style="{CARD_STYLES['title']}">{title}</div>
+    <div style="{CARD_STYLES['description']}">{desc}</div>
+    <div style="{CARD_STYLES['meta_grid']}">
+      <div style="{CARD_STYLES['meta_item']}">
+        <span style="{CARD_STYLES['meta_label']}">ESTADO</span>
+        <span style="{CARD_STYLES['meta_value']}">{status_label.title()}</span>
+      </div>
+      <div style="{CARD_STYLES['meta_item']}">
+        <span style="{CARD_STYLES['meta_label']}">PRIORIDAD</span>
+        <span style="{CARD_STYLES['meta_value']}">{priority_label.title()}</span>
+      </div>
+      <div style="{CARD_STYLES['meta_item']}">
+        <span style="{CARD_STYLES['meta_label']}">CREADO</span>
+        <span style="{CARD_STYLES['meta_value']}">{created_date}</span>
+      </div>
+      <div style="{CARD_STYLES['meta_item']}">
+        <span style="{CARD_STYLES['meta_label']}">GRABACIÓN</span>
+        <span style="{CARD_STYLES['meta_value']}; cursor: pointer;" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
+      </div>
     </div>
-    
-    <div style="padding: 18px;">
-        <div style="font-size: 1.15em; font-weight: 700; color: #F1F5F9; margin: 0 0 10px 0; word-break: break-word;">{title}</div>
-        <div style="color: #CBD5E1; font-size: 0.95em; line-height: 1.6; margin: 0 0 16px 0; word-break: break-word;">{desc}</div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 0.9em; padding: 14px; background: rgba(30, 41, 59, 0.6); border-radius: 8px; border-left: 3px solid #3D63FF;">
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">ESTADO</span>
-                <span style="color: #F1F5F9; font-weight: 600;">{status_label.title()}</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">PRIORIDAD</span>
-                <span style="color: #F1F5F9; font-weight: 600;">{priority_label.title()}</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">CREADO</span>
-                <span style="color: #F1F5F9; font-weight: 600;">{created_date}</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">GRABACIÓN</span>
-                <span style="color: #F1F5F9; font-weight: 600; cursor: pointer;" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
-            </div>
-        </div>
-    </div>
-    
-    <div style="background: #0F172A; padding: 14px 18px; border-top: 2px solid #334155; font-size: 0.9em;">
-        <span style="color: #94A3B8; font-weight: 600;">Notas:</span> 
-        <span style="color: #CBD5E1;">{notes if notes else '—'}</span>
-    </div>
+  </div>
+  <div style="{CARD_STYLES['footer']}">
+    <span style="{CARD_STYLES['notes_label']}">Notas:</span> 
+    <span style="{CARD_STYLES['notes_value']}">{notes if notes else '—'}</span>
+  </div>
 </div>'''
         
         st.markdown(card_html, unsafe_allow_html=True)
