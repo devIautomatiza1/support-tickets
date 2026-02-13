@@ -63,11 +63,6 @@ class StyleManager:
             }
 
             /* ===== TARJETAS DE TICKETS ===== */
-            .ticket-grid {
-                display: grid;
-                gap: 1rem;
-            }
-
             .ticket-card {
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-medium);
@@ -75,7 +70,7 @@ class StyleManager:
                 padding: 1.25rem;
                 transition: all 0.2s ease;
                 position: relative;
-                cursor: pointer;
+                margin-bottom: 1rem;
             }
 
             .ticket-card:hover {
@@ -98,13 +93,36 @@ class StyleManager:
                 letter-spacing: 0.02em;
             }
 
-            .ticket-menu {
+            /* ===== BOTÓN DE EDICIÓN MEJORADO ===== */
+            .edit-button-container {
                 opacity: 0;
                 transition: opacity 0.2s ease;
             }
 
-            .ticket-card:hover .ticket-menu {
+            .ticket-card:hover .edit-button-container {
                 opacity: 1;
+            }
+
+            .edit-button {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border-medium);
+                border-radius: 8px;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--text-tertiary);
+                font-size: 1rem;
+                transition: all 0.2s ease;
+            }
+
+            .edit-button:hover {
+                background: rgba(59, 130, 246, 0.1);
+                border-color: var(--accent);
+                color: var(--accent);
+                transform: scale(1.05);
             }
 
             .ticket-title {
@@ -191,11 +209,11 @@ class StyleManager:
                 border-radius: 50%;
             }
 
-            .priority-dot.high { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+            .priority-dot.high { background: var(--danger); }
             .priority-dot.medium { background: var(--warning); }
             .priority-dot.low { background: var(--success); }
 
-            /* ===== STAT CARDS MINIMAL ===== */
+            /* ===== STAT CARDS ===== */
             .stat-card {
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-medium);
@@ -230,42 +248,30 @@ class StyleManager:
                 line-height: 1;
             }
 
-            .stat-trend {
-                font-size: 0.75rem;
-                color: var(--text-tertiary);
-                margin-top: 0.5rem;
-            }
-
-            /* ===== HEADER MINIMAL ===== */
-            .page-header {
-                margin-bottom: 2rem;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: var(--text-primary);
-                margin-bottom: 0.25rem;
-            }
-
-            .page-subtitle {
-                font-size: 0.9rem;
-                color: var(--text-tertiary);
-            }
-
-            /* ===== POPOVER MINIMAL ===== */
+            /* ===== MODAL/POPOVER MEJORADO ===== */
             [data-testid="stPopoverBody"] {
                 background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 20px !important;
-                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+                border: 1px solid var(--border-accent) !important;
+                border-radius: 24px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
                 padding: 1.5rem !important;
-                min-width: 360px !important;
-                backdrop-filter: blur(20px) !important;
+                min-width: 400px !important;
+                animation: modalFadeIn 0.2s ease !important;
+            }
+
+            @keyframes modalFadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
             }
 
             [data-testid="stPopoverBody"] h3 {
-                font-size: 1rem !important;
+                font-size: 1.25rem !important;
                 font-weight: 600 !important;
                 color: var(--text-primary) !important;
                 margin-bottom: 0.25rem !important;
@@ -292,59 +298,22 @@ class StyleManager:
                 border: 1px solid var(--border-medium) !important;
                 border-radius: 12px !important;
                 color: var(--text-primary) !important;
-                font-size: 0.9rem !important;
+                margin-bottom: 1rem !important;
             }
 
-            /* ===== BOTONES ===== */
-            .stButton > button {
-                background: transparent !important;
-                border: 1px solid var(--border-medium) !important;
-                color: var(--text-secondary) !important;
-                font-weight: 500 !important;
-                font-size: 0.85rem !important;
-                border-radius: 12px !important;
-                padding: 0.5rem 1rem !important;
-                transition: all 0.2s ease !important;
-            }
-
-            .stButton > button:hover {
-                border-color: var(--accent) !important;
-                color: var(--text-primary) !important;
-                background: rgba(59, 130, 246, 0.1) !important;
-            }
-
-            button[type="primary"] {
+            [data-testid="stPopoverBody"] .stButton > button {
                 background: var(--accent) !important;
-                border-color: var(--accent) !important;
-                color: white !important;
-            }
-
-            button[type="primary"]:hover {
-                background: #2563EB !important;
-                border-color: #2563EB !important;
-            }
-
-            /* ===== INPUTS ===== */
-            input, select, textarea {
-                background: var(--bg-primary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-                font-size: 0.9rem !important;
-                padding: 0.75rem 1rem !important;
-            }
-
-            input:focus, select:focus, textarea:focus {
-                border-color: var(--accent) !important;
-                outline: none !important;
-                box-shadow: 0 0 0 2px var(--border-accent) !important;
-            }
-
-            /* ===== DIVIDER ===== */
-            hr {
                 border: none !important;
-                border-top: 1px solid var(--border-medium) !important;
-                margin: 1.5rem 0 !important;
+                color: white !important;
+                font-weight: 600 !important;
+                border-radius: 12px !important;
+                padding: 0.75rem !important;
+                width: 100% !important;
+                margin-top: 1rem !important;
+            }
+
+            [data-testid="stPopoverBody"] .stButton > button:hover {
+                background: #2563EB !important;
             }
 
             /* ===== CONNECTION STATUS ===== */
@@ -364,7 +333,6 @@ class StyleManager:
                 background: var(--success);
                 border-radius: 50%;
                 margin-right: 0.5rem;
-                box-shadow: 0 0 8px var(--success);
             }
         </style>
         """, unsafe_allow_html=True)
@@ -382,7 +350,6 @@ class ComponentStyles:
                 <span class="stat-label">{title}</span>
             </div>
             <div class="stat-value">{value}</div>
-            {f'<div class="stat-trend">{trend}</div>' if trend else ''}
         </div>
         """
     
