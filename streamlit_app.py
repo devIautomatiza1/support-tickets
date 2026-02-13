@@ -572,37 +572,37 @@ else:
         recording_id = str(ticket.get('recording_id', 'N/A'))[:10]
         ticket_id = ticket.get('id')
         
-        card_html = f'''<div class="ticket-card">
-    <div class="ticket-header">
+        card_html = f'''<div class="ticket-card" style="background: #1E293B; border: 1px solid #334155; border-radius: 12px; overflow: hidden; margin-bottom: 16px; padding: 0;">
+    <div class="ticket-header" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 14px 16px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
         <div style="font-weight: 700; font-size: 1em; color: #F1F5F9;">#{ticket_num}</div>
-        <div class="status-badge {status_class}">{status_label}</div>
+        <div class="status-badge {status_class}" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">{status_label}</div>
     </div>
     
-    <div class="ticket-body">
-        <div class="ticket-title">{title}</div>
-        <div class="ticket-description">{desc}</div>
+    <div class="ticket-body" style="padding: 16px;">
+        <div class="ticket-title" style="font-size: 1.1em; font-weight: 600; color: #F1F5F9; margin: 0 0 8px 0;">{title}</div>
+        <div class="ticket-description" style="color: #CBD5E1; font-size: 0.95em; line-height: 1.5; margin: 0 0 12px 0;">{desc}</div>
         
-        <div class="ticket-meta">
-            <div class="meta-item">
-                <span class="meta-label">Estado</span>
-                <span class="meta-value">{status_label.title()}</span>
+        <div class="ticket-meta" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85em; margin-bottom: 0;">
+            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Estado</span>
+                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{status_label.title()}</span>
             </div>
-            <div class="meta-item">
-                <span class="meta-label">Prioridad</span>
-                <span class="meta-value">{priority_label.title()}</span>
+            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Prioridad</span>
+                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{priority_label.title()}</span>
             </div>
-            <div class="meta-item">
-                <span class="meta-label">Creado</span>
-                <span class="meta-value">{created_date}</span>
+            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Creado</span>
+                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{created_date}</span>
             </div>
-            <div class="meta-item">
-                <span class="meta-label">Grabacion</span>
-                <span class="meta-value" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
+            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Grabacion</span>
+                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
             </div>
         </div>
     </div>
     
-    <div class="ticket-footer">
+    <div class="ticket-footer" style="background: #0F172A; padding: 12px 16px; border-top: 1px solid #334155; font-size: 0.85em;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <span><span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else 'Sin notas'}</span></span>
         </div>
