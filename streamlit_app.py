@@ -206,7 +206,8 @@ class SupabaseService:
             return pd.DataFrame()
     
     def update_ticket(self, ticket_id: int, status: str, notes: str, 
-                     priority: Optional[str] = None) -> bool:
+                     priority: Optional[str] = None, title: Optional[str] = None,
+                     description: Optional[str] = None) -> bool:
         try:
             client = self._get_client()
             if not client:
@@ -214,6 +215,10 @@ class SupabaseService:
             data = {"status": status, "notes": notes}
             if priority:
                 data["priority"] = priority
+            if title:
+                data["title"] = title
+            if description:
+                data["description"] = description
             client.table("opportunities").update(data).eq("id", ticket_id).execute()
             return True
         except Exception as e:
@@ -333,6 +338,10 @@ def render_ticket_card(ticket: Ticket):
     else:
         safe_notes = "Sin detalles adicionales"
 
+    # 4. Etiquetas de estado y prioridad para usar en el popover
+    status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+    priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+
     # Mapeo de estados
     badge_map = {
         "new": "badge-new",
@@ -367,15 +376,36 @@ def render_ticket_card(ticket: Ticket):
     st.markdown(card_html, unsafe_allow_html=True)
     
     # Popover para edición
-    with st.popover("Editar"):
-        st.markdown(f"### #{ticket.ticket_number}", unsafe_allow_html=True)
+    with st.popover("Editar", use_container_width=True):
+        st.markdown(f"### Editar ticket #{ticket.ticket_number}", unsafe_allow_html=True)
         st.caption(escape_html(display_title))
         
         st.divider()
         
-        # Formulario de edición
-        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+        # ===== SECCIÓN 1: TÍTULO Y DESCRIPCIÓN =====
+        st.markdown("**📌 Información General**")
+        
+        new_title = st.text_input(
+            "Título",
+            value=escape_html(display_title),
+            placeholder="Ej: Cierre de venta",
+            key=f"title_{ticket.id}",
+            label_visibility="collapsed"
+        )
+        
+        new_description = st.text_area(
+            "Descripción",
+            value=escape_html(clean_desc),
+            placeholder="Describe el ticket en detalle...",
+            height=80,
+            key=f"desc_{ticket.id}",
+            label_visibility="collapsed"
+        )
+        
+        st.divider()
+        
+        # ===== SECCIÓN 2: ESTADO Y PRIORIDAD =====
+        st.markdown("**⚙️ Configuración**")
         
         col1, col2 = st.columns(2)
         
@@ -397,31 +427,48 @@ def render_ticket_card(ticket: Ticket):
                 label_visibility="collapsed"
             )
         
-        st.markdown("**Notas internas**")
+        st.divider()
+        
+        # ===== SECCIÓN 3: NOTAS INTERNAS =====
+        st.markdown("**📝 Notas Internas**")
         new_notes = st.text_area(
             "Notas",
             value=safe_notes,
-            placeholder="Añade comentarios o detalles.",
-            height=120,
+            placeholder="Comentarios, detalles importantes, seguimiento...",
+            height=100,
             key=f"notes_{ticket.id}",
             label_visibility="collapsed"
         )
         
         st.divider()
         
-        if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
-            supabase = SupabaseService()
-            if supabase.update_ticket(
-                ticket.id,
-                Status.from_display(new_status),
-                new_notes,
-                Priority.from_display(new_priority)
-            ):
-                st.success("✓ Actualizado correctamente")
-                time.sleep(0.5)
-                st.rerun()
-            else:
-                st.error("⚠️ Error al guardar")
+        # ===== BOTONES DE ACCIÓN =====
+        col_save, col_cancel = st.columns(2)
+        
+        with col_save:
+            if st.button("✓ Guardar", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+                supabase = SupabaseService()
+                # Conservar [IA] en el título si no está
+                final_title = new_title
+                if not final_title.startswith("[IA]") and display_title and display_title != "Sin asignar":
+                    final_title = f"[IA] {final_title}"
+                
+                if supabase.update_ticket(
+                    ticket.id,
+                    Status.from_display(new_status),
+                    new_notes,
+                    Priority.from_display(new_priority),
+                    title=final_title,
+                    description=new_description
+                ):
+                    st.success("✓ Actualizado")
+                    time.sleep(0.8)
+                    st.rerun()
+                else:
+                    st.error("⚠️ Error al guardar")
+        
+        with col_cancel:
+            st.button("✕ Cancelar", key=f"cancel_{ticket.id}", use_container_width=True)
 
 
 def render_tickets_grid(tickets_df: pd.DataFrame):
