@@ -39,6 +39,7 @@ st.markdown("""
         --radius-md: 12px;
         --radius-sm: 8px;
         --shadow: 0 20px 40px -12px rgba(0,0,0,0.4);
+        --shadow-hover: 0 25px 50px -12px rgba(59,130,246,0.3);
         --transition: all 0.2s ease;
     }
 
@@ -72,7 +73,8 @@ st.markdown("""
     .ticket-card:hover {
         border-color: var(--border-hover);
         box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        background: linear-gradient(145deg, var(--bg-card), #1A1E24);
     }
 
     .ticket-header {
@@ -140,7 +142,7 @@ st.markdown("""
         min-height: 2rem;
     }
 
-    /* ===== MODAL COMPACTO - SIN SCROLL ===== */
+    /* ===== MODAL COMPACTO ===== */
     div[data-testid="stDialog"] {
         display: flex !important;
         align-items: center !important;
@@ -166,7 +168,7 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Header del modal - COMPACTO */
+    /* Header del modal */
     .modal-header {
         margin-bottom: 1rem;
         display: flex;
@@ -195,7 +197,7 @@ st.markdown("""
         border: 1px solid var(--border);
     }
 
-    /* Descripción - COMPACTA */
+    /* Descripción */
     .description-section {
         margin-bottom: 1.25rem;
     }
@@ -220,7 +222,7 @@ st.markdown("""
         white-space: pre-wrap;
     }
 
-    /* Estado y Prioridad - COMPACTO */
+    /* Estado y Prioridad */
     .status-priority-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -259,7 +261,7 @@ st.markdown("""
         margin-bottom: 0.2rem;
     }
 
-    /* Select boxes - COMPACTOS */
+    /* Select boxes */
     .stSelectbox {
         margin-bottom: 0.25rem !important;
     }
@@ -269,9 +271,16 @@ st.markdown("""
         border: 1px solid var(--border) !important;
         border-radius: 8px !important;
         min-height: 2rem !important;
+        transition: var(--transition) !important;
     }
     
-    /* Text area - COMPACTO */
+    .stSelectbox [data-baseweb="select"]:hover {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
+        background: var(--bg-card) !important;
+    }
+    
+    /* Text area */
     .stTextArea {
         margin-top: 0.25rem;
     }
@@ -287,27 +296,107 @@ st.markdown("""
         min-height: 120px !important;
         max-height: 150px !important;
         font-family: 'SF Mono', 'JetBrains Mono', monospace !important;
+        transition: var(--transition) !important;
     }
     
-    /* Botones - COMPACTOS */
+    .stTextArea textarea:hover {
+        border-color: var(--border-hover) !important;
+    }
+    
+    .stTextArea textarea:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
+    }
+
+    /* ===== BOTONES CON HOVER MEJORADOS ===== */
+    
+    /* Botón EDITAR en tarjetas */
     .stButton > button {
         border-radius: 8px !important;
-        font-size: 0.8rem !important;
-        padding: 0.4rem 1rem !important;
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.75rem !important;
         transition: var(--transition) !important;
         font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
+        width: 100% !important;
+        background: transparent !important;
+        color: var(--text-secondary) !important;
+        border: 1px solid var(--border) !important;
+        position: relative !important;
+        overflow: hidden !important;
     }
     
+    .stButton > button:hover {
+        background: var(--accent-soft) !important;
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.2) !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
+    /* Botón ACTUALIZAR en sidebar */
+    .stButton > button[key*="ACTUALIZAR"] {
+        background: transparent !important;
+        border: 1px solid var(--border) !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .stButton > button[key*="ACTUALIZAR"]:hover {
+        background: var(--accent) !important;
+        border-color: var(--accent) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+    }
+    
+    /* Botón Guardar cambios (primario) */
     .stButton > button[kind="primary"] {
         background: var(--accent) !important;
         color: white !important;
         border: none !important;
+        box-shadow: 0 2px 8px rgba(59,130,246,0.2) !important;
     }
     
+    .stButton > button[kind="primary"]:hover {
+        background: #2563EB !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important;
+    }
+    
+    .stButton > button[kind="primary"]:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 8px rgba(59,130,246,0.2) !important;
+    }
+    
+    /* Botón Cancelar */
     .stButton > button:not([kind="primary"]) {
         background: transparent !important;
         color: var(--text-secondary) !important;
         border: 1px solid var(--border) !important;
+    }
+    
+    .stButton > button:not([kind="primary"]):hover {
+        background: var(--bg-secondary) !important;
+        border-color: var(--border-hover) !important;
+        color: var(--text-primary) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Botones de diagnóstico */
+    .stButton > button:has(span:contains("Ver")) {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+    
+    .stButton > button:has(span:contains("Ver")):hover {
+        background: var(--accent-soft) !important;
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
     }
 
     hr {
@@ -317,12 +406,18 @@ st.markdown("""
         margin: 1rem 0;
     }
     
-    /* Métricas - COMPACTAS */
+    /* Métricas */
     [data-testid="metric-container"] {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: 0.6rem;
+        transition: var(--transition) !important;
+    }
+    
+    [data-testid="metric-container"]:hover {
+        border-color: var(--border-hover) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
     }
     
     [data-testid="metric-container"] label {
@@ -331,6 +426,19 @@ st.markdown("""
     
     [data-testid="metric-container"] [data-testid="metric-value"] {
         font-size: 1.1rem !important;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        transition: var(--transition) !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        border-color: var(--border-hover) !important;
+        background: var(--bg-secondary) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -414,6 +522,10 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     current_priority = ticket_dict.get("priority", "Medium")
     notes = ticket_dict.get("notes", "") or ""
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
+    
+    # Limpiar descripción - eliminar líneas en blanco múltiples
+    if description:
+        description = "\n".join([line for line in description.split("\n") if line.strip()])
     
     # === HEADER COMPACTO ===
     st.markdown(f"""
@@ -625,7 +737,7 @@ with st.sidebar:
     selected_status = status_map[status_filter]
     selected_priority = priority_map[priority_filter]
     
-    if st.button("ACTUALIZAR", use_container_width=True):
+    if st.button("ACTUALIZAR", key="ACTUALIZAR", use_container_width=True):
         st.rerun()
     
     st.divider()
@@ -674,14 +786,14 @@ with st.expander("Diagnóstico del sistema", expanded=False):
     
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Ver opportunities"):
+        if st.button("📋 Ver opportunities", key="ver_opp"):
             client = get_supabase_connection()
             if client:
                 data = client.table("opportunities").select("*").limit(3).execute().data
                 if data:
                     st.dataframe(pd.DataFrame(data))
     with col2:
-        if st.button("Ver recordings"):
+        if st.button("🎙️ Ver recordings", key="ver_rec"):
             client = get_supabase_connection()
             if client:
                 data = client.table("recordings").select("*").limit(3).execute().data
