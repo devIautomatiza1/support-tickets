@@ -14,7 +14,10 @@ from styles import (
     StyleManager, 
     StatusColors, 
     PriorityColors, 
-    ComponentStyles
+    ComponentStyles,
+    BootstrapIntegration,
+    ThemeManager,
+    ColorScheme
 )
 
 
@@ -237,11 +240,14 @@ class TicketCard:
             TicketCard.BADGE_STYLES[Status.NEW.value]
         )
         
+        # Usar ComponentStyles para renderizar el badge mejorado
+        badge_html = ComponentStyles.render_status_badge(ticket.status, badge_label)
+        
         card_html = f"""
         <div class="ticket-card">
             <div class="ticket-header">
                 <span class="ticket-number">#{ticket.ticket_number}</span>
-                <span class="badge {badge_class}">{badge_label}</span>
+                {badge_html}
             </div>
             <div class="ticket-title">{ticket.title[:60]}</div>
         </div>
@@ -249,7 +255,7 @@ class TicketCard:
         
         st.markdown(card_html, unsafe_allow_html=True)
         
-        if st.button("EDITAR", key=f"edit_{ticket.id}", use_container_width=True):
+        if st.button("📝 EDITAR", key=f"edit_{ticket.id}", use_container_width=True):
             st.session_state.edit_ticket = ticket.to_dict()
             st.rerun()
 
@@ -317,15 +323,15 @@ class EditTicketModal:
         st.markdown(f"""
         <div class="modal-header">
             <div>
-                <span class="modal-title">{title}</span>
+                <span class="modal-title">📋 {title}</span>
             </div>
-            <span class="modal-date">{created_at}</span>
+            <span class="modal-date">📅 {created_at}</span>
         </div>
         """, unsafe_allow_html=True)
     
     def _render_description(self, description: str):
         """Renderiza la sección de descripción"""
-        st.markdown('<div class="section-title">DESCRIPCIÓN</div>', unsafe_allow_html=True)
+        st.markdown(ComponentStyles.render_section_label("DESCRIPCIÓN", "📝"), unsafe_allow_html=True)
         st.markdown(f"""
         <div class="description-box">
             {description}
@@ -345,13 +351,13 @@ class EditTicketModal:
         color = status_colors.get(status_obj, StatusColors.NEW)
         status_label = Status.display_names()[status_obj]
         
+        status_icon = {"new": "🆕", "in_progress": "⏳", "won": "✅", "closed": "🔒"}.get(ticket.status, "ℹ️")
+        
         st.markdown(f"""
         <div class="info-card">
-            <div class="info-label">ESTADO ACTUAL</div>
-            <span class="current-value" style="background: {color.bg}; color: {color.color};">
-                {status_label}
-            </span>
-            <div class="select-label">CAMBIAR A</div>
+            <div class="info-label">{status_icon} ESTADO ACTUAL</div>
+            {ComponentStyles.render_colored_value(color.bg, color.color, status_label)}
+            <div class="select-label">▼ CAMBIAR A</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -380,13 +386,13 @@ class EditTicketModal:
         color = priority_colors.get(priority_obj, PriorityColors.MEDIUM)
         priority_label = Priority.display_names()[priority_obj]
         
+        priority_icon = {"Low": "📊", "Medium": "⚠️", "High": "🔴"}.get(ticket.priority, "⚠️")
+        
         st.markdown(f"""
         <div class="info-card">
-            <div class="info-label">PRIORIDAD ACTUAL</div>
-            <span class="current-value" style="background: {color.bg}; color: {color.color};">
-                {priority_label}
-            </span>
-            <div class="select-label">CAMBIAR A</div>
+            <div class="info-label">{priority_icon} PRIORIDAD ACTUAL</div>
+            {ComponentStyles.render_colored_value(color.bg, color.color, priority_label)}
+            <div class="select-label">▼ CAMBIAR A</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -405,11 +411,7 @@ class EditTicketModal:
     
     def _render_notes_form(self, ticket: Ticket, new_status: str, new_priority: str):
         """Renderiza el formulario de notas y botones de acción"""
-        st.markdown("""
-        <div style="margin-top: 1rem; margin-bottom: 0.5rem;">
-            <span class="section-title">NOTAS</span>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(ComponentStyles.render_section_label("NOTAS", "📝"), unsafe_allow_html=True)
         
         with st.form(key=f"edit_form_{ticket.id}"):
             new_notes = st.text_area(
@@ -454,7 +456,7 @@ class EditTicketModal:
 # ============================================================================
 
 def render_sidebar(supabase: SupabaseService) -> Tuple[str, str]:
-    """Renderiza la barra lateral con filtros"""
+    """Renderiza la barra lateral con filtros y estadísticas"""
     with st.sidebar:
         st.markdown("## 🔍 Filtros")
         
@@ -475,47 +477,71 @@ def render_sidebar(supabase: SupabaseService) -> Tuple[str, str]:
         
         st.divider()
         
-        # Estadísticas
+        # Estadísticas mejoradas
         st.markdown("## 📊 Estadísticas")
         all_tickets = supabase.fetch_tickets()
         
         if not all_tickets.empty:
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Total", len(all_tickets))
-            with col2:
-                st.metric("Nuevos", len(all_tickets[all_tickets["status"] == "new"]))
-            with col3:
-                st.metric("Ganados", len(all_tickets[all_tickets["status"] == "won"]))
+            total = len(all_tickets)
+            new_count = len(all_tickets[all_tickets["status"] == "new"])
+            won_count = len(all_tickets[all_tickets["status"] == "won"])
+            
+            # Renderizar tarjetas de estadísticas profesionales
+            st.markdown(ComponentStyles.render_stat_card(
+                "Total de Tickets",
+                str(total),
+                f"+{total}" if total > 0 else "sin cambios"
+            ), unsafe_allow_html=True)
+            
+            st.markdown(ComponentStyles.render_stat_card(
+                "Nuevos",
+                str(new_count),
+                f"{new_count} por procesar"
+            ), unsafe_allow_html=True)
+            
+            st.markdown(ComponentStyles.render_stat_card(
+                "Ganados",
+                str(won_count),
+                f"✅ {won_count} completados",
+                trend_positive=True
+            ), unsafe_allow_html=True)
         else:
-            st.info("📭 Sin datos")
+            st.info("📭 Sin datos disponibles")
         
         return status_filter, priority_filter
 
 
 def render_diagnostics(supabase: SupabaseService):
-    """Renderiza la sección de diagnóstico"""
+    """Renderiza la sección de diagnóstico del sistema"""
     with st.expander("🔧 Diagnóstico del sistema", expanded=False):
         success, msg, count = supabase.test_connection()
         
         if success:
-            st.success(f"✅ {msg} — {count} registros")
+            st.markdown(BootstrapIntegration.alert_success(
+                f"{msg} — {count} registros disponibles en la base de datos"
+            ), unsafe_allow_html=True)
         else:
-            st.error(f"❌ {msg}")
+            st.markdown(BootstrapIntegration.alert_error(
+                f"{msg}. Verifica tu conexión a Supabase."
+            ), unsafe_allow_html=True)
         
-        st.caption("Configuración: Secrets de Streamlit")
+        st.caption("🔐 Configuración: Secrets de Streamlit (.streamlit/secrets.toml)")
         
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("📋 Ver opportunities", key="ver_opp"):
-                data = supabase.get_sample_data("opportunities")
+            if st.button("📋 Ver opportunities", key="ver_opp", use_container_width=True):
+                data = supabase.get_sample_data("opportunities", limit=5)
                 if data:
-                    st.dataframe(pd.DataFrame(data))
+                    st.dataframe(pd.DataFrame(data), use_container_width=True)
+                else:
+                    st.warning("⚠️ No hay datos disponibles")
         with col2:
-            if st.button("🎙️ Ver recordings", key="ver_rec"):
-                data = supabase.get_sample_data("recordings")
+            if st.button("🎙️ Ver recordings", key="ver_rec", use_container_width=True):
+                data = supabase.get_sample_data("recordings", limit=5)
                 if data:
-                    st.dataframe(pd.DataFrame(data))
+                    st.dataframe(pd.DataFrame(data), use_container_width=True)
+                else:
+                    st.warning("⚠️ No hay datos disponibles")
 
 
 def main():
@@ -526,14 +552,29 @@ def main():
     modal_editor = EditTicketModal(supabase)
     grid = TicketGrid(num_columns=3)
     
-    # Header
-    st.title("🎫 Dashboard de Tickets")
-    st.markdown(
-        "<h3 style='color: var(--text-secondary); font-weight: 400; margin-top: -0.5rem;'>"
-        "Gestión de oportunidades profesional</h3>",
-        unsafe_allow_html=True
-    )
-    st.divider()
+    # Header profesional
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, var(--accent), #2563EB);
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+    ">
+        <h1 style="
+            color: white;
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        ">🎫 Dashboard de Tickets</h1>
+        <p style="
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+        ">Sistema de gestión de oportunidades — Interfaz profesional</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Sidebar
     status_filter, priority_filter = render_sidebar(supabase)
@@ -558,9 +599,37 @@ def main():
     
     # Mostrar grid
     if tickets.empty:
-        st.info("📭 No hay tickets con los filtros seleccionados.")
+        st.markdown("""
+        <div style="
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+        ">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+            <p style="font-size: 1.1rem; margin: 0;">
+                No hay tickets con los filtros seleccionados
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.markdown(f"#### 📌 {len(tickets)} tickets encontrados")
+        st.markdown(f"""
+        <div style="
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--bg-card), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        ">
+            <h3 style="
+                margin: 0;
+                color: var(--text-primary);
+                font-weight: 600;
+            ">📌 {len(tickets)} tickets encontrados</h3>
+        </div>
+        """, unsafe_allow_html=True)
         grid.render(tickets)
     
     # Modal de edición

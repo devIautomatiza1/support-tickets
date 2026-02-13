@@ -1,12 +1,14 @@
 """
 Sistema de diseño profesional para el Dashboard de Tickets.
 Gestiona temas, colores y componentes de UI de forma centralizada.
+Integración con Bootstrap 5 y estilos avanzados de nivel enterprise.
 """
 
 import streamlit as st
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Tuple
+import json
 
 
 # ============================================================================
@@ -572,8 +574,318 @@ class StyleManager:
         """
     
     @staticmethod
-    def inject_all():
-        """Inyecta todos los estilos CSS"""
+    @st.cache_data
+    def get_advanced_css() -> str:
+        """Estilos avanzados con diseño profesional de nivel enterprise"""
+        return """
+        <style>
+            /* ===== ANIMACIONES ===== */
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes glow {
+                0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+                50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+            }
+            
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.8; }
+            }
+
+            /* ===== CONTEXTO GENERAL ===== */
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: var(--accent) var(--bg-secondary);
+            }
+            
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: var(--bg-secondary);
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: var(--accent);
+                border-radius: 4px;
+            }
+            
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--accent-soft);
+            }
+
+            /* ===== ENHANCED CARD STYLES ===== */
+            .ticket-card {
+                animation: slideIn 0.3s ease-out;
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .ticket-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.1),
+                    transparent
+                );
+                transition: left 0.5s;
+            }
+            
+            .ticket-card:hover::before {
+                left: 100%;
+            }
+
+            /* ===== BADGE ENHANCEMENTS ===== */
+            .badge {
+                animation: fadeIn 0.3s ease-out;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                backdrop-filter: blur(8px);
+            }
+            
+            .badge-new {
+                box-shadow: 0 0 15px rgba(240, 113, 113, 0.3) !important;
+            }
+            
+            .badge-progress {
+                box-shadow: 0 0 15px rgba(250, 190, 36, 0.3) !important;
+            }
+            
+            .badge-won {
+                box-shadow: 0 0 15px rgba(52, 211, 153, 0.3) !important;
+            }
+            
+            .badge-closed {
+                box-shadow: 0 0 15px rgba(156, 163, 175, 0.3) !important;
+            }
+
+            /* ===== PROFESSIONAL SHADOWS ===== */
+            .menu-item {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .profile-section {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            }
+
+            /* ===== ENHANCED MODALS ===== */
+            div[data-testid="stDialog"] > div {
+                animation: slideIn 0.3s ease-out;
+                backdrop-filter: blur(20px);
+                background: linear-gradient(135deg, var(--bg-card), rgba(22, 24, 28, 0.8));
+            }
+            
+            .modal-header {
+                background: linear-gradient(90deg, var(--bg-secondary), var(--bg-card));
+                border-radius: 12px 12px 0 0;
+                margin: -1.5rem -1.75rem 1rem;
+                padding: 1rem 1.75rem;
+                border-bottom: 2px solid var(--accent);
+            }
+            
+            .modal-title {
+                background: linear-gradient(90deg, var(--text-primary), var(--accent));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-weight: 700;
+            }
+
+            /* ===== ENHANCED INFO CARDS ===== */
+            .info-card {
+                transition: var(--transition);
+                border-left: 3px solid var(--accent);
+                background: linear-gradient(135deg, var(--bg-secondary), rgba(22, 24, 28, 0.5));
+            }
+            
+            .info-card:hover {
+                box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+                transform: translateX(4px);
+            }
+
+            /* ===== ENHANCED INPUTS ===== */
+            .stSelectbox [data-baseweb="select"] {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            .stSelectbox [data-baseweb="select"]:focus-within {
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 
+                            0 4px 12px rgba(59, 130, 246, 0.15) !important;
+                transform: translateY(-2px);
+            }
+            
+            .stTextArea textarea {
+                transition: all 0.3s ease !important;
+                resize: vertical !important;
+            }
+            
+            .stTextArea textarea:focus {
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25),
+                            0 8px 16px rgba(59, 130, 246, 0.15) !important;
+            }
+
+            /* ===== ENHANCED BUTTONS ===== */
+            .stButton > button {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .stButton > button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                transition: left 0.5s;
+                z-index: 0;
+            }
+            
+            .stButton > button:hover::before {
+                left: 100%;
+            }
+            
+            .stButton > button[kind="primary"] {
+                background: linear-gradient(135deg, var(--accent), #2563EB) !important;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
+            }
+            
+            .stButton > button[kind="primary"]:hover {
+                background: linear-gradient(135deg, #2563EB, #1d4ed8) !important;
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
+                transform: translateY(-3px) !important;
+            }
+            
+            .stButton > button[kind="primary"]:active {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+            }
+
+            /* ===== ENHANCED METRICS ===== */
+            [data-testid="metric-container"] {
+                background: linear-gradient(135deg, var(--bg-card), rgba(22, 24, 28, 0.5));
+                border-left: 3px solid var(--accent);
+                transition: all 0.3s ease;
+            }
+            
+            [data-testid="metric-container"]:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2) !important;
+            }
+
+            /* ===== DIVIDER ENHANCEMENT ===== */
+            hr {
+                background: linear-gradient(90deg, transparent, var(--border), transparent);
+                opacity: 0.6;
+                margin: 1.5rem 0;
+            }
+
+            /* ===== TITLE ENHANCEMENTS ===== */
+            [data-testid="stMarkdownContainer"] h1 {
+                background: linear-gradient(90deg, var(--text-primary), var(--accent));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+            }
+            
+            [data-testid="stMarkdownContainer"] h3 {
+                font-weight: 500;
+                letter-spacing: -0.01em;
+            }
+
+            /* ===== SIDEBAR ENHANCEMENTS ===== */
+            [data-testid="stSidebar"] {
+                background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            }
+
+            /* ===== EXPANDER ENHANCEMENT ===== */
+            .streamlit-expanderHeader {
+                background: linear-gradient(90deg, var(--bg-card), rgba(22, 24, 28, 0.5));
+                transition: all 0.3s ease;
+            }
+            
+            .streamlit-expanderHeader:hover {
+                background: linear-gradient(90deg, var(--bg-card), var(--bg-secondary)) !important;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+            }
+
+            /* ===== PROFESSIONAL TEXT STYLES ===== */
+            .section-title {
+                letter-spacing: 0.1em;
+                font-weight: 600;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            
+            .description-box {
+                background: linear-gradient(135deg, var(--bg-secondary), rgba(22, 24, 28, 0.3));
+                border-left: 3px solid var(--accent);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            /* ===== RESPONSIVE DESIGN ===== */
+            @media (max-width: 768px) {
+                .ticket-card {
+                    padding: 0.6rem;
+                }
+                
+                .modal-title {
+                    font-size: 1rem;
+                }
+                
+                [data-testid="metric-container"] {
+                    padding: 0.5rem !important;
+                }
+            }
+
+            /* ===== ACCESSIBILITY ===== */
+            button:focus-visible,
+            input:focus-visible,
+            select:focus-visible,
+            textarea:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+            }
+
+            /* ===== TRANSITION SMOOTHNESS ===== */
+            * {
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        </style>
+        """
+        """Inyecta todos los estilos CSS incluyendo Bootstrap y estilos avanzados"""
+        # Bootstrap 5 CDN
+        st.markdown("""
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        """, unsafe_allow_html=True)
+        
         css_parts = [
             StyleManager.get_base_css(),
             StyleManager.get_card_css(),
@@ -582,6 +894,7 @@ class StyleManager:
             StyleManager.get_input_css(),
             StyleManager.get_button_css(),
             StyleManager.get_metric_css(),
+            StyleManager.get_advanced_css(),
         ]
         
         for css in css_parts:
@@ -597,7 +910,7 @@ class ComponentStyles:
     
     @staticmethod
     def render_status_badge(status: str, label: str) -> str:
-        """Renderiza un badge de estado"""
+        """Renderiza un badge de estado profesional"""
         badge_classes = {
             "new": "badge-new",
             "in_progress": "badge-progress",
@@ -605,19 +918,190 @@ class ComponentStyles:
             "closed": "badge-closed"
         }
         badge_class = badge_classes.get(status, "badge-new")
-        return f'<span class="badge {badge_class}">{label}</span>'
+        icons = {
+            "new": "🆕",
+            "in_progress": "⏳",
+            "won": "✅",
+            "closed": "🔒"
+        }
+        icon = icons.get(status, "")
+        return f'<span class="badge {badge_class}">{icon} {label}</span>'
     
     @staticmethod
     def render_colored_value(bg: str, color: str, text: str) -> str:
-        """Renderiza un valor con colores personalizados"""
-        return f'<span class="current-value" style="background: {bg}; color: {color};">{text}</span>'
+        """Renderiza un valor con colores personalizados y efectos"""
+        return f'''
+        <span class="current-value" style="
+            background: {bg}; 
+            color: {color};
+            box-shadow: 0 2px 8px {bg};
+            font-weight: 600;
+        ">{text}</span>
+        '''
     
     @staticmethod
-    def render_info_card(label: str, content: str) -> str:
-        """Renderiza una tarjeta de información"""
+    def render_info_card(label: str, content: str, icon: str = "ℹ️") -> str:
+        """Renderiza una tarjeta de información profesional"""
         return f"""
         <div class="info-card">
-            <div class="info-label">{label}</div>
+            <div class="info-label">
+                <span style="margin-right: 0.5rem;">{icon}</span>{label}
+            </div>
             {content}
         </div>
         """
+    
+    @staticmethod
+    def render_stat_card(title: str, value: str, change: str = "", 
+                        trend_positive: bool = True) -> str:
+        """Renderiza una tarjeta de estadística profesional"""
+        trend_icon = "📈" if trend_positive else "📉"
+        trend_color = "#34D399" if trend_positive else "#F87171"
+        
+        return f"""
+        <div style="
+            background: linear-gradient(135deg, var(--bg-card), rgba(22, 24, 28, 0.5));
+            border-radius: 12px;
+            padding: 1.2rem;
+            border-left: 4px solid var(--accent);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(59, 130, 246, 0.2)';"
+           onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+                        {title}
+                    </div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary);">
+                        {value}
+                    </div>
+                </div>
+                <div style="font-size: 1.5rem; color: {trend_color}; opacity: 0.8;">
+                    {trend_icon}
+                </div>
+            </div>
+            {f'<div style="margin-top: 0.75rem; font-size: 0.85rem; color: {trend_color};">{change}</div>' if change else ''}
+        </div>
+        """
+    
+    @staticmethod
+    def render_section_label(label: str, icon: str = "▪") -> str:
+        """Renderiza un label de sección profesional"""
+        return f"""
+        <div style="
+            padding: 0.75rem 1rem;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        ">
+            <span style="
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: var(--text-primary);
+            ">{icon} {label}</span>
+        </div>
+        """
+
+    @staticmethod
+    def render_gradient_separator() -> str:
+        """Renderiza un separador con gradiente"""
+        return """
+        <div style="
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin: 1.5rem 0;
+            border-radius: 1px;
+        "></div>
+        """
+
+
+class ThemeManager:
+    """Gestor de temas intercambiables"""
+    
+    @staticmethod
+    def get_dark_theme() -> Dict[str, str]:
+        """Tema oscuro (predeterminado)"""
+        return {
+            "primary": ColorScheme.ACCENT,
+            "background": ColorScheme.BG_PRIMARY,
+            "surface": ColorScheme.BG_CARD,
+            "text_primary": ColorScheme.TEXT_PRIMARY,
+            "text_secondary": ColorScheme.TEXT_SECONDARY,
+        }
+    
+    @staticmethod
+    def apply_theme(theme_name: str = "dark"):
+        """Aplica un tema"""
+        themes = {
+            "dark": ThemeManager.get_dark_theme(),
+        }
+        return themes.get(theme_name, themes["dark"])
+
+
+class BootstrapIntegration:
+    """Utilidades para integrar Bootstrap 5"""
+    
+    @staticmethod
+    def button_primary(text: str) -> str:
+        """Genera un botón Bootstrap primario"""
+        return f'<button class="btn btn-primary" style="width: 100%;">{text}</button>'
+    
+    @staticmethod
+    def button_secondary(text: str) -> str:
+        """Genera un botón Bootstrap secundario"""
+        return f'<button class="btn btn-outline-secondary" style="width: 100%;">{text}</button>'
+    
+    @staticmethod
+    def alert_success(message: str, icon: str = "✓") -> str:
+        """Alerta de éxito con Bootstrap"""
+        return f"""
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="
+            border-left: 4px solid #34D399;
+            background: rgba(52, 211, 153, 0.1);
+            color: #34D399;
+        ">
+            <strong>{icon} Éxito:</strong> {message}
+        </div>
+        """
+    
+    @staticmethod
+    def alert_error(message: str, icon: str = "✕") -> str:
+        """Alerta de error con Bootstrap"""
+        return f"""
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="
+            border-left: 4px solid #F87171;
+            background: rgba(248, 113, 113, 0.1);
+            color: #F87171;
+        ">
+            <strong>{icon} Error:</strong> {message}
+        </div>
+        """
+    
+    @staticmethod
+    def card(title: str, content: str, footer: str = "") -> str:
+        """Tarjeta Bootstrap profesional"""
+        footer_html = f'<div class="card-footer">{footer}</div>' if footer else ''
+        return f"""
+        <div class="card" style="
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+        ">
+            <div class="card-header" style="
+                background: linear-gradient(90deg, var(--bg-secondary), var(--bg-card));
+                border-bottom: 2px solid var(--accent);
+            ">
+                <h5 class="card-title" style="margin: 0; color: var(--text-primary);">{title}</h5>
+            </div>
+            <div class="card-body">
+                {content}
+            </div>
+            {footer_html}
+        </div>
+        """
+
