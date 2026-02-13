@@ -261,57 +261,37 @@ def render_metrics(tickets_df: pd.DataFrame):
 def render_ticket_card(ticket: Ticket):
     """Renderiza una tarjeta de ticket minimalista"""
     
-    try:
-        # Sanitizar y validar datos básicos
-        ticket_title = str(ticket.title or "Sin título").strip()
-        ticket_id = str(ticket.ticket_number or "SIN-ID").strip()
-        ticket_description = str(ticket.description or "").strip()
-        
-        # Extraer persona del título
-        title_parts = ticket_title.split(" - ")
-        display_title = (title_parts[0] or "Sin título").strip()
-        person = (title_parts[1] if len(title_parts) > 1 else "").strip()
-        
-        # Validar status
-        try:
-            status_enum = Status(ticket.status)
-            status_text = Status.display_names().get(status_enum, "Nuevo")
-            badge_class = f"badge-{ticket.status}"
-        except (ValueError, KeyError, AttributeError):
-            status_text = "Nuevo"
-            badge_class = "badge-new"
-        
-        # Validar priority
-        try:
-            priority_enum = Priority(ticket.priority)
-            priority_class = Priority.css_class().get(priority_enum, "medium")
-        except (ValueError, KeyError, AttributeError):
-            priority_class = "medium"
-        
-        # Escapar caracteres especiales en HTML
-        display_title = display_title.replace("<", "&lt;").replace(">", "&gt;")
-        person = person.replace("<", "&lt;").replace(">", "&gt;")
-        ticket_description = ticket_description.replace("<", "&lt;").replace(">", "&gt;")
-        
-        # Truncar descripción
-        desc_truncated = ticket_description[:100]
-        if len(ticket_description) > 100:
-            desc_truncated += "..."
-        
-        # HTML de la tarjeta
-        card_html = f"""
+    # Extraer persona del título
+    title_parts = ticket.title.split(" - ")
+    display_title = title_parts[0]
+    person = title_parts[1] if len(title_parts) > 1 else ""
+    
+    # Mapeo de estados
+    badge_map = {
+        "new": "badge-new",
+        "in_progress": "badge-progress",
+        "won": "badge-won",
+        "closed": "badge-closed"
+    }
+    status_text = Status.display_names().get(Status(ticket.status), "Nuevo")
+    
+    # Prioridad
+    priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
+    
+    # HTML de la tarjeta
+    card_html = f"""
     <div class="ticket-card">
         <div class="ticket-header">
-            <span class="ticket-id">#{ticket_id}</span>
+            <span class="ticket-id">#{ticket.ticket_number}</span>
             <div class="ticket-menu" id="menu-{ticket.id}">
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
         </div>
         <div class="ticket-title">{display_title}</div>
         {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
-        <div class="ticket-description">"{desc_truncated}"</div>
+        <div class="ticket-description">"{ticket.description[:100]}{'...' if len(ticket.description) > 100 else ''}"</div>
         <div class="ticket-footer">
-            <span class="badge {badge_class}">{status_text}</span>
+            <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
             <div class="priority-indicator">
                 <span class="priority-dot {priority_class}"></span>
                 <span style="color: var(--text-tertiary); font-size: 0.7rem;">{ticket.created_at[:10]}</span>
@@ -319,63 +299,52 @@ def render_ticket_card(ticket: Ticket):
         </div>
     </div>
     """
-        
-        st.markdown(card_html, unsafe_allow_html=True)
-        
-        # Popover para edición
-        with st.popover("Editar"):
-            st.markdown(f"### {ticket_id}")
-            st.caption(display_title)
-            
-            # Formulario de edición
-            try:
-                status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-            except (ValueError, KeyError, AttributeError):
-                status_label = "Nuevo"
-            
-            try:
-                priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-            except (ValueError, KeyError, AttributeError):
-                priority_label = "Media"
-            
-            new_status = st.selectbox(
-                "Estado",
-                list(Status.display_names().values()),
-                index=list(Status.display_names().values()).index(status_label),
-                key=f"status_{ticket.id}"
-            )
-            
-            new_priority = st.selectbox(
-                "Prioridad",
-                list(Priority.display_names().values()),
-                index=list(Priority.display_names().values()).index(priority_label),
-                key=f"priority_{ticket.id}"
-            )
-            
-            new_notes = st.text_area(
-                "Notas",
-                value=ticket.notes or "",
-                placeholder="Añade notas internas...",
-                key=f"notes_{ticket.id}"
-            )
-            
-            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
-                supabase = SupabaseService()
-                if supabase.update_ticket(
-                    ticket.id,
-                    Status.from_display(new_status),
-                    new_notes,
-                    Priority.from_display(new_priority)
-                ):
-                    st.success("✓ Actualizado")
-                    time.sleep(0.5)
-                    st.rerun()
-                else:
-                    st.error("Error al guardar")
     
-    except Exception as e:
-        # Si algo falla, mostrar un mensaje de error transparente
-        st.warning(f"⚠️ Error al renderizar ticket {ticket.ticket_number}: {str(e)[:80]}")
+    st.markdown(card_html, unsafe_allow_html=True)
+    
+    # Popover para edición
+    with st.popover("Editar"):
+        st.markdown(f"### {ticket.ticket_number}")
+        st.caption(display_title)
+        
+        # Formulario de edición
+        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+        
+        new_status = st.selectbox(
+            "Estado",
+            list(Status.display_names().values()),
+            index=list(Status.display_names().values()).index(status_label),
+            key=f"status_{ticket.id}"
+        )
+        
+        new_priority = st.selectbox(
+            "Prioridad",
+            list(Priority.display_names().values()),
+            index=list(Priority.display_names().values()).index(priority_label),
+            key=f"priority_{ticket.id}"
+        )
+        
+        new_notes = st.text_area(
+            "Notas",
+            value=ticket.notes,
+            placeholder="Añade notas internas...",
+            key=f"notes_{ticket.id}"
+        )
+        
+        if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+            supabase = SupabaseService()
+            if supabase.update_ticket(
+                ticket.id,
+                Status.from_display(new_status),
+                new_notes,
+                Priority.from_display(new_priority)
+            ):
+                st.success("✓ Actualizado")
+                time.sleep(0.5)
+                st.rerun()
+            else:
+                st.error("Error al guardar")
 
 
 def render_tickets_grid(tickets_df: pd.DataFrame):
