@@ -1,5 +1,5 @@
 # ============================================================================
-# CONFIGURACIÓN DE ESTILOS Y TEMAS - VERSIÓN 2025
+# CONFIGURACIÓN DE ESTILOS Y TEMAS - VERSIÓN FINAL
 # ============================================================================
 
 from dataclasses import dataclass
@@ -66,6 +66,7 @@ class DesignTokens:
     radius_md: str = "0.5rem"    # 8px
     radius_lg: str = "0.75rem"   # 12px
     radius_xl: str = "1rem"      # 16px
+    radius_xxl: str = "1.25rem"  # 20px
     radius_full: str = "9999px"
     
     # Shadows
@@ -73,6 +74,7 @@ class DesignTokens:
     shadow_md: str = "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
     shadow_lg: str = "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
     shadow_xl: str = "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+    shadow_hover: str = "0 25px 50px -12px rgba(59, 130, 246, 0.3)"
     
     # Transitions
     transition_base: str = "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -137,11 +139,11 @@ class Theme:
 
 
 # ----------------------------------------------------------------------------
-# GENERADOR DE CSS MODERNO
+# GENERADOR DE CSS MODERNO - VERSIÓN COMPLETA
 # ----------------------------------------------------------------------------
 
 def generate_global_styles(theme: str = "dark") -> str:
-    """Genera CSS moderno con variables CSS y diseño system-ui"""
+    """Genera CSS moderno con todos los estilos optimizados"""
     
     colors = Theme.dark() if theme == "dark" else Theme.light()
     
@@ -170,6 +172,7 @@ def generate_global_styles(theme: str = "dark") -> str:
             --radius-md: {TOKENS.radius_md};
             --radius-lg: {TOKENS.radius_lg};
             --radius-xl: {TOKENS.radius_xl};
+            --radius-xxl: {TOKENS.radius_xxl};
             --radius-full: {TOKENS.radius_full};
             
             /* Shadows */
@@ -177,6 +180,7 @@ def generate_global_styles(theme: str = "dark") -> str:
             --shadow-md: {TOKENS.shadow_md};
             --shadow-lg: {TOKENS.shadow_lg};
             --shadow-xl: {TOKENS.shadow_xl};
+            --shadow-hover: {TOKENS.shadow_hover};
             
             /* Transitions */
             --transition-base: {TOKENS.transition_base};
@@ -273,89 +277,59 @@ def generate_global_styles(theme: str = "dark") -> str:
         }}
         
         /* ------------------------------------------------------------------
-           TARJETAS MODERNAS - GLASSMORPHISM
+           GRID DE TARJETAS
+        ------------------------------------------------------------------ */
+        div.row-widget.stHorizontal {{
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }}
+        
+        /* ------------------------------------------------------------------
+           TARJETAS COMPACTAS
         ------------------------------------------------------------------ */
         .ticket-card {{
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            overflow: hidden;
-            margin-bottom: var(--space-4);
+            padding: 0.85rem;
             transition: var(--transition-base);
-            backdrop-filter: blur(8px);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }}
         
         .ticket-card:hover {{
             border-color: var(--border-hover);
-            box-shadow: var(--shadow-lg);
-            background: var(--bg-card-hover);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+            background: linear-gradient(145deg, var(--bg-card), #1A1E24);
         }}
         
         .ticket-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--space-4);
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(to right, var(--bg-tertiary), transparent);
+            margin-bottom: 0.4rem;
         }}
         
         .ticket-number {{
             font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--primary);
-            letter-spacing: -0.01em;
-        }}
-        
-        .ticket-body {{
-            padding: var(--space-4);
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            letter-spacing: 0.02em;
         }}
         
         .ticket-title {{
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 450;
             color: var(--text-primary);
-            margin-bottom: var(--space-2);
-        }}
-        
-        .ticket-description {{
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: var(--space-4);
-        }}
-        
-        /* ------------------------------------------------------------------
-           GRID DE METADATOS
-        ------------------------------------------------------------------ */
-        .meta-grid {{
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-4);
-            background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            padding: var(--space-4);
-            margin-bottom: var(--space-4);
-        }}
-        
-        .meta-item {{
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-        }}
-        
-        .meta-label {{
-            color: var(--text-tertiary);
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }}
-        
-        .meta-value {{
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 0.9rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2rem;
         }}
         
         /* ------------------------------------------------------------------
@@ -364,77 +338,282 @@ def generate_global_styles(theme: str = "dark") -> str:
         .badge {{
             display: inline-flex;
             align-items: center;
-            padding: var(--space-1) var(--space-3);
-            border-radius: var(--radius-full);
-            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
+            letter-spacing: 0.03em;
             border: 1px solid transparent;
+            white-space: nowrap;
         }}
         
-        .badge-new {{
-            background: {TOKENS.danger}10;
-            color: {TOKENS.danger};
-            border-color: {TOKENS.danger}20;
+        .badge-new {{ 
+            background: rgba(239,68,68,0.08); 
+            color: #F87171; 
+            border-color: rgba(239,68,68,0.2); 
         }}
         
-        .badge-progress {{
-            background: {TOKENS.warning}10;
-            color: {TOKENS.warning};
-            border-color: {TOKENS.warning}20;
+        .badge-progress {{ 
+            background: rgba(245,158,11,0.08); 
+            color: #FBBF24; 
+            border-color: rgba(245,158,11,0.2); 
         }}
         
-        .badge-won {{
-            background: {TOKENS.success}10;
-            color: {TOKENS.success};
-            border-color: {TOKENS.success}20;
+        .badge-won {{ 
+            background: rgba(16,185,129,0.08); 
+            color: #34D399; 
+            border-color: rgba(16,185,129,0.2); 
         }}
         
-        .badge-closed {{
-            background: {TOKENS.gray_500}10;
-            color: var(--text-tertiary);
-            border-color: {TOKENS.gray_500}20;
+        .badge-closed {{ 
+            background: rgba(107,114,128,0.08); 
+            color: #9CA3AF; 
+            border-color: rgba(107,114,128,0.2); 
         }}
         
         /* ------------------------------------------------------------------
-           BOTONES MODERNOS
+           MODAL CENTRADO
         ------------------------------------------------------------------ */
-        .stButton > button {{
-            font-family: var(--font-sans);
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: var(--space-2) var(--space-4);
-            border-radius: var(--radius-md);
-            background: var(--primary);
-            color: white;
-            border: none;
-            transition: var(--transition-base);
-            box-shadow: var(--shadow-sm);
+        div[data-testid="stDialog"] {{
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 1rem 0 !important;
         }}
         
-        .stButton > button:hover {{
-            background: var(--primary-hover);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
+        div[data-testid="stDialog"] > div {{
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 20px !important;
+            padding: 1.5rem 1.75rem !important;
+            box-shadow: var(--shadow-xl) !important;
+            max-width: 600px !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
         }}
         
-        .stButton > button:active {{
-            transform: translateY(0);
+        div[data-testid="stDialog"] [data-testid="stMarkdownContainer"] h2 {{
+            display: none !important;
         }}
         
-        /* Botón secundario */
-        .stButton > button[kind="secondary"] {{
-            background: transparent;
-            color: var(--text-secondary);
+        /* ------------------------------------------------------------------
+           MODAL HEADER
+        ------------------------------------------------------------------ */
+        .modal-header {{
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }}
+        
+        .modal-title {{
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+        }}
+        
+        .modal-date {{
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 16px;
             border: 1px solid var(--border);
         }}
         
-        .stButton > button[kind="secondary"]:hover {{
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: var(--border-hover);
+        /* ------------------------------------------------------------------
+           DESCRIPCIÓN
+        ------------------------------------------------------------------ */
+        .section-title {{
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }}
+        
+        .description-box {{
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.9rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }}
+        
+        /* ------------------------------------------------------------------
+           ESTADO Y PRIORIDAD
+        ------------------------------------------------------------------ */
+        .status-priority-grid {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }}
+        
+        .info-card {{
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 0.9rem;
+            border: 1px solid var(--border);
+        }}
+        
+        .info-label {{
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+        }}
+        
+        .current-value {{
+            display: inline-block;
+            padding: 0.2rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }}
+        
+        .select-label {{
+            font-size: 0.6rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.2rem;
+        }}
+        
+        /* ------------------------------------------------------------------
+           SELECT BOXES
+        ------------------------------------------------------------------ */
+        .stSelectbox {{
+            margin-bottom: 0.25rem !important;
+        }}
+        
+        .stSelectbox [data-baseweb="select"] {{
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 8px !important;
+            min-height: 2rem !important;
+            transition: var(--transition-base) !important;
+        }}
+        
+        .stSelectbox [data-baseweb="select"]:hover {{
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px {TOKENS.primary_500}20 !important;
+        }}
+        
+        /* ------------------------------------------------------------------
+           TEXT AREA
+        ------------------------------------------------------------------ */
+        .stTextArea {{
+            margin-top: 0.25rem;
+        }}
+        
+        .stTextArea textarea {{
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 12px !important;
+            color: var(--text-primary) !important;
+            font-size: 0.8rem !important;
+            line-height: 1.5 !important;
+            padding: 0.75rem !important;
+            min-height: 120px !important;
+            max-height: 150px !important;
+            font-family: var(--font-mono) !important;
+            transition: var(--transition-base) !important;
+        }}
+        
+        .stTextArea textarea:hover {{
+            border-color: var(--border-hover) !important;
+        }}
+        
+        .stTextArea textarea:focus {{
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px {TOKENS.primary_500}20 !important;
+        }}
+        
+        /* ------------------------------------------------------------------
+           BOTONES CON HOVER MEJORADOS
+        ------------------------------------------------------------------ */
+        .stButton > button {{
+            border-radius: 8px !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.75rem !important;
+            transition: var(--transition-base) !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.02em !important;
+            width: 100% !important;
+            background: transparent !important;
+            color: var(--text-secondary) !important;
+            border: 1px solid var(--border) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }}
+        
+        .stButton > button:hover {{
+            background: var(--primary-soft) !important;
+            border-color: var(--primary) !important;
+            color: var(--primary) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px {TOKENS.primary_500}30 !important;
+        }}
+        
+        .stButton > button:active {{
+            transform: translateY(0) !important;
+        }}
+        
+        /* Botón ACTUALIZAR */
+        .stButton > button[key*="ACTUALIZAR"] {{
+            background: transparent !important;
+            border: 1px solid var(--border) !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.8rem !important;
+        }}
+        
+        .stButton > button[key*="ACTUALIZAR"]:hover {{
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px {TOKENS.primary_500}40 !important;
+        }}
+        
+        /* Botón Guardar (primario) */
+        .stButton > button[kind="primary"] {{
+            background: var(--primary) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 2px 8px {TOKENS.primary_500}30 !important;
+        }}
+        
+        .stButton > button[kind="primary"]:hover {{
+            background: var(--primary-hover) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px {TOKENS.primary_500}50 !important;
+        }}
+        
+        /* Botón Cancelar */
+        .stButton > button:not([kind="primary"]) {{
+            background: transparent !important;
+            color: var(--text-secondary) !important;
+            border: 1px solid var(--border) !important;
+        }}
+        
+        .stButton > button:not([kind="primary"]):hover {{
+            background: var(--bg-secondary) !important;
+            border-color: var(--border-hover) !important;
+            color: var(--text-primary) !important;
         }}
         
         /* ------------------------------------------------------------------
@@ -443,19 +622,19 @@ def generate_global_styles(theme: str = "dark") -> str:
         [data-testid="metric-container"] {{
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: var(--space-4);
-            transition: var(--transition-base);
+            border-radius: 12px;
+            padding: 0.6rem;
+            transition: var(--transition-base) !important;
         }}
         
         [data-testid="metric-container"]:hover {{
-            border-color: var(--border-hover);
-            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
         }}
         
         [data-testid="metric-container"] label {{
             color: var(--text-tertiary) !important;
-            font-size: 0.75rem !important;
+            font-size: 0.6rem !important;
             font-weight: 600 !important;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -464,43 +643,22 @@ def generate_global_styles(theme: str = "dark") -> str:
         [data-testid="metric-container"] [data-testid="metric-value"] {{
             color: var(--text-primary) !important;
             font-weight: 600 !important;
-            font-size: 1.5rem !important;
-        }}
-        
-        /* ------------------------------------------------------------------
-           INPUTS Y SELECTS
-        ------------------------------------------------------------------ */
-        .stSelectbox [data-baseweb="select"] {{
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            transition: var(--transition-base);
-        }}
-        
-        .stSelectbox [data-baseweb="select"]:hover {{
-            border-color: var(--border-hover);
-        }}
-        
-        .stSelectbox [data-baseweb="select"]:focus {{
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px {TOKENS.primary_500}20;
+            font-size: 1.1rem !important;
         }}
         
         /* ------------------------------------------------------------------
            EXPANDER
         ------------------------------------------------------------------ */
         .streamlit-expanderHeader {{
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: var(--transition-base);
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 8px !important;
+            transition: var(--transition-base) !important;
         }}
         
         .streamlit-expanderHeader:hover {{
-            background: var(--bg-card-hover);
-            border-color: var(--border-hover);
+            border-color: var(--border-hover) !important;
+            background: var(--bg-secondary) !important;
         }}
         
         /* ------------------------------------------------------------------
@@ -508,8 +666,9 @@ def generate_global_styles(theme: str = "dark") -> str:
         ------------------------------------------------------------------ */
         hr {{
             border: none;
-            border-top: 1px solid var(--border);
-            margin: var(--space-6) 0;
+            height: 1px;
+            background: var(--border);
+            margin: 1rem 0;
         }}
         
         /* ------------------------------------------------------------------
@@ -528,121 +687,6 @@ def generate_global_styles(theme: str = "dark") -> str:
 
 
 # ----------------------------------------------------------------------------
-# COMPONENTES REUTILIZABLES
-# ----------------------------------------------------------------------------
-
-class StatusBadge:
-    """Componente de badge de estado"""
-    
-    STATUS_CONFIG = {
-        "new": {"class": "badge-new", "label": "Nuevo", "icon": "🆕"},
-        "in_progress": {"class": "badge-progress", "label": "En progreso", "icon": "⚡"},
-        "won": {"class": "badge-won", "label": "Ganado", "icon": "🎯"},
-        "closed": {"class": "badge-closed", "label": "Cerrado", "icon": "✅"},
-    }
-    
-    @classmethod
-    def render(cls, status: str) -> str:
-        config = cls.STATUS_CONFIG.get(status, cls.STATUS_CONFIG["new"])
-        return f'<span class="badge {config["class"]}">{config["icon"]} {config["label"]}</span>'
-
-
-class PriorityIndicator:
-    """Indicador de prioridad minimalista"""
-    
-    PRIORITY_CONFIG = {
-        "High": {"color": "#DC2626", "dot": "🔴", "label": "Alta"},
-        "Medium": {"color": "#D97706", "dot": "🟡", "label": "Media"},
-        "Low": {"color": "#059669", "dot": "🟢", "label": "Baja"},
-    }
-    
-    @classmethod
-    def render(cls, priority: str) -> str:
-        config = cls.PRIORITY_CONFIG.get(priority, cls.PRIORITY_CONFIG["Medium"])
-        return f'<span style="display: flex; align-items: center; gap: 4px;"><span style="color: {config["color"]};">{config["dot"]}</span> {config["label"]}</span>'
-
-
-# ----------------------------------------------------------------------------
-# FACTORY DE TARJETAS
-# ----------------------------------------------------------------------------
-
-class TicketCardFactory:
-    """Factory para crear tarjetas de tickets"""
-    
-    @staticmethod
-    def create(
-        ticket_num: str,
-        title: str,
-        description: str,
-        status: str,
-        priority: str,
-        created_at: str,
-        recording_id: str,
-        notes: str = ""
-    ) -> str:
-        """Crea una tarjeta de ticket moderna"""
-        
-        # Sanitizar y truncar
-        description = (description or "").replace('"', '&quot;').strip()
-        if len(description) > 200:
-            description = description[:200] + "..."
-            
-        notes = (notes or "").replace('"', '&quot;').strip()
-        if len(notes) > 150:
-            notes = notes[:150] + "..."
-        
-        # Formatear fecha
-        created_date = created_at[:10] if created_at else "N/A"
-        
-        # Truncar ID de grabación
-        recording_short = str(recording_id)[:8] if recording_id else "N/A"
-        
-        # Generar componentes
-        status_badge = StatusBadge.render(status)
-        priority_indicator = PriorityIndicator.render(priority)
-        
-        return f"""
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <span class="ticket-number">#{ticket_num}</span>
-                {status_badge}
-            </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-title">{title}</div>
-                <div class="ticket-description">{description}</div>
-                
-                <div class="meta-grid">
-                    <div class="meta-item">
-                        <span class="meta-label">Prioridad</span>
-                        <span class="meta-value">{priority_indicator}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Creado</span>
-                        <span class="meta-value">{created_date}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Grabación</span>
-                        <span class="meta-value" title="{recording_id}">{recording_short}...</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Ticket ID</span>
-                        <span class="meta-value">#{ticket_num}</span>
-                    </div>
-                </div>
-                
-                <div style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border);">
-                    <span style="color: var(--text-tertiary); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Notas</span>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: var(--space-2); line-height: 1.6;">
-                        {notes if notes else '<span style="color: var(--text-disabled);">Sin notas registradas</span>'}
-                    </p>
-                </div>
-            </div>
-        </div>
-        """
-
-
-# ----------------------------------------------------------------------------
 # FUNCIÓN PRINCIPAL DE INICIALIZACIÓN
 # ----------------------------------------------------------------------------
 
@@ -654,29 +698,35 @@ def init_design_system(theme: str = "dark") -> None:
 
 
 # ----------------------------------------------------------------------------
-# EJEMPLO DE USO
+# COMPONENTES REUTILIZABLES (OPCIONALES - Comenta si no los usas)
 # ----------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    # Ejemplo de cómo usar en Streamlit
-    st.set_page_config(page_title="Dashboard Moderno", layout="wide")
+class StatusBadge:
+    """Componente de badge de estado"""
     
-    # Inicializar diseño
-    init_design_system(theme="dark")
+    STATUS_CONFIG = {
+        "new": {"class": "badge-new", "label": "NUEVO", "icon": ""},
+        "in_progress": {"class": "badge-progress", "label": "PROGRESO", "icon": ""},
+        "won": {"class": "badge-won", "label": "GANADO", "icon": ""},
+        "closed": {"class": "badge-closed", "label": "CERRADO", "icon": ""},
+    }
     
-    # Título
-    st.title("Dashboard de Tickets")
+    @classmethod
+    def render(cls, status: str) -> str:
+        config = cls.STATUS_CONFIG.get(status, cls.STATUS_CONFIG["new"])
+        return f'<span class="badge {config["class"]}">{config["label"]}</span>'
+
+
+class PriorityIndicator:
+    """Indicador de prioridad minimalista"""
     
-    # Ejemplo de tarjeta
-    card = TicketCardFactory.create(
-        ticket_num="479",
-        title="[IA] Infraestructura - Jaime",
-        description="Estimamos que necesitamos unos $75,000 para invertir en nuevas herramientas en software.",
-        status="new",
-        priority="Low",
-        created_at="2026-02-13",
-        recording_id="39856553-09d2-46f8-9b88-04fde06cc561",
-        notes="hola | ✨ Tema: Infraestructura | 🏠 Descripción: Recursos tecnológicos, herramientas, sistemas"
-    )
+    PRIORITY_CONFIG = {
+        "High": {"color": "#F87171", "label": "Alta"},
+        "Medium": {"color": "#FBBF24", "label": "Media"},
+        "Low": {"color": "#34D399", "label": "Baja"},
+    }
     
-    st.markdown(card, unsafe_allow_html=True)
+    @classmethod
+    def render(cls, priority: str) -> str:
+        config = cls.PRIORITY_CONFIG.get(priority, cls.PRIORITY_CONFIG["Medium"])
+        return f'<span style="color: {config["color"]}; font-weight: 600;">{config["label"]}</span>'
