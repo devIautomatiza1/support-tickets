@@ -315,7 +315,7 @@ def render_ticket_card(ticket: Ticket):
     display_title = escape_html(sanitize_text(title_parts[0]))
     person = escape_html(sanitize_text(title_parts[1])) if len(title_parts) > 1 else ""
     
-    # Limpiar descripción - NO escapar aquí, solo sanitizar
+    # Limpiar descripción
     desc = sanitize_text(ticket.description)
     desc_preview = escape_html(desc[:100])
     
@@ -334,19 +334,19 @@ def render_ticket_card(ticket: Ticket):
     # Clase adicional si está malformado
     malformed_class = " ticket-card-warning" if is_malformed else ""
     
-    # HTML de la tarjeta
+    # HTML de la tarjeta con escape de HTML
     card_html = f"""
     <div class="ticket-card{malformed_class}">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
-            {'<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''}
+            {f'<span class="ticket-warning" title="Datos incompletos">⚠️</span>' if is_malformed else ''}
             <div class="ticket-menu" id="menu-{ticket.id}">
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
         </div>
         <div class="ticket-title">{display_title}</div>
-        {'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> ' + person + '</div>' if person else ''}
-        <div class="ticket-description">\"{desc_preview}{'...' if len(desc) > 100 else ''}\"</div>
+        {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
+        <div class="ticket-description">"{desc_preview}{'...' if len(desc) > 100 else ''}"</div>
         <div class="ticket-footer">
             <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
             <div class="priority-indicator">
