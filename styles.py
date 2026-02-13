@@ -362,8 +362,18 @@ class StyleManager:
             }
 
             /* ===== BOTÓN INVISIBLE PARA CLICK DETECTION ===== */
-            [data-testid="stVerticalBlock"] > div > .stButton > button[aria-label=""] {
-                display: none !important;
+            .stContainer > .stButton > button {
+                background: transparent !important;
+                border: none !important;
+                color: transparent !important;
+                padding: 0 !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .stContainer > .stButton > button:hover {
+                background: transparent !important;
             }
 
             /* ===== CONNECTION STATUS ===== */
