@@ -354,10 +354,7 @@ def render_ticket_card(ticket: Ticket):
 
     # Renderizado HTML (Mantenemos la lógica pero con datos limpios)
     card_html = f"""
-    <div class="ticket-card ticket-card-interactive" id="card-{ticket.id}" data-ticket-id="{ticket.id}">
-        <div class="ticket-overlay"></div>
-        <div class="ticket-edit-hint">Editar</div>
-        
+    <div class="ticket-card">
         <div class="ticket-header">
             <span class="ticket-id">#{ticket.ticket_number}</span>
             <div class="ticket-menu" id="menu-{ticket.id}">
