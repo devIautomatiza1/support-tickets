@@ -64,25 +64,20 @@ class StyleManager:
 
             /* ===== TARJETAS DE TICKETS (PREMIUM) ===== */
             .ticket-card {
-                display: flex;
-                flex-direction: column;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-medium);
                 border-radius: 12px;
                 padding: 1.5rem;
                 transition: all 0.2s ease;
                 position: relative;
                 margin-bottom: 1.25rem;
-                min-height: 250px;
-                justify-content: space-between;
-                overflow: hidden;
             }
 
             .ticket-card:hover {
-                background: rgba(255, 255, 255, 0.06);
-                border-color: #3b82f6;
+                background: var(--bg-tertiary);
+                border-color: rgba(255, 255, 255, 0.12);
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px -4px rgba(59, 130, 246, 0.2);
+                box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3);
             }
 
             /* ===== TICKET CARD CLICKEABLE ===== */
@@ -212,23 +207,20 @@ class StyleManager:
                 color: var(--text-tertiary);
                 line-height: 1.4;
                 margin-bottom: 1rem;
-                flex: 1;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 word-break: break-word;
-                min-height: 2.8em;
             }
 
             .ticket-footer {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-top: auto;
+                margin-top: 1rem;
                 padding-top: 0.75rem;
                 border-top: 1px solid var(--border-light);
-                flex-shrink: 0;
             }
 
             /* ===== BADGES (PILL STYLE MINIMALISTA) ===== */
