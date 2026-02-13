@@ -283,7 +283,7 @@ def render_ticket_card(ticket: Ticket):
     # Botón invisible para capturar click
     col1, col2, col3 = st.columns([1, 10, 1])
     with col2:
-        if st.button("_", key=f"open_{ticket.id}", use_container_width=True):
+        if st.button("", key=f"open_{ticket.id}", use_container_width=True, label_visibility="collapsed"):
             st.session_state[ticket_key] = True
     
     # Popover para edición - se abre si se detectó el click
