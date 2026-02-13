@@ -263,14 +263,14 @@ with col1:
     st.metric("Total", len(all_tickets) if not all_tickets.empty else 0)
 
 if not all_tickets.empty:
-    abiertos = len(all_tickets[all_tickets["status"].str.lower() == "abierto"])
-    en_progreso = len(all_tickets[all_tickets["status"].str.lower() == "en progreso"])
-    cerrados = len(all_tickets[all_tickets["status"].str.lower() == "cerrado"])
+    nuevos = len(all_tickets[all_tickets["status"] == "new"])
+    en_progreso = len(all_tickets[all_tickets["status"] == "in_progress"])
+    ganados = len(all_tickets[all_tickets["status"] == "won"])
     
     with col2:
-        st.metric("Abiertos", abiertos)
+        st.metric("🆕 Nuevos", nuevos)
     with col3:
-        st.metric("🔒", cerrados)
+        st.metric("🎉 Ganados", ganados)
 
 # ============================================================================
 # CONTENIDO PRINCIPAL - VISTA DE TARJETAS
@@ -292,28 +292,46 @@ else:
     for idx, ticket in tickets.iterrows():
         with st.container():
             # Determinar color de estado
-            status_lower = str(ticket.get("status", "")).lower()
-            if "abierto" in status_lower:
+            status_value = str(ticket.get("status", "")).lower()
+            if status_value == "new":
                 status_class = "status-open"
-                status_icon = "🔴"
-            elif "progreso" in status_lower:
+                status_icon = "🆕"
+                status_label = "Nuevo"
+            elif status_value == "in_progress":
                 status_class = "status-progress"
-                status_icon = "🟡"
-            else:
+                status_icon = "⏳"
+                status_label = "En progreso"
+            elif status_value == "closed":
                 status_class = "status-closed"
-                status_icon = "🟢"
+                status_icon = "✅"
+                status_label = "Cerrado"
+            elif status_value == "won":
+                status_class = "status-closed"
+                status_icon = "🎉"
+                status_label = "Ganado"
+            else:
+                status_class = "status-open"
+                status_icon = "❓"
+                status_label = status_value
             
             # Determinar color de prioridad
-            priority_lower = str(ticket.get("priority", "")).lower()
-            if "alta" in priority_lower:
+            priority_value = str(ticket.get("priority", "")).lower()
+            if priority_value == "high":
                 priority_class = "priority-high"
                 priority_icon = "⚠️"
-            elif "media" in priority_lower:
+                priority_label = "Alta"
+            elif priority_value == "medium":
                 priority_class = "priority-medium"
                 priority_icon = "📌"
-            else:
+                priority_label = "Media"
+            elif priority_value == "low":
                 priority_class = "priority-low"
-                priority_icon = "✅"
+                priority_icon = "📍"
+                priority_label = "Baja"
+            else:
+                priority_class = "priority-medium"
+                priority_icon = "❓"
+                priority_label = priority_value
             
             # Crear columnas para la tarjeta
             col1, col2 = st.columns([0.1, 0.9])
@@ -330,7 +348,7 @@ else:
                             <p style="margin: 5px 0; color: rgba(255,255,255,0.7); font-size: 0.9em;">{ticket.get('description', '')}</p>
                         </div>
                         <div style="text-align: right;">
-                            <span class="status-badge {status_class}">{status_icon} {ticket.get('status', 'N/A')}</span>
+                            <span class="status-badge {status_class}">{status_icon} {status_label}</span>
                         </div>
                     </div>
                     
@@ -359,20 +377,26 @@ else:
                 edit_col1, edit_col2 = st.columns(2)
                 
                 with edit_col1:
-                    new_status = st.selectbox(
+                    status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+                    current_status_label = {"new": "Nuevo", "in_progress": "En progreso", "closed": "Cerrado", "won": "Ganado"}.get(ticket.get('status', 'new'), "Nuevo")
+                    status_display = st.selectbox(
                         "Cambiar Estado",
-                        ["Abierto", "En progreso", "Cerrado"],
-                        index=0,
+                        list(status_map.keys()),
+                        index=list(status_map.keys()).index(current_status_label) if current_status_label in status_map.keys() else 0,
                         key=f"status_{ticket.get('id')}"
                     )
+                    new_status = status_map[status_display]
                 
                 with edit_col2:
-                    new_priority = st.selectbox(
+                    priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+                    current_priority_label = {"Low": "Baja", "Medium": "Media", "High": "Alta"}.get(ticket.get('priority', 'Medium'), "Media")
+                    priority_display = st.selectbox(
                         "Prioridad",
-                        ["Baja", "Media", "Alta"],
-                        index=0,
+                        list(priority_map.keys()),
+                        index=list(priority_map.keys()).index(current_priority_label) if current_priority_label in priority_map.keys() else 0,
                         key=f"priority_{ticket.get('id')}"
                     )
+                    new_priority = priority_map[priority_display]
                 
                 new_notes = st.text_area(
                     "Agregar Notas",
