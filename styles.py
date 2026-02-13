@@ -62,22 +62,21 @@ class StyleManager:
                 padding: 1.5rem 1rem !important;
             }
 
-            /* ===== TARJETAS DE TICKETS (PREMIUM) ===== */
+            /* ===== TARJETAS DE TICKETS ===== */
             .ticket-card {
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-medium);
-                border-radius: 12px;
-                padding: 1.5rem;
+                border-radius: 16px;
+                padding: 1.25rem;
                 transition: all 0.2s ease;
                 position: relative;
-                margin-bottom: 1.25rem;
+                margin-bottom: 1rem;
             }
 
             .ticket-card:hover {
                 background: var(--bg-tertiary);
-                border-color: rgba(255, 255, 255, 0.12);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3);
+                border-color: var(--border-accent);
+                transform: translateY(-1px);
             }
 
             /* ===== TICKET CARD CLICKEABLE ===== */
@@ -127,30 +126,16 @@ class StyleManager:
 
             .ticket-header {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
-                margin-bottom: 0.75rem;
+                margin-bottom: 1rem;
             }
 
             .ticket-id {
-                font-size: 0.72rem;
-                font-weight: 500;
+                font-size: 0.75rem;
+                font-weight: 600;
                 color: var(--text-tertiary);
-                letter-spacing: 0.01em;
-            }
-            
-            .ticket-menu {
-                opacity: 0;
-                transition: opacity 0.2s ease;
-                cursor: pointer;
-                color: var(--text-tertiary);
-                font-size: 1.2rem;
-                transition: all 0.2s ease;
-            }
-            
-            .ticket-card:hover .ticket-menu {
-                opacity: 1;
-                color: var(--text-secondary);
+                letter-spacing: 0.02em;
             }
 
             /* ===== BOTÓN DE EDICIÓN MEJORADO ===== */
@@ -186,78 +171,73 @@ class StyleManager:
             }
 
             .ticket-title {
-                font-size: 0.95rem;
+                font-size: 1rem;
                 font-weight: 600;
                 color: var(--text-primary);
-                margin-bottom: 0.4rem;
-                line-height: 1.3;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
             }
 
             .ticket-person {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 color: var(--text-secondary);
                 margin-bottom: 0.75rem;
                 display: flex;
                 align-items: center;
-                gap: 0.3rem;
+                gap: 0.25rem;
             }
 
             .ticket-description {
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 color: var(--text-tertiary);
-                line-height: 1.4;
+                line-height: 1.5;
                 margin-bottom: 1rem;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
-                word-break: break-word;
             }
 
             .ticket-footer {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-top: 1rem;
-                padding-top: 0.75rem;
-                border-top: 1px solid var(--border-light);
+                margin-top: 0.75rem;
             }
 
-            /* ===== BADGES (PILL STYLE MINIMALISTA) ===== */
+            /* ===== BADGES ===== */
             .badge {
                 display: inline-flex;
                 align-items: center;
-                padding: 0.3rem 0.65rem;
-                border-radius: 12px;
-                font-size: 0.68rem;
-                font-weight: 500;
-                letter-spacing: 0.01em;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                letter-spacing: 0.02em;
                 border: 1px solid;
-                text-transform: uppercase;
-                backdrop-filter: blur(1px);
             }
 
             .badge-new {
-                background: rgba(239, 68, 68, 0.08);
-                border-color: rgba(239, 68, 68, 0.15);
-                color: #EC8787;
+                background: rgba(239, 68, 68, 0.1);
+                border-color: rgba(239, 68, 68, 0.2);
+                color: #FCA5A5;
             }
 
             .badge-progress {
-                background: rgba(245, 158, 11, 0.08);
-                border-color: rgba(245, 158, 11, 0.15);
-                color: #F5D547;
+                background: rgba(245, 158, 11, 0.1);
+                border-color: rgba(245, 158, 11, 0.2);
+                color: #FCD34D;
             }
 
             .badge-won {
-                background: rgba(16, 185, 129, 0.08);
-                border-color: rgba(16, 185, 129, 0.15);
-                color: #5EE8B7;
+                background: rgba(16, 185, 129, 0.1);
+                border-color: rgba(16, 185, 129, 0.2);
+                color: #6EE7B7;
             }
 
             .badge-closed {
-                background: rgba(107, 114, 128, 0.08);
-                border-color: rgba(107, 114, 128, 0.15);
+                background: rgba(107, 114, 128, 0.1);
+                border-color: rgba(107, 114, 128, 0.2);
                 color: #9CA3AF;
             }
 
@@ -278,54 +258,39 @@ class StyleManager:
             .priority-dot.medium { background: var(--warning); }
             .priority-dot.low { background: var(--success); }
 
-            /* ===== STAT CARDS (HORIZONTAL PREMIUM) ===== */
+            /* ===== STAT CARDS ===== */
             .stat-card {
-                background: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                padding: 1rem 1.25rem;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                backdrop-filter: blur(3px);
-                transition: all 0.2s ease;
-            }
-            
-            .stat-card:hover {
-                border-color: rgba(255, 255, 255, 0.15);
-                background: rgba(255, 255, 255, 0.02);
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-medium);
+                border-radius: 16px;
+                padding: 1.25rem;
             }
 
             .stat-card-header {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                flex-shrink: 0;
+                margin-bottom: 0.75rem;
             }
 
             .stat-icon {
-                color: var(--accent);
-                font-size: 1.2rem;
+                color: var(--text-tertiary);
+                font-size: 1rem;
             }
 
             .stat-label {
-                font-size: 0.7rem;
-                font-weight: 500;
+                font-size: 0.75rem;
+                font-weight: 600;
                 color: var(--text-tertiary);
                 text-transform: uppercase;
-                letter-spacing: 0.04em;
-                line-height: 1;
+                letter-spacing: 0.05em;
             }
 
             .stat-value {
-                font-size: 1.75rem;
+                font-size: 2rem;
                 font-weight: 700;
                 color: var(--text-primary);
                 line-height: 1;
-            }
-            
-            .stat-card-content {
-                flex: 1;
             }
 
             /* ===== MODAL/POPOVER MEJORADO ===== */
