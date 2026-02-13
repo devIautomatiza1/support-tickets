@@ -306,20 +306,33 @@ def detect_malformed_ticket(ticket: Ticket) -> bool:
 
 @st.fragment
 def render_ticket_card(ticket: Ticket):
-    """Renderiza una tarjeta de ticket minimalista"""
+    """Renderiza una tarjeta blindada contra datos corruptos"""
     
-    # Extraer persona del título
-    title_parts = ticket.title.split(" - ")
-    display_title = escape_html(title_parts[0])
-    person = escape_html(title_parts[1]) if len(title_parts) > 1 else ""
+    import re
     
-    # Limpiar y acortar descripción
-    desc = ticket.description.strip()
-    # Remover comillas al inicio si existen
-    if desc.startswith('"') and desc.endswith('"'):
-        desc = desc[1:-1]
-    desc_preview = escape_html(desc[:100])
+    # 1. Limpieza de Título y Persona (Seguro para Registro 5)
+    if " - " in ticket.title:
+        parts = ticket.title.split(" - ")
+        display_title = parts[0].replace("[IA]", "").strip()
+        person = parts[1].strip()
+    else:
+        display_title = ticket.title.replace("[IA]", "").strip()
+        person = "Sin asignar"
+
+    # 2. Limpieza de descripción (Elimina el "aaaaaaaa" y HTML roto)
+    # Elimina repeticiones de caracteres (más de 4 iguales)
+    clean_desc = re.sub(r'(.)\1{4,}', '', ticket.description)
+    clean_desc = clean_desc.replace('"', '').replace('*', '').replace('<', '').replace('>', '').strip()
+    # Remover comillas al inicio
+    if clean_desc.startswith("'") or clean_desc.startswith('"'):
+        clean_desc = clean_desc[1:]
     
+    # 3. Validación de Notas (Si es "sad" o basura, no mostrar error)
+    if ticket.notes and len(ticket.notes) > 5 and ticket.notes.lower() not in ["sad", "n/a", "none"]:
+        safe_notes = ticket.notes
+    else:
+        safe_notes = "Sin detalles adicionales"
+
     # Mapeo de estados
     badge_map = {
         "new": "badge-new",
@@ -328,11 +341,9 @@ def render_ticket_card(ticket: Ticket):
         "closed": "badge-closed"
     }
     status_text = Status.display_names().get(Status(ticket.status), "Nuevo")
-    
-    # Prioridad
     priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
-    
-    # HTML de la tarjeta con escape de HTML
+
+    # Renderizado HTML (Mantenemos la lógica pero con datos limpios)
     card_html = f"""
     <div class="ticket-card">
         <div class="ticket-header">
@@ -341,9 +352,9 @@ def render_ticket_card(ticket: Ticket):
                 <span style="color: var(--text-tertiary);">⋯</span>
             </div>
         </div>
-        <div class="ticket-title">{display_title}</div>
-        {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
-        <div class="ticket-description">"{desc_preview}{'...' if len(desc) > 100 else ''}"</div>
+        <div class="ticket-title">{escape_html(display_title)}</div>
+        <div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {escape_html(person)}</div>
+        <div class="ticket-description">"{escape_html(clean_desc[:90])}{'...' if len(clean_desc) > 90 else ''}"</div>
         <div class="ticket-footer">
             <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
             <div class="priority-indicator">
@@ -353,13 +364,12 @@ def render_ticket_card(ticket: Ticket):
         </div>
     </div>
     """
-    
     st.markdown(card_html, unsafe_allow_html=True)
     
     # Popover para edición
     with st.popover("Editar"):
         st.markdown(f"### {ticket.ticket_number}")
-        st.caption(display_title)
+        st.caption(escape_html(display_title))
         
         # Formulario de edición
         status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
@@ -381,7 +391,7 @@ def render_ticket_card(ticket: Ticket):
         
         new_notes = st.text_area(
             "Notas",
-            value=ticket.notes,
+            value=safe_notes,
             placeholder="Añade notas internas...",
             key=f"notes_{ticket.id}"
         )
