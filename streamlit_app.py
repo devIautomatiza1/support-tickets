@@ -274,51 +274,54 @@ def render_ticket_card(ticket: Ticket):
     
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Popover para edición
-    col1, col2, col3 = st.columns([0.1, 0.8, 0.1])
-    with col2:
-        with st.popover("Editar", use_container_width=True):
-            st.markdown(f"### {ticket.ticket_number}")
-            st.caption(display_title)
-            
-            # Formulario de edición
-            status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-            priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-            
-            new_status = st.selectbox(
-                "Estado",
-                list(Status.display_names().values()),
-                index=list(Status.display_names().values()).index(status_label),
-                key=f"status_{ticket.id}"
-            )
-            
-            new_priority = st.selectbox(
-                "Prioridad",
-                list(Priority.display_names().values()),
-                index=list(Priority.display_names().values()).index(priority_label),
-                key=f"priority_{ticket.id}"
-            )
-            
-            new_notes = st.text_area(
-                "Notas",
-                value=ticket.notes,
-                placeholder="Añade notas internas...",
-                key=f"notes_{ticket.id}"
-            )
-            
-            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
-                supabase = SupabaseService()
-                if supabase.update_ticket(
-                    ticket.id,
-                    Status.from_display(new_status),
-                    new_notes,
-                    Priority.from_display(new_priority)
-                ):
-                    st.success("✓ Actualizado")
-                    time.sleep(0.5)
-                    st.rerun()
-                else:
-                    st.error("Error al guardar")
+    # Popover para edición - centrado
+    st.markdown("""
+    <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+    </div>
+    """, unsafe_allow_html=True)
+    
+    with st.popover("Editar", use_container_width=False):
+        st.markdown(f"### {ticket.ticket_number}")
+        st.caption(display_title)
+        
+        # Formulario de edición
+        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+        
+        new_status = st.selectbox(
+            "Estado",
+            list(Status.display_names().values()),
+            index=list(Status.display_names().values()).index(status_label),
+            key=f"status_{ticket.id}"
+        )
+        
+        new_priority = st.selectbox(
+            "Prioridad",
+            list(Priority.display_names().values()),
+            index=list(Priority.display_names().values()).index(priority_label),
+            key=f"priority_{ticket.id}"
+        )
+        
+        new_notes = st.text_area(
+            "Notas",
+            value=ticket.notes,
+            placeholder="Añade notas internas...",
+            key=f"notes_{ticket.id}"
+        )
+        
+        if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+            supabase = SupabaseService()
+            if supabase.update_ticket(
+                ticket.id,
+                Status.from_display(new_status),
+                new_notes,
+                Priority.from_display(new_priority)
+            ):
+                st.success("✓ Actualizado")
+                time.sleep(0.5)
+                st.rerun()
+            else:
+                st.error("Error al guardar")
 
 
 def render_tickets_grid(tickets_df: pd.DataFrame):
