@@ -352,20 +352,37 @@ class StyleManager:
                 flex: 1;
             }
 
-            /* ===== MODAL/POPOVER MEJORADO ===== */
+            /* ===== MODAL PREMIUM - REDISEÑO COMPLETO ===== */
             [data-testid="stPopover"] {
                 z-index: 1000 !important;
             }
+
+            /* Overlay de fondo */
+            [data-testid="stPopover"]::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                animation: fadeIn 0.2s ease;
+                pointer-events: none;
+            }
             
             [data-testid="stPopoverBody"] {
-                background: var(--bg-secondary) !important;
+                background: var(--glass-bg) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
                 border: 1px solid var(--border-accent) !important;
-                border-radius: 24px !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+                border-radius: 32px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
                 padding: 2rem !important;
                 min-width: 600px !important;
                 max-width: 700px !important;
-                animation: modalFadeIn 0.2s ease !important;
+                animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
                 transform-origin: center !important;
                 position: fixed !important;
                 top: 50% !important;
@@ -373,34 +390,247 @@ class StyleManager:
                 transform: translate(-50%, -50%) !important;
                 margin: 0 !important;
                 overflow-y: auto !important;
-                max-height: 80vh !important;
+                max-height: 85vh !important;
             }
 
-            @keyframes modalFadeIn {
+            @keyframes modalSlideUp {
                 from {
                     opacity: 0;
-                    transform: translate(-50%, -50%) scale(0.95);
+                    transform: translate(-50%, -45%) scale(0.95);
                 }
                 to {
                     opacity: 1;
                     transform: translate(-50%, -50%) scale(1);
                 }
             }
-            
-            [data-testid="stPopoverBody"] > h3 {
-                margin: 0 0 0.5rem 0 !important;
-                padding: 0 !important;
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* ===== HEADER DEL MODAL ===== */
+            .modal-header-custom {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+                padding-bottom: 1.25rem;
+                border-bottom: 1px solid var(--border-medium);
+            }
+
+            .modal-title-section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .modal-title-custom {
                 font-size: 1.5rem !important;
                 font-weight: 700 !important;
                 color: var(--text-primary) !important;
-            }
-            
-            [data-testid="stPopoverBody"] > .stCaption {
-                margin-bottom: 1.5rem !important;
-                padding-bottom: 1.5rem !important;
-                border-bottom: 1px solid var(--border-medium) !important;
+                letter-spacing: -0.02em !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
+            .modal-subtitle-custom {
+                font-size: 0.875rem !important;
+                color: var(--text-tertiary) !important;
+                font-weight: 400 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .modal-close-button {
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background: var(--bg-tertiary);
+                border: 1px solid var(--border-medium);
+                color: var(--text-secondary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1.2rem;
+                transition: all 0.2s ease;
+            }
+
+            .modal-close-button:hover {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: white;
+                transform: rotate(90deg);
+            }
+
+            /* ===== CONTENEDOR DE CAMPOS ===== */
+            .modal-field-container {
+                background: var(--bg-tertiary);
+                border-radius: 16px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid var(--border-light);
+            }
+
+            .modal-field-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .modal-field-group:last-child {
+                margin-bottom: 0;
+            }
+
+            .modal-field-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .modal-field-label i {
+                color: var(--accent);
+                font-size: 1rem;
+                width: 20px;
+            }
+
+            .modal-field-label span {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+
+            /* ===== INPUTS MEJORADOS ===== */
+            [data-testid="stPopoverBody"] .stTextArea textarea,
+            [data-testid="stPopoverBody"] .stSelectbox > div,
+            [data-testid="stPopoverBody"] input {
+                background: var(--bg-primary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-primary) !important;
+                font-size: 0.95rem !important;
+                padding: 0.75rem 1rem !important;
+                width: 100% !important;
+                transition: all 0.2s ease !important;
+            }
+
+            [data-testid="stPopoverBody"] .stTextArea textarea:hover,
+            [data-testid="stPopoverBody"] .stSelectbox > div:hover,
+            [data-testid="stPopoverBody"] input:hover {
+                border-color: rgba(255, 255, 255, 0.2) !important;
+            }
+
+            [data-testid="stPopoverBody"] .stTextArea textarea:focus,
+            [data-testid="stPopoverBody"] .stSelectbox > div:focus,
+            [data-testid="stPopoverBody"] input:focus {
+                border-color: var(--accent) !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                outline: none !important;
+            }
+
+            /* ===== SELECTBOX MEJORADO ===== */
+            [data-testid="stPopoverBody"] .stSelectbox [data-testid="baseButton-secondary"] {
+                background: var(--bg-primary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-primary) !important;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.95rem !important;
+                transition: all 0.2s ease !important;
+            }
+
+            [data-testid="stPopoverBody"] .stSelectbox [data-testid="baseButton-secondary"]:hover {
+                border-color: var(--accent) !important;
+                background: var(--bg-tertiary) !important;
+            }
+
+            /* ===== BOTÓN DE ACCIÓN ===== */
+            .modal-actions {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid var(--border-medium);
+            }
+
+            [data-testid="stPopoverBody"] .stButton > button {
+                flex: 1;
+                background: var(--accent) !important;
+                border: none !important;
+                border-radius: 12px !important;
+                color: white !important;
+                font-weight: 600 !important;
+                font-size: 0.95rem !important;
+                padding: 0.875rem !important;
+                transition: all 0.2s ease !important;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+                margin: 0 !important;
+            }
+
+            [data-testid="stPopoverBody"] .stButton > button:hover {
+                background: #2563EB !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
+            }
+
+            [data-testid="stPopoverBody"] .stButton > button:active {
+                transform: translateY(0) !important;
+            }
+
+            .modal-button-secondary {
+                flex: 1;
+                background: transparent !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-secondary) !important;
+                font-weight: 600 !important;
+                font-size: 0.95rem !important;
+                padding: 0.875rem !important;
+                transition: all 0.2s ease !important;
+                cursor: pointer;
+                text-align: center;
+            }
+
+            .modal-button-secondary:hover {
+                background: var(--bg-tertiary) !important;
+                border-color: var(--text-tertiary) !important;
+                color: var(--text-primary) !important;
+            }
+
+            /* ===== DIVISORES Y ESPACIADO ===== */
+            .modal-divider {
+                height: 1px;
+                background: linear-gradient(90deg, 
+                    transparent 0%, 
+                    var(--border-medium) 20%, 
+                    var(--border-medium) 80%, 
+                    transparent 100%
+                );
+                margin: 1.5rem 0;
+            }
+
+            /* ===== SCROLLBAR PERSONALIZADO ===== */
+            [data-testid="stPopoverBody"]::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            [data-testid="stPopoverBody"]::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            [data-testid="stPopoverBody"]::-webkit-scrollbar-thumb {
+                background: var(--border-medium);
+                border-radius: 20px;
+            }
+
+            [data-testid="stPopoverBody"]::-webkit-scrollbar-thumb:hover {
+                background: var(--text-tertiary);
+            }
+
+            /* ===== TÍTULOS Y TEXTOS DENTRO DEL MODAL ===== */
             [data-testid="stPopoverBody"] h3 {
                 font-size: 1.25rem !important;
                 font-weight: 600 !important;
@@ -421,30 +651,6 @@ class StyleManager:
                 text-transform: uppercase !important;
                 letter-spacing: 0.03em !important;
                 margin-bottom: 0.5rem !important;
-            }
-
-            [data-testid="stPopoverBody"] .stSelectbox > div,
-            [data-testid="stPopoverBody"] .stTextArea textarea {
-                background: var(--bg-primary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-                margin-bottom: 1rem !important;
-            }
-
-            [data-testid="stPopoverBody"] .stButton > button {
-                background: var(--accent) !important;
-                border: none !important;
-                color: white !important;
-                font-weight: 600 !important;
-                border-radius: 12px !important;
-                padding: 0.75rem !important;
-                width: 100% !important;
-                margin-top: 1rem !important;
-            }
-
-            [data-testid="stPopoverBody"] .stButton > button:hover {
-                background: #2563EB !important;
             }
 
             /* ===== BOTÓN INVISIBLE PARA CLICK DETECTION ===== */
@@ -479,99 +685,12 @@ class StyleManager:
                 background: var(--success);
                 border-radius: 50%;
                 margin-right: 0.5rem;
+                animation: pulse 2s ease-in-out infinite;
             }
 
-            /* ===== POPOVER / MODAL MINIMALISTA ===== */
+            /* ===== ELIMINAR ESTILOS ANTERIORES DEL POPOVER ===== */
             [data-testid="popover"] {
-                background: var(--bg-secondary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 16px !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
-            }
-
-            /* Stylear inputs y textareas dentro del popover */
-            [data-testid="popover"] input,
-            [data-testid="popover"] textarea,
-            [data-testid="popover"] select {
-                background: var(--bg-tertiary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 10px !important;
-                color: var(--text-primary) !important;
-                padding: 0.75rem !important;
-                font-family: 'Inter', sans-serif !important;
-                transition: all 0.2s ease !important;
-            }
-
-            [data-testid="popover"] input:focus,
-            [data-testid="popover"] textarea:focus,
-            [data-testid="popover"] select:focus {
-                border-color: var(--accent) !important;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
-                background: var(--bg-tertiary) !important;
-            }
-
-            /* Labels dentro del popover */
-            [data-testid="popover"] label {
-                color: var(--text-primary) !important;
-                font-weight: 500 !important;
-                font-size: 0.85rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            /* Separadores entre campos */
-            [data-testid="popover"] [data-testid="element-container"]:not(:last-child) {
-                margin-bottom: 1.25rem !important;
-                padding-bottom: 1.25rem !important;
-                border-bottom: 1px solid var(--border-light) !important;
-            }
-
-            /* Botones dentro del popover */
-            [data-testid="popover"] button[kind="primary"] {
-                background: var(--accent) !important;
-                border: none !important;
-                border-radius: 10px !important;
-                color: white !important;
-                font-weight: 600 !important;
-                padding: 0.75rem 1.25rem !important;
-                transition: all 0.2s ease !important;
-                width: 100% !important;
-                margin-top: 1rem !important;
-            }
-
-            [data-testid="popover"] button[kind="primary"]:hover {
-                background: #2563eb !important;
-                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3) !important;
-                transform: translateY(-1px) !important;
-            }
-
-            [data-testid="popover"] button[kind="primary"]:active {
-                transform: translateY(0) !important;
-            }
-
-            /* Selectbox (dropdown) dentro del popover */
-            [data-testid="popover"] [data-testid="selectbox"] {
-                margin-bottom: 1rem !important;
-            }
-
-            [data-testid="popover"] [role="combobox"] {
-                background: var(--bg-tertiary) !important;
-                border: 1px solid var(--border-medium) !important;
-                border-radius: 10px !important;
-                color: var(--text-primary) !important;
-            }
-
-            /* Heading dentro del popover */
-            [data-testid="popover"] h3 {
-                color: var(--text-primary) !important;
-                font-size: 1.1rem !important;
-                font-weight: 700 !important;
-                margin-bottom: 0.75rem !important;
-            }
-
-            [data-testid="popover"] p {
-                color: var(--text-secondary) !important;
-                font-size: 0.85rem !important;
-                margin-bottom: 1.5rem !important;
+                display: none !important;
             }
         </style>
         """, unsafe_allow_html=True)
@@ -610,4 +729,77 @@ class ComponentStyles:
                 Conectado • {count} registros
             </div>
             """
-        return '<div class="connection-status" style="border-color: rgba(239,68,68,0.1);">❌ Error de conexión</div>'
+        return '<div class="connection-status" style="border-color: rgba(239,68,68,0.1); color: #EF4444;">❌ Error de conexión</div>'
+
+
+class ModalHelper:
+    """Helper para crear modales consistentes"""
+    
+    @staticmethod
+    def modal_header(title: str, subtitle: str = ""):
+        """Renderiza el header del modal"""
+        subtitle_html = f'<p class="modal-subtitle-custom">{subtitle}</p>' if subtitle else ''
+        return f"""
+        <div class="modal-header-custom">
+            <div class="modal-title-section">
+                <h3 class="modal-title-custom">{title}</h3>
+                {subtitle_html}
+            </div>
+            <div class="modal-close-button" onclick="document.querySelector(\'[data-testid="stPopover"] button\')?.click()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        """
+    
+    @staticmethod
+    def field_container(content: str, icon: str = "", label: str = ""):
+        """Envuelve un campo en un contenedor estilizado"""
+        icon_html = f'<i class="fas fa-{icon}"></i>' if icon else ''
+        label_html = f'<span>{label}</span>' if label else ''
+        
+        label_section = f'<div class="modal-field-label">{icon_html}{label_html}</div>' if (icon or label) else ''
+        
+        return f"""
+        <div class="modal-field-group">
+            {label_section}
+            {content}
+        </div>
+        """
+    
+    @staticmethod
+    def field_container_start(icon: str = "", label: str = ""):
+        """Inicia un contenedor de campo"""
+        icon_html = f'<i class="fas fa-{icon}"></i>' if icon else ''
+        label_html = f'<span>{label}</span>' if label else ''
+        
+        label_section = f'<div class="modal-field-label">{icon_html}{label_html}</div>' if (icon or label) else ''
+        
+        return f"""
+        <div class="modal-field-group">
+            {label_section}
+        """
+    
+    @staticmethod
+    def field_container_end():
+        """Cierra un contenedor de campo"""
+        return "</div>"
+    
+    @staticmethod
+    def action_buttons(primary_text: str = "Guardar cambios", secondary_text: str = "Cancelar"):
+        """Renderiza los botones de acción"""
+        return f"""
+        <div class="modal-actions">
+            <div class="modal-button-secondary" onclick="document.querySelector(\'[data-testid="stPopover"] button\')?.click()">
+                {secondary_text}
+            </div>
+        """
+    
+    @staticmethod
+    def action_buttons_end():
+        """Cierra los botones de acción"""
+        return "</div>"
+    
+    @staticmethod
+    def divider():
+        """Renderiza un divisor"""
+        return '<div class="modal-divider"></div>'
