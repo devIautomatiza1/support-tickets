@@ -310,6 +310,7 @@ st.markdown("""
 
 SUPABASE_URL = "https://euqtlsheickstdtcfhfi.supabase.co"
 SUPABASE_KEY = "sb_publishable_cVoObJObqnsKxRIXgcft4g_ejb6VJnC"
+GEMINI_API_KEY = "AIzaSyBBD6CoJl2n2--7DWRTrdLxZMYcr_Mzk0I"
 
 # ============================================================================
 # FUNCIONES DE CONEXIÓN A SUPABASE
