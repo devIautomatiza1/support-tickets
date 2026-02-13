@@ -19,7 +19,7 @@ from styles import StyleManager, ComponentStyles
 # Configuración
 st.set_page_config(
     page_title="FlowTickets",
-    page_icon="⚡",
+    page_icon="icon.jpeg",
     layout="wide",
     initial_sidebar_state="expanded"
 )
