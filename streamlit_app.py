@@ -1,5 +1,6 @@
 """
-Dashboard minimalista de gestión de tickets con Tailwind CSS.
+Dashboard SaaS Pro de gestión de tickets con Glassmorphism.
+Diseño profesional tipo Linear, Holded, Vercel.
 """
 
 import streamlit as st
@@ -13,13 +14,19 @@ from styles import StyleManager, ComponentStyles
 
 # Configuración
 st.set_page_config(
-    page_title="Dashboard de Tickets",
+    page_title="Dashboard de Tickets | SaaS Pro",
     page_icon="🎫",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 StyleManager.inject_all()
+
+# Session state init
+if "edit_ticket" not in st.session_state:
+    st.session_state.edit_ticket = None
+if "search_filter" not in st.session_state:
+    st.session_state.search_filter = ""
 
 
 # ============================================================================
@@ -109,7 +116,7 @@ class SupabaseService:
                     st.secrets["SUPABASE_KEY"]
                 )
             except Exception as e:
-                st.error(f"Error al conectar: {e}")
+                st.error(f"❌ Error al conectar: {e}")
                 return None
         return self._client
     
@@ -147,7 +154,7 @@ class SupabaseService:
                 return df
             return pd.DataFrame()
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"❌ Error: {e}")
             return pd.DataFrame()
     
     def update_ticket(self, ticket_id: int, status: str, notes: str, 
@@ -162,7 +169,7 @@ class SupabaseService:
             client.table("opportunities").update(data).eq("id", ticket_id).execute()
             return True
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"❌ Error: {e}")
             return False
     
     def get_sample_data(self, table: str, limit: int = 5) -> list:
@@ -181,73 +188,135 @@ class SupabaseService:
 # ============================================================================
 
 @st.fragment
-def render_grid(tickets_df: pd.DataFrame):
-    """Grid de tickets"""
+def render_grid(tickets_df: pd.DataFrame, on_edit_callback=None):
+    """Grid de tickets con glassmorphism y acciones rápidas"""
     if tickets_df.empty:
-        st.info("📭 No hay tickets")
+        st.markdown("""
+        <div class="glass-container" style="text-align: center; padding: 3rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+            <p style="color: #94A3B8; font-size: 0.95rem;">No hay tickets con los filtros seleccionados</p>
+        </div>
+        """, unsafe_allow_html=True)
         return
     
     cols = st.columns(3, gap="medium")
     for idx, (_, row) in enumerate(tickets_df.iterrows()):
         with cols[idx % 3]:
             ticket = Ticket.from_dict(row.to_dict())
+            
+            # Tarjeta principal
             st.markdown(
                 ComponentStyles.ticket_card(
                     ticket.ticket_number,
                     ticket.title,
-                    ticket.status
+                    ticket.status,
+                    ticket.priority
                 ),
                 unsafe_allow_html=True
             )
-            if st.button("✏️ Editar", key=f"edit_{ticket.id}", use_container_width=True):
-                st.session_state.edit_ticket = ticket
-                st.rerun()
+            
+            # Botones de acción
+            col1, col2, col3 = st.columns(3, gap="small")
+            
+            with col1:
+                if st.button("✏️", key=f"edit_{ticket.id}", help="Editar", use_container_width=True):
+                    st.session_state.edit_ticket = ticket
+                    st.rerun()
+            
+            with col2:
+                with st.popover("⚡", help="Acciones rápidas"):
+                    st.markdown("### Acciones rápidas")
+                    supabase = SupabaseService()
+                    
+                    if st.button("🟢 Completar", key=f"complete_{ticket.id}", use_container_width=True):
+                        if supabase.update_ticket(ticket.id, Status.CLOSED.value, ticket.notes):
+                            st.success("✅ Ticket completado")
+                            st.rerun()
+                    
+                    if st.button("⏳ En progreso", key=f"progress_{ticket.id}", use_container_width=True):
+                        if supabase.update_ticket(ticket.id, Status.IN_PROGRESS.value, ticket.notes):
+                            st.success("✅ Estado actualizado")
+                            st.rerun()
+                    
+                    st.divider()
+                    st.caption("Descripción")
+                    st.text(ticket.description[:100] + "..." if len(ticket.description) > 100 else ticket.description)
+            
+            with col3:
+                if st.button("📋", key=f"view_{ticket.id}", help="Ver detalles", use_container_width=True):
+                    st.session_state.show_details = ticket.id
 
 
-@st.dialog("Editar Ticket", width="large")
+@st.dialog("✏️ Editar Ticket", width="large")
 def edit_modal(ticket: Ticket):
-    """Modal de edición"""
+    """Modal de edición con diseño profesional"""
     st.markdown(f"### 📋 {ticket.title}")
-    st.caption(f"Creado: {ticket.created_at[:10] if ticket.created_at else 'N/A'}")
+    st.caption(f"🆔 Ticket: #{ticket.ticket_number} | 📅 {ticket.created_at[:10] if ticket.created_at else 'N/A'}")
     
-    st.markdown("**Descripción:**")
-    st.text(ticket.description or "Sin descripción")
+    st.divider()
     
     col1, col2 = st.columns(2)
+    
     with col1:
-        st.markdown("**Estado actual:**")
+        st.markdown("**📝 Descripción**")
+        st.text(ticket.description or "Sin descripción")
+    
+    with col2:
+        st.markdown("**📊 Información**")
+        info_text = f"""
+        **Estado:** {Status.display_names().get(Status(ticket.status), 'Nuevo')}
+        
+        **Prioridad:** {Priority.display_names().get(Priority(ticket.priority), 'Media')}
+        """
+        st.markdown(info_text)
+    
+    st.divider()
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**Estado**")
         status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-        st.markdown(f"🔹 {status_label}")
         new_status_label = st.selectbox(
             "Cambiar a:", 
             list(Status.display_names().values()),
-            index=list(Status.display_names().values()).index(status_label)
+            index=list(Status.display_names().values()).index(status_label),
+            key="status_select"
         )
         new_status = Status.from_display(new_status_label)
     
     with col2:
-        st.markdown("**Prioridad actual:**")
+        st.markdown("**Prioridad**")
         priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-        st.markdown(f"⚡ {priority_label}")
         new_priority_label = st.selectbox(
             "Cambiar a:",
             list(Priority.display_names().values()),
-            index=list(Priority.display_names().values()).index(priority_label)
+            index=list(Priority.display_names().values()).index(priority_label),
+            key="priority_select"
         )
         new_priority = Priority.from_display(new_priority_label)
     
-    st.markdown("**Notas:**")
-    new_notes = st.text_area("", value=ticket.notes, height=120)
+    st.markdown("**Notas**")
+    new_notes = st.text_area("", value=ticket.notes, height=100, placeholder="Añade notas sobre este ticket...")
     
-    col1, col2 = st.columns(2)
+    st.divider()
+    
+    col1, col2, col3 = st.columns(3)
+    
     with col1:
         if st.button("💾 Guardar", use_container_width=True, type="primary"):
             supabase = SupabaseService()
             if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
-                st.success("✅ Guardado")
+                st.markdown(ComponentStyles.alert_success("Cambios guardados exitosamente"), unsafe_allow_html=True)
                 st.rerun()
+    
     with col2:
-        if st.button("❌ Cancelar", use_container_width=True):
+        if st.button("🔄 Resetear", use_container_width=True):
+            st.rerun()
+    
+    with col3:
+        if st.button("❌ Cerrar", use_container_width=True):
+            st.session_state.edit_ticket = None
             st.rerun()
 
 
@@ -258,73 +327,130 @@ def edit_modal(ticket: Ticket):
 def main():
     supabase = SupabaseService()
     
-    # Header
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem;">
-        <h1 style="color: white; margin: 0; font-size: 2rem;">🎫 Dashboard de Tickets</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0;">Gestión minimalista de oportunidades</p>
-    </div>
-    """, unsafe_allow_html=True)
+    # HEADER PROFESIONAL
+    st.markdown(ComponentStyles.header_hero(
+        "Dashboard de Tickets",
+        "Gestiona tus oportunidades y tickets de soporte con eficiencia"
+    ), unsafe_allow_html=True)
     
-    # Sidebar
-    with st.sidebar:
+    # LAYOUT PRINCIPAL
+    col_sidebar, col_main = st.columns([1, 4], gap="large")
+    
+    with col_sidebar:
         st.markdown("### 🔍 Filtros")
-        status = st.selectbox("Estado", ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"])
-        priority = st.selectbox("Prioridad", ["Todos", "Baja", "Media", "Alta"])
+        
+        status = st.selectbox(
+            "Estado", 
+            ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
+            key="status_filter"
+        )
+        
+        priority = st.selectbox(
+            "Prioridad", 
+            ["Todos", "Baja", "Media", "Alta"],
+            key="priority_filter"
+        )
         
         if st.button("🔄 Actualizar", use_container_width=True):
+            st.cache_data.clear()
             st.rerun()
         
         st.divider()
         
+        # ESTADÍSTICAS
         st.markdown("### 📊 Estadísticas")
         all_tickets = supabase.fetch_tickets()
-        if not all_tickets.empty:
-            st.markdown(ComponentStyles.stat_card("Total", str(len(all_tickets))), unsafe_allow_html=True)
-            st.markdown(ComponentStyles.stat_card("Nuevos", str(len(all_tickets[all_tickets["status"]=="new"]))), unsafe_allow_html=True)
-            st.markdown(ComponentStyles.stat_card("Ganados", str(len(all_tickets[all_tickets["status"]=="won"]))), unsafe_allow_html=True)
-    
-    # Mapeos
-    status_map = {"Todos": "Todos", "Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-    priority_map = {"Todos": "Todos", "Baja": "Low", "Media": "Medium", "Alta": "High"}
-    
-    # Obtener y mostrar tickets
-    tickets = supabase.fetch_tickets(
-        status_map[status] if status_map[status] != "Todos" else None,
-        priority_map[priority] if priority_map[priority] != "Todos" else None
-    )
-    
-    if not tickets.empty:
-        st.markdown(f"#### 📌 {len(tickets)} tickets encontrados")
-        render_grid(tickets)
-    else:
-        st.info("📭 No hay tickets con esos filtros")
-    
-    # Modal
-    if "edit_ticket" in st.session_state and st.session_state.edit_ticket:
-        edit_modal(st.session_state.edit_ticket)
-        st.session_state.edit_ticket = None
-    
-    # Diagnóstico
-    with st.expander("🔧 Diagnóstico"):
-        success, msg, count = supabase.test_connection()
-        if success:
-            st.markdown(ComponentStyles.alert_success(f"{msg} — {count} registros"), unsafe_allow_html=True)
-        else:
-            st.markdown(ComponentStyles.alert_error(msg), unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Ver opportunities"):
-                data = supabase.get_sample_data("opportunities")
-                if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
-        with col2:
-            if st.button("Ver recordings"):
-                data = supabase.get_sample_data("recordings")
-                if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
+        if not all_tickets.empty:
+            st.markdown(ComponentStyles.stat_card(
+                "Total", 
+                str(len(all_tickets)), 
+                f"+{len(all_tickets)}",
+                "🎫"
+            ), unsafe_allow_html=True)
+            
+            new_count = len(all_tickets[all_tickets["status"]=="new"])
+            st.markdown(ComponentStyles.stat_card(
+                "Nuevos", 
+                str(new_count),
+                f"+{new_count}" if new_count > 0 else "-",
+                "🆕"
+            ), unsafe_allow_html=True)
+            
+            won_count = len(all_tickets[all_tickets["status"]=="won"])
+            st.markdown(ComponentStyles.stat_card(
+                "Ganados", 
+                str(won_count),
+                f"+{won_count}" if won_count > 0 else "-",
+                "✅"
+            ), unsafe_allow_html=True)
+        
+        st.divider()
+        
+        # DIAGNÓSTICO
+        with st.expander("🔧 Diagnóstico"):
+            success, msg, count = supabase.test_connection()
+            if success:
+                st.markdown(ComponentStyles.alert_success(f"{msg} — {count} registros"), unsafe_allow_html=True)
+            else:
+                st.markdown(ComponentStyles.alert_error(msg), unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2, gap="small")
+            with col1:
+                if st.button("👁️ Opportunities", use_container_width=True):
+                    data = supabase.get_sample_data("opportunities")
+                    if data:
+                        st.dataframe(pd.DataFrame(data), use_container_width=True)
+            
+            with col2:
+                if st.button("📹 Recordings", use_container_width=True):
+                    data = supabase.get_sample_data("recordings")
+                    if data:
+                        st.dataframe(pd.DataFrame(data), use_container_width=True)
+    
+    with col_main:
+        # MAPEOS
+        status_map = {
+            "Todos": "Todos", 
+            "Nuevo": "new", 
+            "En progreso": "in_progress", 
+            "Cerrado": "closed", 
+            "Ganado": "won"
+        }
+        priority_map = {
+            "Todos": "Todos", 
+            "Baja": "Low", 
+            "Media": "Medium", 
+            "Alta": "High"
+        }
+        
+        # OBTENER TICKETS
+        tickets = supabase.fetch_tickets(
+            status_map[status] if status_map[status] != "Todos" else None,
+            priority_map[priority] if priority_map[priority] != "Todos" else None
+        )
+        
+        # HEADER DE RESULTADOS
+        if not tickets.empty:
+            st.markdown(f"""
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: #F1F5F9; font-size: 1.125rem;">
+                    📌 {len(tickets)} ticket{'s' if len(tickets) != 1 else ''} encontrado{'s' if len(tickets) != 1 else ''}
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; color: #94A3B8; font-size: 0.85rem;">
+                    {status} • {priority}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # GRID DE TICKETS
+        render_grid(tickets)
+    
+    # MODAL DE EDICIÓN
+    if st.session_state.edit_ticket:
+        edit_modal(st.session_state.edit_ticket)
 
 
 if __name__ == "__main__":
     main()
+
