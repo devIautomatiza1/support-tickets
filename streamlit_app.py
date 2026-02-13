@@ -572,40 +572,58 @@ else:
         recording_id = str(ticket.get('recording_id', 'N/A'))[:10]
         ticket_id = ticket.get('id')
         
-        card_html = f'''<div class="ticket-card" style="background: #1E293B; border: 1px solid #334155; border-radius: 12px; overflow: hidden; margin-bottom: 16px; padding: 0;">
-    <div class="ticket-header" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 14px 16px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-weight: 700; font-size: 1em; color: #F1F5F9;">#{ticket_num}</div>
-        <div class="status-badge {status_class}" style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">{status_label}</div>
-    </div>
-    
-    <div class="ticket-body" style="padding: 16px;">
-        <div class="ticket-title" style="font-size: 1.1em; font-weight: 600; color: #F1F5F9; margin: 0 0 8px 0;">{title}</div>
-        <div class="ticket-description" style="color: #CBD5E1; font-size: 0.95em; line-height: 1.5; margin: 0 0 12px 0;">{desc}</div>
+        # Determinar estilos de estado
+        status_bg_color = {
+            "status-open": "rgba(239, 68, 68, 0.15)",
+            "status-progress": "rgba(245, 158, 11, 0.15)",
+            "status-closed": "rgba(16, 185, 129, 0.15)"
+        }.get(status_class, "rgba(61, 99, 255, 0.15)")
         
-        <div class="ticket-meta" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85em; margin-bottom: 0;">
-            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
-                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Estado</span>
-                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{status_label.title()}</span>
+        status_border_color = {
+            "status-open": "rgba(239, 68, 68, 0.4)",
+            "status-progress": "rgba(245, 158, 11, 0.4)",
+            "status-closed": "rgba(16, 185, 129, 0.4)"
+        }.get(status_class, "rgba(61, 99, 255, 0.4)")
+        
+        status_text_color = {
+            "status-open": "#FCA5A5",
+            "status-progress": "#FCD34D",
+            "status-closed": "#6EE7B7"
+        }.get(status_class, "#93C5FD")
+        
+        card_html = f'''<div style="background: #1E293B; border: 2px solid #334155; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); transition: all 0.3s ease;">
+    <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 16px; border-bottom: 2px solid #334155; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div style="font-weight: 700; font-size: 1.1em; color: #3D63FF; letter-spacing: 1px;">#{ticket_num}</div>
+        <div style="background-color: {status_bg_color}; border: 1px solid {status_border_color}; color: {status_text_color}; padding: 6px 14px; border-radius: 8px; font-size: 0.75em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">{status_label}</div>
+    </div>
+    
+    <div style="padding: 18px;">
+        <div style="font-size: 1.15em; font-weight: 700; color: #F1F5F9; margin: 0 0 10px 0; word-break: break-word;">{title}</div>
+        <div style="color: #CBD5E1; font-size: 0.95em; line-height: 1.6; margin: 0 0 16px 0; word-break: break-word;">{desc}</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 0.9em; padding: 14px; background: rgba(30, 41, 59, 0.6); border-radius: 8px; border-left: 3px solid #3D63FF;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">ESTADO</span>
+                <span style="color: #F1F5F9; font-weight: 600;">{status_label.title()}</span>
             </div>
-            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
-                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Prioridad</span>
-                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{priority_label.title()}</span>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">PRIORIDAD</span>
+                <span style="color: #F1F5F9; font-weight: 600;">{priority_label.title()}</span>
             </div>
-            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
-                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Creado</span>
-                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;">{created_date}</span>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">CREADO</span>
+                <span style="color: #F1F5F9; font-weight: 600;">{created_date}</span>
             </div>
-            <div class="meta-item" style="display: flex; flex-direction: column; gap: 4px;">
-                <span class="meta-label" style="color: #94A3B8; font-weight: 500;">Grabacion</span>
-                <span class="meta-value" style="color: #F1F5F9; font-weight: 500;" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="color: #94A3B8; font-weight: 600; font-size: 0.85em;">GRABACIÓN</span>
+                <span style="color: #F1F5F9; font-weight: 600; cursor: pointer;" title="{ticket.get('recording_id', 'N/A')}">{recording_id}...</span>
             </div>
         </div>
     </div>
     
-    <div class="ticket-footer" style="background: #0F172A; padding: 12px 16px; border-top: 1px solid #334155; font-size: 0.85em;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span><span style="color: #94A3B8;">Notas:</span> <span style="color: #CBD5E1;">{notes if notes else 'Sin notas'}</span></span>
-        </div>
+    <div style="background: #0F172A; padding: 14px 18px; border-top: 2px solid #334155; font-size: 0.9em;">
+        <span style="color: #94A3B8; font-weight: 600;">Notas:</span> 
+        <span style="color: #CBD5E1;">{notes if notes else '—'}</span>
     </div>
 </div>'''
         
