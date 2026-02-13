@@ -307,10 +307,11 @@ class StyleManager:
                 min-width: 600px !important;
                 max-width: 700px !important;
                 animation: modalFadeIn 0.2s ease !important;
-                transform-origin: top center !important;
-                position: absolute !important;
-                inset: auto auto auto 50% !important;
-                transform: translateX(-50%) !important;
+                transform-origin: center !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
                 margin: 0 !important;
                 overflow: hidden !important;
             }
@@ -318,11 +319,11 @@ class StyleManager:
             @keyframes modalFadeIn {
                 from {
                     opacity: 0;
-                    transform: translateX(-50%) scale(0.95) translateY(-10px);
+                    transform: translate(-50%, -50%) scale(0.95);
                 }
                 to {
                     opacity: 1;
-                    transform: translateX(-50%) scale(1) translateY(0);
+                    transform: translate(-50%, -50%) scale(1);
                 }
             }
             
