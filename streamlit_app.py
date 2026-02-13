@@ -229,27 +229,45 @@ st.markdown("---")
 st.sidebar.title("🎛️ Filtros")
 st.sidebar.markdown("---")
 
-# Obtener valores únicos para filtros
+# Obtener tickets para estadísticas
 all_tickets = fetch_tickets()
 
-if not all_tickets.empty:
-    status_options = ["Todos"] + sorted(all_tickets["status"].unique().tolist())
-    priority_options = ["Todos"] + sorted(all_tickets["priority"].unique().tolist())
-else:
-    status_options = ["Todos"]
-    priority_options = ["Todos"]
+# Definir todos los estados y prioridades posibles
+status_options = ["Todos", "new", "in_progress", "closed", "won"]
+priority_options = ["Todos", "Low", "Medium", "High"]
 
-selected_status = st.sidebar.selectbox(
+# Mapeo para mostrar en español
+status_display_map = {
+    "Todos": "Todos",
+    "new": "🆕 Nuevo",
+    "in_progress": "⏳ En progreso",
+    "closed": "✅ Cerrado",
+    "won": "🎉 Ganado"
+}
+
+priority_display_map = {
+    "Todos": "Todos",
+    "Low": "📍 Baja",
+    "Medium": "📌 Media",
+    "High": "⚠️ Alta"
+}
+
+# Selectores con display en español
+status_display = st.sidebar.selectbox(
     "📊 Filtrar por Estado",
-    status_options,
+    [status_display_map[s] for s in status_options],
     key="status_filter"
 )
 
-selected_priority = st.sidebar.selectbox(
+priority_display = st.sidebar.selectbox(
     "🎯 Filtrar por Prioridad",
-    priority_options,
+    [priority_display_map[p] for p in priority_options],
     key="priority_filter"
 )
+
+# Mapear de vuelta a valores de Supabase
+selected_status = [k for k, v in status_display_map.items() if v == status_display][0]
+selected_priority = [k for k, v in priority_display_map.items() if v == priority_display][0]
 
 # Botón de actualizar
 if st.sidebar.button("🔄 Actualizar", use_container_width=True):
