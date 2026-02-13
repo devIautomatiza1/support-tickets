@@ -324,53 +324,62 @@ def render_tickets(tickets_df: pd.DataFrame):
             </div>
             """, unsafe_allow_html=True)
             
-            # Popover discreto - integrado visualmente en la tarjeta
-            col1, col2, col3 = st.columns([0.78, 0.02, 0.2], gap="small")
+            # Popover discreto - integrado DENTRO de la tarjeta (arriba a la derecha)
+            st.markdown(f"""
+            <div style="position: relative; margin-top: -4.1rem;">
+                <div style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 20;">
+                    <div id="popover-anchor-{ticket.id}"></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
-            with col3:
-                with st.popover("⋯", use_container_width=True):
-                    st.markdown(f"### #{ticket.ticket_number}")
-                    st.caption(display_title)
-                    st.divider()
-                    
-                    # Mini-formulario dentro del popover
-                    status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-                    priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-                    
-                    new_status_label = st.selectbox(
-                        "Estado",
-                        list(Status.display_names().values()),
-                        index=list(Status.display_names().values()).index(status_label),
-                        key=f"pop_status_{ticket.id}"
-                    )
-                    new_status = Status.from_display(new_status_label)
-                    
-                    new_priority_label = st.selectbox(
-                        "Prioridad",
-                        list(Priority.display_names().values()),
-                        index=list(Priority.display_names().values()).index(priority_label),
-                        key=f"pop_priority_{ticket.id}"
-                    )
-                    new_priority = Priority.from_display(new_priority_label)
-                    
-                    new_notes = st.text_area(
-                        "Notas",
-                        value=ticket.notes,
-                        height=100,
-                        key=f"pop_notes_{ticket.id}",
-                        placeholder="Añade notas internas..."
-                    )
-                    
-                    st.divider()
-                    
-                    # Botón guardar en popover
-                    if st.button("💾 Guardar", key=f"pop_save_{ticket.id}", use_container_width=True, type="primary"):
-                        supabase = SupabaseService()
-                        if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
-                            st.success("✅ Actualizado")
-                            st.rerun()
-                        else:
-                            st.error("❌ Error al guardar")
+            # Contenedor del popover dentro de la tarjeta
+            with st.container():
+                col_empty, col_popover = st.columns([0.85, 0.15], gap="small")
+                with col_popover:
+                    with st.popover("⋯", use_container_width=True):
+                        st.markdown(f"### #{ticket.ticket_number}")
+                        st.caption(display_title)
+                        st.divider()
+                        
+                        # Mini-formulario dentro del popover
+                        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+                        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+                        
+                        new_status_label = st.selectbox(
+                            "Estado",
+                            list(Status.display_names().values()),
+                            index=list(Status.display_names().values()).index(status_label),
+                            key=f"pop_status_{ticket.id}"
+                        )
+                        new_status = Status.from_display(new_status_label)
+                        
+                        new_priority_label = st.selectbox(
+                            "Prioridad",
+                            list(Priority.display_names().values()),
+                            index=list(Priority.display_names().values()).index(priority_label),
+                            key=f"pop_priority_{ticket.id}"
+                        )
+                        new_priority = Priority.from_display(new_priority_label)
+                        
+                        new_notes = st.text_area(
+                            "Notas",
+                            value=ticket.notes,
+                            height=100,
+                            key=f"pop_notes_{ticket.id}",
+                            placeholder="Añade notas internas..."
+                        )
+                        
+                        st.divider()
+                        
+                        # Botón guardar en popover
+                        if st.button("💾 Guardar", key=f"pop_save_{ticket.id}", use_container_width=True, type="primary"):
+                            supabase = SupabaseService()
+                            if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
+                                st.success("✅ Actualizado")
+                                st.rerun()
+                            else:
+                                st.error("❌ Error al guardar")
 
 
 

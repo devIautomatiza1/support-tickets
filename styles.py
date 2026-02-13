@@ -89,13 +89,12 @@ class StyleManager:
                 flex: 1;
             }
 
-            .ticket-header-actions {
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
+            .ticket-popover-wrapper {
+                position: absolute;
+                top: 0.75rem;
+                right: 0.75rem;
+                z-index: 20;
             }
-
-            .ticket-popover-btn {
                 background: transparent;
                 border: none;
                 color: var(--text-muted);
@@ -298,8 +297,14 @@ class StyleManager:
             /* ===== POPOVER PREMIUM ===== */
             [data-testid="popoverContainer"] {
                 backdrop-filter: blur(16px);
-                width: 100% !important;
-                min-width: 420px !important;
+                width: 380px !important;
+                min-width: 380px !important;
+                max-width: 380px !important;
+                position: fixed !important;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+                border: 1px solid rgba(59, 130, 246, 0.2) !important;
+                border-radius: 16px !important;
+                z-index: 100 !important;
             }
 
             .popover-form {
