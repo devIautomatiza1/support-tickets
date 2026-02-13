@@ -289,16 +289,8 @@ def render_ticket_card(ticket: Ticket):
     
     # Popover para edición
     with st.popover("Editar"):
-        # Header con X
-        col1, col2 = st.columns([1, 0.15])
-        with col1:
-            st.markdown(f"### {ticket.ticket_number}")
-            st.caption(display_title)
-        with col2:
-            if st.button("✕", key=f"close_{ticket.id}", help="Cerrar"):
-                st.rerun()
-        
-        st.divider()
+        st.markdown(f"### {ticket.ticket_number}")
+        st.caption(display_title)
         
         # Formulario de edición
         status_label = Status.display_names().get(Status(ticket.status), "Nuevo")

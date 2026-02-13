@@ -303,7 +303,7 @@ class StyleManager:
                 border: 1px solid var(--border-accent) !important;
                 border-radius: 24px !important;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                padding: 0 !important;
+                padding: 2rem !important;
                 min-width: 600px !important;
                 max-width: 700px !important;
                 animation: modalFadeIn 0.2s ease !important;
@@ -313,7 +313,8 @@ class StyleManager:
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
                 margin: 0 !important;
-                overflow: hidden !important;
+                overflow-y: auto !important;
+                max-height: 80vh !important;
             }
 
             @keyframes modalFadeIn {
@@ -327,18 +328,18 @@ class StyleManager:
                 }
             }
             
-            [data-testid="stPopoverBody"] .modal-header {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                padding: 1.5rem !important;
-                border-bottom: 1px solid var(--border-medium) !important;
+            [data-testid="stPopoverBody"] > h3 {
+                margin: 0 0 0.5rem 0 !important;
+                padding: 0 !important;
+                font-size: 1.5rem !important;
+                font-weight: 700 !important;
+                color: var(--text-primary) !important;
             }
             
-            [data-testid="stPopoverBody"] .modal-content {
-                padding: 1.5rem !important;
-                max-height: 70vh !important;
-                overflow-y: auto !important;
+            [data-testid="stPopoverBody"] > .stCaption {
+                margin-bottom: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+                border-bottom: 1px solid var(--border-medium) !important;
             }
 
             [data-testid="stPopoverBody"] h3 {
