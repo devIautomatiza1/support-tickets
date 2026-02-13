@@ -274,13 +274,10 @@ def render_ticket_card(ticket: Ticket):
     
     st.markdown(card_html, unsafe_allow_html=True)
     
-    # Popover para edición - centrado
-    st.markdown("""
-    <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
-    </div>
-    """, unsafe_allow_html=True)
-    
-    with st.popover("Editar", use_container_width=False):
+    # Popover para edición - centrado con contenedor
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        with st.popover("Editar", use_container_width=True):
         st.markdown(f"### {ticket.ticket_number}")
         st.caption(display_title)
         
