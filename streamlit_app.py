@@ -166,11 +166,13 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Header del modal */
+    /* Header del modal - CON FECHA AL LADO */
     .modal-header {
         margin-bottom: 2rem;
-        text-align: left;
-        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
     }
     
     .modal-title {
@@ -178,22 +180,47 @@ st.markdown("""
         font-weight: 600;
         color: var(--text-primary);
         line-height: 1.4;
-        margin: 0 0 0.5rem 0;
         letter-spacing: -0.02em;
-        background: linear-gradient(135deg, #fff, var(--text-secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    }
+    
+    .modal-date {
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+        font-family: 'SF Mono', 'JetBrains Mono', monospace;
+        background: var(--bg-secondary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        border: 1px solid var(--border);
     }
     
     .modal-divider {
-        height: 4px;
-        width: 80px;
+        height: 3px;
+        width: 100%;
         background: linear-gradient(90deg, var(--accent), var(--purple));
-        border-radius: 4px;
-        margin: 0.5rem 0 0 0;
+        border-radius: 3px;
+        margin-top: 0.75rem;
     }
 
     /* Descripción */
+    .description-section {
+        margin-bottom: 2rem;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.75rem;
+    }
+    
+    .section-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
     .description-box {
         background: linear-gradient(145deg, var(--bg-secondary), #0F1115);
         border: 1px solid var(--border);
@@ -203,75 +230,66 @@ st.markdown("""
         font-size: 0.95rem;
         line-height: 1.7;
         white-space: pre-wrap;
-        margin-bottom: 2rem;
         border-left: 4px solid var(--accent);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    /* Formulario */
-    .form-section {
-        background: linear-gradient(145deg, var(--bg-secondary), #0F1115);
-        border-radius: 20px;
-        padding: 1.75rem;
-        margin-top: 0.5rem;
+    /* Estado y Prioridad - DISEÑO LIMPIO */
+    .status-priority-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-card {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        padding: 1.25rem;
         border: 1px solid var(--border);
     }
     
-    .section-title {
-        font-size: 1rem;
+    .info-label {
+        font-size: 0.7rem;
         font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
     }
     
-    .section-title-icon {
-        background: linear-gradient(135deg, var(--accent), var(--purple));
-        padding: 0.25rem;
-        border-radius: 8px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* Select boxes */
-    .stSelectbox {
+    .current-value {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
         margin-bottom: 1rem;
     }
     
-    .stSelectbox label {
-        color: var(--text-tertiary) !important;
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
+    .select-label {
+        font-size: 0.7rem;
+        color: var(--text-tertiary);
+        margin-bottom: 0.25rem;
+    }
+
+    /* Select boxes */
+    .stSelectbox {
+        margin-bottom: 0.5rem;
     }
     
     .stSelectbox [data-baseweb="select"] {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
         border-radius: 12px !important;
-        transition: var(--transition) !important;
     }
     
     .stSelectbox [data-baseweb="select"]:hover {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
     }
     
-    /* Text area - MÁS GRANDE */
+    /* Text area - GRANDE */
     .stTextArea {
-        margin-top: 1rem;
-    }
-    
-    .stTextArea label {
-        color: var(--text-tertiary) !important;
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
+        margin-top: 0.5rem;
     }
     
     .stTextArea textarea {
@@ -282,14 +300,13 @@ st.markdown("""
         font-size: 0.9rem !important;
         line-height: 1.6 !important;
         padding: 1rem !important;
-        min-height: 200px !important;
-        transition: var(--transition) !important;
+        min-height: 250px !important;
+        font-family: 'SF Mono', 'JetBrains Mono', monospace !important;
     }
     
     .stTextArea textarea:focus {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 4px rgba(59,130,246,0.15) !important;
-        background: var(--bg-card) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important;
     }
 
     /* Botones */
@@ -299,26 +316,23 @@ st.markdown("""
         padding: 0.6rem 1.5rem !important;
         transition: var(--transition) !important;
         font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
     }
     
     .stButton > button[kind="primary"] {
         background: linear-gradient(135deg, var(--accent), var(--purple)) !important;
         color: white !important;
         border: none !important;
-        box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
     }
     
     .stButton > button[kind="primary"]:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(59,130,246,0.4) !important;
+        box-shadow: 0 8px 20px rgba(59,130,246,0.3) !important;
     }
     
     .stButton > button:not([kind="primary"]) {
         background: transparent !important;
         color: var(--text-secondary) !important;
         border: 1px solid var(--border) !important;
-        backdrop-filter: blur(10px);
     }
     
     .stButton > button:not([kind="primary"]):hover {
@@ -345,15 +359,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================================
-# CREDENCIALES Y FUNCIONES SUPABASE
+# CREDENCIALES Y FUNCIONES SUPABASE - USANDO SECRETS
 # ============================================================================
-SUPABASE_URL = "https://euqtlsheickstdtcfhfi.supabase.co"
-SUPABASE_KEY = "sb_publishable_cVoObJObqnsKxRIXgcft4g_ejb6VJnC"
-GEMINI_API_KEY = "AIzaSyBBD6CoJl2n2--7DWRTrdLxZMYcr_Mzk0I"
 
 def get_supabase_connection():
     try:
         from supabase import create_client
+        SUPABASE_URL = st.secrets["SUPABASE_URL"]
+        SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
         return create_client(SUPABASE_URL, SUPABASE_KEY)
     except:
         return None
@@ -410,11 +423,11 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - LIMPIO Y COLORIDO
+# MODAL DE EDICIÓN - SIN ICONOS, CON FECHA EN HEADER
 # ============================================================================
 @st.dialog("Editar ticket", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional - SIN INFORMACIÓN DUPLICADA"""
+    """Modal profesional - SIN ICONOS, con fecha en el header"""
     
     # Extraer datos
     ticket_id = ticket_dict.get("id")
@@ -425,22 +438,21 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     notes = ticket_dict.get("notes", "") or ""
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
     
-    # === SOLO TÍTULO - NADA MÁS ===
+    # === HEADER CON FECHA AL LADO DEL TÍTULO ===
     st.markdown(f"""
     <div class="modal-header">
-        <div class="modal-title">{title}</div>
-        <div class="modal-divider"></div>
+        <div>
+            <span class="modal-title">{title}</span>
+        </div>
+        <span class="modal-date">{created_at}</span>
     </div>
+    <div class="modal-divider"></div>
     """, unsafe_allow_html=True)
     
-    # === SOLO DESCRIPCIÓN - SIN ESTADO/PRIORIDAD/GRABACIÓN ===
+    # === DESCRIPCIÓN ===
     st.markdown("""
-    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-        <span style="background: linear-gradient(135deg, var(--accent), var(--purple)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
-            <span style="color: white; font-size: 0.8rem;">📝</span>
-        </span>
-        <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">DESCRIPCIÓN</span>
-        <span style="color: var(--text-tertiary); font-size: 0.75rem;">· {created_at}</span>
+    <div class="section-header">
+        <span class="section-title">DESCRIPCIÓN</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -450,82 +462,80 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     </div>
     """, unsafe_allow_html=True)
     
-    # === FORMULARIO DE EDICIÓN - TODO EN UN MISMO LUGAR ===
+    # === ESTADO Y PRIORIDAD ===
     st.markdown("""
-    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;">
-        <span style="background: linear-gradient(135deg, var(--purple), var(--pink)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
-            <span style="color: white; font-size: 0.8rem;">✏️</span>
-        </span>
-        <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">EDITAR TICKET</span>
+    <div class="status-priority-grid">
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Estado actual
+        status_colors = {
+            "new": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171", "label": "Nuevo"},
+            "in_progress": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24", "label": "En progreso"},
+            "closed": {"bg": "rgba(107,114,128,0.1)", "color": "#9CA3AF", "label": "Cerrado"},
+            "won": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399", "label": "Ganado"}
+        }
+        status_style = status_colors.get(current_status, status_colors["new"])
+        
+        st.markdown(f"""
+        <div class="info-card">
+            <div class="info-label">ESTADO ACTUAL</div>
+            <span class="current-value" style="background: {status_style['bg']}; color: {status_style['color']};">
+                {status_style['label']}
+            </span>
+            <div class="select-label">CAMBIAR A</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
+        status_idx = ["new", "in_progress", "closed", "won"].index(current_status) if current_status in ["new", "in_progress", "closed", "won"] else 0
+        new_status = st.selectbox("", status_options, index=status_idx, key=f"status_{ticket_id}", label_visibility="collapsed")
+        status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+    
+    with col2:
+        # Prioridad actual
+        priority_colors = {
+            "Low": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399", "label": "Baja"},
+            "Medium": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24", "label": "Media"},
+            "High": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171", "label": "Alta"}
+        }
+        priority_style = priority_colors.get(current_priority, priority_colors["Medium"])
+        
+        st.markdown(f"""
+        <div class="info-card">
+            <div class="info-label">PRIORIDAD ACTUAL</div>
+            <span class="current-value" style="background: {priority_style['bg']}; color: {priority_style['color']};">
+                {priority_style['label']}
+            </span>
+            <div class="select-label">CAMBIAR A</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        priority_options = ["Baja", "Media", "Alta"]
+        priority_idx = ["Low", "Medium", "High"].index(current_priority) if current_priority in ["Low", "Medium", "High"] else 1
+        new_priority = st.selectbox("", priority_options, index=priority_idx, key=f"priority_{ticket_id}", label_visibility="collapsed")
+        priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # === NOTAS Y COMENTARIOS ===
+    st.markdown("""
+    <div style="margin-top: 1rem;">
+        <div class="section-header">
+            <span class="section-title">NOTAS Y COMENTARIOS</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
     with st.form(key=f"edit_modal_form_{ticket_id}"):
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
-            status_idx = ["new", "in_progress", "closed", "won"].index(current_status) if current_status in ["new", "in_progress", "closed", "won"] else 0
-            
-            status_colors = {
-                "Nuevo": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171"},
-                "En progreso": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24"},
-                "Cerrado": {"bg": "rgba(107,114,128,0.1)", "color": "#9CA3AF"},
-                "Ganado": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399"}
-            }
-            
-            st.markdown(f"""
-            <div style="margin-bottom: 0.5rem;">
-                <span style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">ESTADO ACTUAL</span><br>
-                <span style="display: inline-block; margin-top: 0.25rem; padding: 0.25rem 0.75rem; background: {status_colors[status_options[status_idx]]['bg']}; border-radius: 20px; font-size: 0.7rem; color: {status_colors[status_options[status_idx]]['color']}; font-weight: 600;">
-                    {status_options[status_idx]}
-                </span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            new_status = st.selectbox("Cambiar a", status_options, index=status_idx, key=f"status_{ticket_id}")
-            status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
-        
-        with col2:
-            priority_options = ["Baja", "Media", "Alta"]
-            priority_idx = ["Low", "Medium", "High"].index(current_priority) if current_priority in ["Low", "Medium", "High"] else 1
-            
-            priority_colors = {
-                "Baja": {"bg": "rgba(16,185,129,0.1)", "color": "#34D399"},
-                "Media": {"bg": "rgba(245,158,11,0.1)", "color": "#FBBF24"},
-                "Alta": {"bg": "rgba(239,68,68,0.1)", "color": "#F87171"}
-            }
-            
-            st.markdown(f"""
-            <div style="margin-bottom: 0.5rem;">
-                <span style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">PRIORIDAD ACTUAL</span><br>
-                <span style="display: inline-block; margin-top: 0.25rem; padding: 0.25rem 0.75rem; background: {priority_colors[priority_options[priority_idx]]['bg']}; border-radius: 20px; font-size: 0.7rem; color: {priority_colors[priority_options[priority_idx]]['color']}; font-weight: 600;">
-                    {priority_options[priority_idx]}
-                </span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            new_priority = st.selectbox("Cambiar a", priority_options, index=priority_idx, key=f"priority_{ticket_id}")
-            priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
-        
-        # === NOTAS - MUCHO MÁS GRANDE ===
-        st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span style="background: linear-gradient(135deg, var(--success), var(--accent)); padding: 0.25rem; border-radius: 6px; display: inline-flex;">
-                <span style="color: white; font-size: 0.8rem;">📋</span>
-            </span>
-            <span style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">NOTAS Y COMENTARIOS</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
         new_notes = st.text_area(
             "",
             value=notes,
             height=250,
             placeholder="""Ejemplo:
-✨ Tema: Infraestructura
+⭐️ Tema: Infraestructura
 📌 Descripción: Recursos tecnológicos, herramientas, sistemas, equipos
 👤 Mencionado por: Jaime
 💬 Contexto: Estimamos que necesitamos unos $75,000...
@@ -538,19 +548,18 @@ Agrega aquí más notas, enlaces o actualizaciones...""",
         
         st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
         
-        # === BOTONES ===
         col1, col2, col3 = st.columns([1, 1, 1])
         
         with col2:
             saved = st.form_submit_button(
-                "💾 Guardar cambios", 
+                "Guardar cambios", 
                 use_container_width=True,
                 type="primary"
             )
         
         with col3:
             cancelled = st.form_submit_button(
-                "✕ Cancelar", 
+                "Cancelar", 
                 use_container_width=True
             )
         
@@ -611,7 +620,7 @@ def render_ticket_grid(tickets_df: pd.DataFrame):
             
             st.markdown(card_html, unsafe_allow_html=True)
             
-            if st.button("✏️ EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
+            if st.button("EDITAR", key=f"edit_{ticket_dict.get('id')}", use_container_width=True):
                 st.session_state.edit_ticket = ticket_dict
                 st.rerun()
 
@@ -651,7 +660,7 @@ with st.sidebar:
     selected_status = status_map[status_filter]
     selected_priority = priority_map[priority_filter]
     
-    if st.button("🔄 ACTUALIZAR", use_container_width=True):
+    if st.button("ACTUALIZAR", use_container_width=True):
         st.rerun()
     
     st.divider()
@@ -696,7 +705,7 @@ with st.expander("Diagnóstico del sistema", expanded=False):
     else:
         st.error(msg)
     
-    st.caption(f"URL: {SUPABASE_URL[:20]}...")
+    st.caption(f"URL: Configurada en secrets")
     
     col1, col2 = st.columns(2)
     with col1:
