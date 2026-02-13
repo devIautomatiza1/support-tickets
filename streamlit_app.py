@@ -9,8 +9,20 @@ from typing import Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 import random
+import base64
+from pathlib import Path
 
 from styles import StyleManager, ComponentStyles
+
+
+# Función para cargar imagen y convertir a base64
+@st.cache_data
+def get_image_base64(image_path):
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except Exception as e:
+        return None
 
 
 # Configuración
@@ -391,17 +403,33 @@ def render_tickets(tickets_df: pd.DataFrame):
 def main():
     supabase = SupabaseService()
     
+    # Cargar el icono
+    icon_base64 = get_image_base64("icon.jpeg")
+    
     # SIDEBAR PREMIUM
     with st.sidebar:
-        st.markdown("""
-        <div style="padding: 1.5rem 0.5rem; text-align: center;">
-            <div style="background: linear-gradient(135deg, var(--accent), #1e40af); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 2rem;">⚡</span>
+        # Icono personalizado con texto "Control Tickets" y "IAutomatiza"
+        if icon_base64:
+            st.markdown(f"""
+            <div style="padding: 1.5rem 0.5rem; text-align: center;">
+                <div style="background: linear-gradient(135deg, var(--accent), #1e40af); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 0.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="data:image/jpeg;base64,{icon_base64}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h2 style="margin: 0; color: var(--text-primary); font-size: 1.5rem;">Control Tickets</h2>
+                <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.8rem;">IAutomatiza</p>
             </div>
-            <h2 style="margin: 0; color: var(--text-primary); font-size: 1.5rem;">FlowTickets</h2>
-            <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.8rem;">SaaS Pro Dashboard</p>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+        else:
+            # Fallback si no se encuentra el icono
+            st.markdown("""
+            <div style="padding: 1.5rem 0.5rem; text-align: center;">
+                <div style="background: linear-gradient(135deg, var(--accent), #1e40af); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 0.5rem auto; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 2rem;">🎫</span>
+                </div>
+                <h2 style="margin: 0; color: var(--text-primary); font-size: 1.5rem;">Control Tickets</h2>
+                <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.8rem;">IAutomatiza</p>
+            </div>
+            """, unsafe_allow_html=True)
         
         st.divider()
         
