@@ -1,6 +1,6 @@
 """
-Dashboard SaaS Pro de gestión de tickets con Glassmorphism.
-Diseño profesional tipo Linear, Holded, Vercel - VERSIÓN SIMPLIFICADA
+Dashboard SaaS Pro - Gestión de Tickets
+Diseño ultra minimalista tipo Linear
 """
 
 import streamlit as st
@@ -11,23 +11,14 @@ from enum import Enum
 import random
 import base64
 from pathlib import Path
+import time
 
 from styles import StyleManager, ComponentStyles
 
 
-# Función para cargar imagen y convertir a base64
-@st.cache_data
-def get_image_base64(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except Exception as e:
-        return None
-
-
 # Configuración
 st.set_page_config(
-    page_title="FlowTickets | SaaS Pro",
+    page_title="FlowTickets",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -35,9 +26,11 @@ st.set_page_config(
 
 StyleManager.inject_all()
 
-# Session state init
+# Session state
 if "search_filter" not in st.session_state:
     st.session_state.search_filter = ""
+if "last_update" not in st.session_state:
+    st.session_state.last_update = time.time()
 
 
 # ============================================================================
@@ -63,15 +56,6 @@ class Status(Enum):
     def from_display(cls, name: str) -> str:
         inverse = {v: k.value for k, v in cls.display_names().items()}
         return inverse.get(name, cls.NEW.value)
-    
-    @classmethod
-    def colors(cls):
-        return {
-            cls.NEW: "#ef4444",
-            cls.IN_PROGRESS: "#f59e0b",
-            cls.WON: "#10b981",
-            cls.CLOSED: "#64748b"
-        }
 
 
 class Priority(Enum):
@@ -89,11 +73,11 @@ class Priority(Enum):
         return inverse.get(name, cls.MEDIUM.value)
     
     @classmethod
-    def colors(cls):
+    def css_class(cls):
         return {
-            cls.LOW: "#52d383",
-            cls.MEDIUM: "#ffa500",
-            cls.HIGH: "#ff5757"
+            cls.LOW: "low",
+            cls.MEDIUM: "medium",
+            cls.HIGH: "high"
         }
 
 
@@ -118,7 +102,7 @@ class Ticket:
             status=data.get("status", Status.NEW.value).lower(),
             priority=data.get("priority", Priority.MEDIUM.value),
             notes=data.get("notes", "") or "",
-            created_at=data.get("created_at")
+            created_at=data.get("created_at", "2026-02-13")
         )
 
 
@@ -144,7 +128,6 @@ class SupabaseService:
                     st.secrets["SUPABASE_KEY"]
                 )
             except Exception as e:
-                st.error(f"❌ Error al conectar: {e}")
                 return None
         return self._client
     
@@ -186,14 +169,12 @@ class SupabaseService:
                     search_query = search_query.lower()
                     df = df[
                         df['title'].str.lower().str.contains(search_query, na=False) |
-                        df['ticket_number'].str.lower().str.contains(search_query, na=False) |
-                        df['description'].str.lower().str.contains(search_query, na=False)
+                        df['ticket_number'].str.lower().str.contains(search_query, na=False)
                     ]
                 
                 return df
             return pd.DataFrame()
         except Exception as e:
-            st.error(f"❌ Error: {e}")
             return pd.DataFrame()
     
     def update_ticket(self, ticket_id: int, status: str, notes: str, 
@@ -208,192 +189,157 @@ class SupabaseService:
             client.table("opportunities").update(data).eq("id", ticket_id).execute()
             return True
         except Exception as e:
-            st.error(f"❌ Error: {e}")
             return False
 
 
 # ============================================================================
-# COMPONENTES UI PREMIUM
+# COMPONENTES UI
 # ============================================================================
 
-@st.fragment
-def render_metrics_dashboard(tickets_df: pd.DataFrame):
-    """Dashboard de métricas premium"""
-    col1, col2, col3, col4, col5 = st.columns(5, gap="small")
+def render_metrics(tickets_df: pd.DataFrame):
+    """Métricas minimalistas"""
+    if tickets_df.empty:
+        cols = st.columns(4)
+        metrics = [
+            ("Total", "0", "🎫"),
+            ("Nuevos", "0", "🆕"),
+            ("En progreso", "0", "⏳"),
+            ("Alta prioridad", "0", "⚡")
+        ]
+        for col, (title, value, icon) in zip(cols, metrics):
+            with col:
+                st.markdown(ComponentStyles.stat_card(title, value, icon), unsafe_allow_html=True)
+        return
     
-    total = len(tickets_df) if not tickets_df.empty else 0
+    total = len(tickets_df)
+    new_count = len(tickets_df[tickets_df["status"]=="new"])
+    in_progress = len(tickets_df[tickets_df["status"]=="in_progress"])
+    high_priority = len(tickets_df[tickets_df["priority"]=="High"])
     
-    with col1:
-        st.markdown(ComponentStyles.stat_card(
-            "Total Tickets", 
-            str(total), 
-            f"{total} activos",
-            "🎫"
-        ), unsafe_allow_html=True)
+    cols = st.columns(4)
+    metrics = [
+        ("Total", str(total), "🎫", f"{total} tickets"),
+        ("Nuevos", str(new_count), "🆕", f"{round(new_count/total*100)}%"),
+        ("En progreso", str(in_progress), "⏳", f"{round(in_progress/total*100)}%"),
+        ("Alta prioridad", str(high_priority), "⚡", f"{round(high_priority/total*100)}%")
+    ]
     
-    if not tickets_df.empty:
-        new_count = len(tickets_df[tickets_df["status"]=="new"])
-        in_progress_count = len(tickets_df[tickets_df["status"]=="in_progress"])
-        won_count = len(tickets_df[tickets_df["status"]=="won"])
-        high_priority = len(tickets_df[tickets_df["priority"]=="High"])
-        
-        with col2:
-            st.markdown(ComponentStyles.stat_card(
-                "Nuevos", 
-                str(new_count),
-                f"{round(new_count/total*100, 1)}%" if total > 0 else "0%",
-                "🆕"
-            ), unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown(ComponentStyles.stat_card(
-                "En Progreso", 
-                str(in_progress_count),
-                f"{round(in_progress_count/total*100, 1)}%" if total > 0 else "0%",
-                "⏳"
-            ), unsafe_allow_html=True)
-        
-        with col4:
-            st.markdown(ComponentStyles.stat_card(
-                "Ganados", 
-                str(won_count),
-                f"+{won_count}",
-                "✅"
-            ), unsafe_allow_html=True)
-        
-        with col5:
-            st.markdown(ComponentStyles.stat_card(
-                "Alta Prioridad", 
-                str(high_priority),
-                f"{round(high_priority/total*100, 1)}%" if total > 0 else "0%",
-                "⚡"
-            ), unsafe_allow_html=True)
-    else:
-        for i in range(4):
-            with col2 if i == 0 else col3 if i == 1 else col4 if i == 2 else col5:
-                st.markdown(ComponentStyles.stat_card(
-                    ["Nuevos", "En Progreso", "Ganados", "Alta Prioridad"][i],
-                    "0",
-                    "0%",
-                    ["🆕", "⏳", "✅", "⚡"][i]
-                ), unsafe_allow_html=True)
+    for col, (title, value, icon, trend) in zip(cols, metrics):
+        with col:
+            st.markdown(ComponentStyles.stat_card(title, value, icon, trend), unsafe_allow_html=True)
 
 
 @st.fragment
-def render_tickets(tickets_df: pd.DataFrame):
-    """Renderiza los tickets en grid 3D minimalista con edición integrada en popover"""
+def render_ticket_card(ticket: Ticket):
+    """Renderiza una tarjeta de ticket minimalista"""
+    
+    # Extraer persona del título
+    title_parts = ticket.title.split(" - ")
+    display_title = title_parts[0]
+    person = title_parts[1] if len(title_parts) > 1 else ""
+    
+    # Mapeo de estados
+    badge_map = {
+        "new": "badge-new",
+        "in_progress": "badge-progress",
+        "won": "badge-won",
+        "closed": "badge-closed"
+    }
+    status_text = Status.display_names().get(Status(ticket.status), "Nuevo")
+    
+    # Prioridad
+    priority_class = Priority.css_class().get(Priority(ticket.priority), "medium")
+    
+    # HTML de la tarjeta
+    card_html = f"""
+    <div class="ticket-card">
+        <div class="ticket-header">
+            <span class="ticket-id">#{ticket.ticket_number}</span>
+            <div class="ticket-menu" id="menu-{ticket.id}">
+                <span style="color: var(--text-tertiary);">⋯</span>
+            </div>
+        </div>
+        <div class="ticket-title">{display_title}</div>
+        {f'<div class="ticket-person"><i class="far fa-user" style="font-size: 0.7rem;"></i> {person}</div>' if person else ''}
+        <div class="ticket-description">"{ticket.description[:100]}{'...' if len(ticket.description) > 100 else ''}"</div>
+        <div class="ticket-footer">
+            <span class="badge {badge_map.get(ticket.status, 'badge-new')}">{status_text}</span>
+            <div class="priority-indicator">
+                <span class="priority-dot {priority_class}"></span>
+                <span style="color: var(--text-tertiary); font-size: 0.7rem;">{ticket.created_at[:10]}</span>
+            </div>
+        </div>
+    </div>
+    """
+    
+    st.markdown(card_html, unsafe_allow_html=True)
+    
+    # Popover para edición
+    col1, col2, col3 = st.columns([0.1, 0.8, 0.1])
+    with col2:
+        with st.popover("Editar", use_container_width=True):
+            st.markdown(f"### {ticket.ticket_number}")
+            st.caption(display_title)
+            
+            # Formulario de edición
+            status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+            priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+            
+            new_status = st.selectbox(
+                "Estado",
+                list(Status.display_names().values()),
+                index=list(Status.display_names().values()).index(status_label),
+                key=f"status_{ticket.id}"
+            )
+            
+            new_priority = st.selectbox(
+                "Prioridad",
+                list(Priority.display_names().values()),
+                index=list(Priority.display_names().values()).index(priority_label),
+                key=f"priority_{ticket.id}"
+            )
+            
+            new_notes = st.text_area(
+                "Notas",
+                value=ticket.notes,
+                placeholder="Añade notas internas...",
+                key=f"notes_{ticket.id}"
+            )
+            
+            if st.button("Guardar cambios", type="primary", key=f"save_{ticket.id}", use_container_width=True):
+                supabase = SupabaseService()
+                if supabase.update_ticket(
+                    ticket.id,
+                    Status.from_display(new_status),
+                    new_notes,
+                    Priority.from_display(new_priority)
+                ):
+                    st.success("✓ Actualizado")
+                    time.sleep(0.5)
+                    st.rerun()
+                else:
+                    st.error("Error al guardar")
+
+
+def render_tickets_grid(tickets_df: pd.DataFrame):
+    """Renderiza el grid de tickets"""
     if tickets_df.empty:
         st.markdown("""
-        <div class="glass" style="text-align: center; padding: 4rem 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.5;">✨</div>
-            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">No hay tickets</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">Los tickets aparecerán aquí cuando estén disponibles</p>
+        <div style="text-align: center; padding: 4rem; background: var(--bg-secondary); border-radius: 24px; border: 1px solid var(--border-medium);">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">✨</div>
+            <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;">No hay tickets</h3>
+            <p style="color: var(--text-tertiary);">Los tickets aparecerán aquí cuando estén disponibles</p>
         </div>
         """, unsafe_allow_html=True)
         return
     
-    cols = st.columns(3, gap="large")
+    # Grid de 3 columnas
+    cols = st.columns(3, gap="small")
+    
     for idx, (_, row) in enumerate(tickets_df.iterrows()):
+        ticket = Ticket.from_dict(row.to_dict())
         with cols[idx % 3]:
-            ticket = Ticket.from_dict(row.to_dict())
-            
-            # Extraer persona del título si existe
-            title_parts = ticket.title.split(" - ")
-            display_title = ticket.title
-            person = ""
-            if len(title_parts) > 1:
-                display_title = title_parts[0]
-                person = title_parts[1]
-            
-            # Descripción truncada
-            description = ticket.description[:80] + "..." if len(ticket.description) > 80 else ticket.description
-            date_str = ticket.created_at[:10] if ticket.created_at else "2026-02-13"
-            
-            # Mapeo de estados y colores
-            status_map = {
-                "new": ("badge-new", "NUEVO"),
-                "in_progress": ("badge-in-progress", "EN PROGRESO"),
-                "won": ("badge-won", "GANADO"),
-                "closed": ("badge-closed", "CERRADO")
-            }
-            badge_class, status_text = status_map.get(ticket.status, ("badge-new", "NUEVO"))
-            
-            # Renderizar tarjeta premium
-            st.markdown(f"""
-            <div class="premium-ticket-card">
-                <div class="ticket-header">
-                    <div class="ticket-header-left">
-                        <div class="ticket-number">#{ticket.ticket_number}</div>
-                        <div class="ticket-title">{display_title}</div>
-                        {'<div class="ticket-person">👤 ' + person + '</div>' if person else ''}
-                    </div>
-                </div>
-                <div class="ticket-description">"{description}"</div>
-                <div class="ticket-footer">
-                    <span class="badge badge-sm {badge_class}">{status_text}</span>
-                    <span>📅 {date_str}</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Popover discreto - integrado DENTRO de la tarjeta (arriba a la derecha)
-            st.markdown(f"""
-            <div style="position: relative; margin-top: -4.1rem;">
-                <div style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 20;">
-                    <div id="popover-anchor-{ticket.id}"></div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Contenedor del popover dentro de la tarjeta
-            with st.container():
-                col_empty, col_popover = st.columns([0.85, 0.15], gap="small")
-                with col_popover:
-                    with st.popover("⋯", use_container_width=True):
-                        st.markdown(f"### #{ticket.ticket_number}")
-                        st.caption(display_title)
-                        st.divider()
-                        
-                        # Mini-formulario dentro del popover
-                        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
-                        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
-                        
-                        new_status_label = st.selectbox(
-                            "Estado",
-                            list(Status.display_names().values()),
-                            index=list(Status.display_names().values()).index(status_label),
-                            key=f"pop_status_{ticket.id}"
-                        )
-                        new_status = Status.from_display(new_status_label)
-                        
-                        new_priority_label = st.selectbox(
-                            "Prioridad",
-                            list(Priority.display_names().values()),
-                            index=list(Priority.display_names().values()).index(priority_label),
-                            key=f"pop_priority_{ticket.id}"
-                        )
-                        new_priority = Priority.from_display(new_priority_label)
-                        
-                        new_notes = st.text_area(
-                            "Notas",
-                            value=ticket.notes,
-                            height=100,
-                            key=f"pop_notes_{ticket.id}",
-                            placeholder="Añade notas internas..."
-                        )
-                        
-                        st.divider()
-                        
-                        # Botón guardar en popover
-                        if st.button("💾 Guardar", key=f"pop_save_{ticket.id}", use_container_width=True, type="primary"):
-                            supabase = SupabaseService()
-                            if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
-                                st.success("✅ Actualizado")
-                                st.rerun()
-                            else:
-                                st.error("❌ Error al guardar")
-
-
+            render_ticket_card(ticket)
 
 
 # ============================================================================
@@ -403,133 +349,107 @@ def render_tickets(tickets_df: pd.DataFrame):
 def main():
     supabase = SupabaseService()
     
-    # Cargar el icono
-    icon_base64 = get_image_base64("icon.jpeg")
-    
-    # SIDEBAR PREMIUM
+    # SIDEBAR
     with st.sidebar:
-        # Icono personalizado con texto "Control Tickets" y "IAutomatiza"
-        if icon_base64:
-            st.markdown(f"""
-            <div style="padding: 1.5rem 0.5rem; text-align: center;">
-                <div style="background: linear-gradient(135deg, var(--accent), #1e40af); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 0.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                    <img src="data:image/jpeg;base64,{icon_base64}" style="width: 100%; height: 100%; object-fit: cover;">
+        # Logo y título
+        st.markdown("""
+        <div style="padding: 0.5rem 0 1.5rem 0;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="background: var(--accent); width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-weight: 700;">⚡</span>
                 </div>
-                <h2 style="margin: 0; color: var(--text-primary); font-size: 1.5rem;">Control Tickets</h2>
-                <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.8rem;">IAutomatiza</p>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # Fallback si no se encuentra el icono
-            st.markdown("""
-            <div style="padding: 1.5rem 0.5rem; text-align: center;">
-                <div style="background: linear-gradient(135deg, var(--accent), #1e40af); width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 0.5rem auto; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 2rem;">🎫</span>
+                <div>
+                    <div style="font-weight: 700; color: var(--text-primary);">FlowTickets</div>
+                    <div style="font-size: 0.7rem; color: var(--text-tertiary);">IAutomatiza</div>
                 </div>
-                <h2 style="margin: 0; color: var(--text-primary); font-size: 1.5rem;">Control Tickets</h2>
-                <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.8rem;">IAutomatiza</p>
             </div>
-            """, unsafe_allow_html=True)
-        
-        st.divider()
+        </div>
+        """, unsafe_allow_html=True)
         
         # Búsqueda
-        st.markdown("### 🔍 Búsqueda")
-        search_query = st.text_input(
+        st.markdown("### Buscar")
+        search = st.text_input(
             "Buscar tickets",
-            placeholder="ID, título o descripción...",
+            placeholder="ID o título...",
             label_visibility="collapsed",
-            key="global_search"
+            key="search"
         )
         
         st.divider()
         
-        # Filtros premium
-        st.markdown("### 🎯 Filtros")
+        # Filtros
+        st.markdown("### Filtros")
         
         status_filter = st.selectbox(
             "Estado",
             ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
-            key="sidebar_status_filter"
+            key="status_filter"
         )
         
         priority_filter = st.selectbox(
             "Prioridad",
             ["Todos", "Baja", "Media", "Alta"],
-            key="sidebar_priority_filter"
+            key="priority_filter"
         )
         
-        # Botón de actualización
-        if st.button("🔄 Actualizar datos", use_container_width=True):
+        # Botón actualizar
+        if st.button("↻ Actualizar", use_container_width=True):
             st.cache_data.clear()
             st.rerun()
         
         st.divider()
         
         # Estado de conexión
-        success, msg, count = supabase.test_connection()
-        if success:
-            st.markdown(f"""
-            <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 0.75rem;">
-                <p style="margin: 0; color: #6ee7b7; font-size: 0.8rem;">
-                    <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; margin-right: 0.5rem;"></span>
-                    Conectado • {count} registros
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(ComponentStyles.alert_error("Error de conexión"), unsafe_allow_html=True)
+        success, _, count = supabase.test_connection()
+        st.markdown(ComponentStyles.connection_status(success, count or 0), unsafe_allow_html=True)
     
     # CONTENIDO PRINCIPAL
-    # Header hero
-    st.markdown(ComponentStyles.header_hero(
-        "Dashboard de Tickets",
-        "Gestiona tus oportunidades con eficiencia y estilo"
+    st.markdown(ComponentStyles.page_header(
+        "Tickets",
+        "Gestiona tus oportunidades"
     ), unsafe_allow_html=True)
     
-    # MAPEOS
+    # MAPEO DE FILTROS
     status_map = {
-        "Todos": "Todos",
+        "Todos": None,
         "Nuevo": "new",
         "En progreso": "in_progress",
         "Cerrado": "closed",
         "Ganado": "won"
     }
     priority_map = {
-        "Todos": "Todos",
+        "Todos": None,
         "Baja": "Low",
         "Media": "Medium",
         "Alta": "High"
     }
     
     # OBTENER TICKETS
-    tickets = supabase.fetch_tickets(
-        status_map[status_filter] if status_filter != "Todos" else None,
-        priority_map[priority_filter] if priority_filter != "Todos" else None,
-        search_query if search_query else None
-    )
+    with st.spinner("Cargando tickets..."):
+        tickets = supabase.fetch_tickets(
+            status_map[status_filter],
+            priority_map[priority_filter],
+            search if search else None
+        )
     
     # MÉTRICAS
-    render_metrics_dashboard(tickets)
+    render_metrics(tickets)
     
     st.divider()
     
-    # HEADER DE RESULTADOS
+    # CONTADOR DE RESULTADOS
     if not tickets.empty:
-        col1, col2 = st.columns([3, 1])
+        col1, col2 = st.columns([6, 1])
         with col1:
             st.markdown(f"""
-            <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1rem;">
-                <h3 style="margin: 0; color: var(--text-primary); font-size: 1.125rem;">📌 Tickets encontrados</h3>
-                <span style="background: rgba(37,99,235,0.2); color: var(--accent-light); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{len(tickets)}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Mostrando</span>
+                <span style="background: var(--bg-tertiary); color: var(--text-primary); padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">{len(tickets)} tickets</span>
             </div>
             """, unsafe_allow_html=True)
-        with col2:
-            if not tickets.empty:
-                st.markdown(f'<p style="text-align: right; color: var(--text-muted); font-size: 0.85rem;">{status_filter} • {priority_filter}</p>', unsafe_allow_html=True)
     
-    # RENDERIZAR TICKETS
-    render_tickets(tickets)
+    # GRID DE TICKETS
+    render_tickets_grid(tickets)
 
 
 if __name__ == "__main__":

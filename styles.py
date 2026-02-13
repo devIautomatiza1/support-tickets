@@ -1,115 +1,132 @@
 """
-Sistema de estilos HERMOSO - Diseño SaaS Premium tipo Linear/Vercel.
+Sistema de estilos premium - Diseño ultra minimalista tipo Linear/Vercel
 """
 
 import streamlit as st
 
 
 class StyleManager:
-    """Gestor maestro de estilos - Diseño premium"""
+    """Gestor maestro de estilos - Diseño ultra premium"""
     
     @staticmethod
     @st.cache_data
     def inject_all():
-        """Inyecta CSS HERMOSO y profesional"""
+        """Inyecta CSS ultra minimalista y profesional"""
         st.markdown("""
-        <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         
         <style>
+            /* ===== VARIABLES ===== */
             :root {
-                --bg-dark: #0a0c12;
-                --bg-secondary: #0f1117;
-                --bg-tertiary: #1a1c23;
-                --accent: #3b82f6;
-                --accent-light: #60a5fa;
-                --accent-dark: #2563eb;
-                --text-primary: #f8fafc;
-                --text-secondary: #e2e8f0;
-                --text-muted: #94a3b8;
-                --border: rgba(255, 255, 255, 0.08);
-                --success: #10b981;
-                --warning: #f59e0b;
-                --danger: #ef4444;
+                --bg-primary: #0B0D12;
+                --bg-secondary: #12141A;
+                --bg-tertiary: #1A1D26;
+                --accent: #3B82F6;
+                --accent-glow: rgba(59, 130, 246, 0.5);
+                --text-primary: #F0F2F5;
+                --text-secondary: #B0B7C4;
+                --text-tertiary: #6B7280;
+                --border-light: rgba(255, 255, 255, 0.03);
+                --border-medium: rgba(255, 255, 255, 0.06);
+                --border-accent: rgba(59, 130, 246, 0.2);
+                --success: #10B981;
+                --warning: #F59E0B;
+                --danger: #EF4444;
+                --glass-bg: rgba(18, 20, 26, 0.7);
             }
 
+            /* ===== RESET Y BASE ===== */
             * {
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
             html, body, [data-testid="stAppViewContainer"] {
-                background: radial-gradient(circle at 20% 30%, #0f1117, #0a0c12);
+                background: var(--bg-primary);
                 color: var(--text-primary);
+                font-feature-settings: "ss01", "ss02", "cv01", "cv02";
             }
 
-            /* ===== SIDEBAR ===== */
+            /* ===== SIDEBAR MINIMAL ===== */
             [data-testid="stSidebar"] {
-                background: rgba(10, 12, 18, 0.8) !important;
-                backdrop-filter: blur(20px) !important;
-                border-right: 1px solid var(--border) !important;
+                background: var(--bg-secondary) !important;
+                border-right: 1px solid var(--border-medium) !important;
+                box-shadow: none !important;
+            }
+
+            [data-testid="stSidebar"] > div {
+                background: transparent !important;
+                padding: 1.5rem 1rem !important;
             }
 
             /* ===== TARJETAS DE TICKETS ===== */
-            .premium-ticket-card {
-                background: linear-gradient(145deg, rgba(26, 28, 35, 0.6), rgba(26, 28, 35, 0.4));
-                backdrop-filter: blur(16px);
-                border: 1.5px solid rgba(59, 130, 246, 0.15);
-                border-radius: 20px;
-                padding: 1.25rem;
-                transition: all 0.3s ease;
-                position: relative;
-                overflow: visible;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            .ticket-grid {
+                display: grid;
+                gap: 1rem;
             }
 
-            .premium-ticket-card:hover {
-                border-color: rgba(59, 130, 246, 0.4);
-                background: linear-gradient(145deg, rgba(26, 28, 35, 0.8), rgba(26, 28, 35, 0.6));
-                box-shadow: 0 12px 48px rgba(59, 130, 246, 0.25);
-                transform: translateY(-2px);
+            .ticket-card {
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-medium);
+                border-radius: 16px;
+                padding: 1.25rem;
+                transition: all 0.2s ease;
+                position: relative;
+                cursor: pointer;
+            }
+
+            .ticket-card:hover {
+                background: var(--bg-tertiary);
+                border-color: var(--border-accent);
+                transform: translateY(-1px);
             }
 
             .ticket-header {
                 display: flex;
-                justify-content: space-between;
                 align-items: flex-start;
-                margin-bottom: 0.75rem;
-                position: relative;
+                justify-content: space-between;
+                margin-bottom: 1rem;
             }
 
-            .ticket-header-left {
-                flex: 1;
-            }
-
-            .ticket-number {
+            .ticket-id {
                 font-size: 0.75rem;
-                font-weight: 700;
-                color: var(--text-muted);
-                font-family: 'SF Mono', 'Monaco', monospace;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                font-weight: 600;
+                color: var(--text-tertiary);
+                letter-spacing: 0.02em;
+            }
+
+            .ticket-menu {
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .ticket-card:hover .ticket-menu {
+                opacity: 1;
             }
 
             .ticket-title {
                 font-size: 1rem;
-                font-weight: 700;
+                font-weight: 600;
                 color: var(--text-primary);
-                margin: 0.5rem 0 0 0;
-                line-height: 1.35;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
             }
 
             .ticket-person {
-                font-size: 0.8rem;
-                color: var(--accent-light);
-                margin-top: 0.5rem;
+                font-size: 0.85rem;
+                color: var(--text-secondary);
                 margin-bottom: 0.75rem;
-                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
             }
 
             .ticket-description {
                 font-size: 0.85rem;
-                color: var(--text-muted);
+                color: var(--text-tertiary);
                 line-height: 1.5;
                 margin-bottom: 1rem;
                 display: -webkit-box;
@@ -120,11 +137,9 @@ class StyleManager:
 
             .ticket-footer {
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: space-between;
                 margin-top: 0.75rem;
-                font-size: 0.75rem;
-                color: var(--text-muted);
             }
 
             /* ===== BADGES ===== */
@@ -132,446 +147,261 @@ class StyleManager:
                 display: inline-flex;
                 align-items: center;
                 padding: 0.25rem 0.75rem;
-                border-radius: 30px;
+                border-radius: 20px;
                 font-size: 0.7rem;
                 font-weight: 600;
-                border: 1.5px solid;
+                letter-spacing: 0.02em;
+                border: 1px solid;
             }
 
             .badge-new {
                 background: rgba(239, 68, 68, 0.1);
-                border-color: rgba(239, 68, 68, 0.3);
-                color: #ff8b8e;
+                border-color: rgba(239, 68, 68, 0.2);
+                color: #FCA5A5;
             }
 
-            .badge-in-progress {
+            .badge-progress {
                 background: rgba(245, 158, 11, 0.1);
-                border-color: rgba(245, 158, 11, 0.3);
-                color: #fbb040;
+                border-color: rgba(245, 158, 11, 0.2);
+                color: #FCD34D;
             }
 
             .badge-won {
                 background: rgba(16, 185, 129, 0.1);
-                border-color: rgba(16, 185, 129, 0.3);
-                color: #2dd4a4;
+                border-color: rgba(16, 185, 129, 0.2);
+                color: #6EE7B7;
             }
 
             .badge-closed {
-                background: rgba(100, 116, 139, 0.1);
-                border-color: rgba(100, 116, 139, 0.3);
-                color: #cbd5e1;
+                background: rgba(107, 114, 128, 0.1);
+                border-color: rgba(107, 114, 128, 0.2);
+                color: #9CA3AF;
             }
 
-            .badge-sm {
-                display: inline-flex;
+            /* ===== PRIORITY INDICATORS ===== */
+            .priority-indicator {
+                display: flex;
                 align-items: center;
-                padding: 0.35rem 0.85rem;
-                border-radius: 20px;
-                font-size: 0.75rem;
-                font-weight: 600;
-                border: 1.2px solid;
-                white-space: nowrap;
+                gap: 0.5rem;
             }
 
-            /* ===== STAT CARDS ===== */
-            .stat-card-premium {
-                background: linear-gradient(145deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(59, 130, 246, 0.2);
+            .priority-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+            }
+
+            .priority-dot.high { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+            .priority-dot.medium { background: var(--warning); }
+            .priority-dot.low { background: var(--success); }
+
+            /* ===== STAT CARDS MINIMAL ===== */
+            .stat-card {
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-medium);
                 border-radius: 16px;
                 padding: 1.25rem;
-                transition: all 0.3s ease;
             }
 
-            .stat-card-premium:hover {
-                background: linear-gradient(145deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.08));
-                border-color: rgba(59, 130, 246, 0.3);
-                transform: translateY(-2px);
+            .stat-card-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .stat-icon {
+                color: var(--text-tertiary);
+                font-size: 1rem;
             }
 
             .stat-label {
-                font-size: 0.7rem;
-                font-weight: 700;
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: var(--text-tertiary);
                 text-transform: uppercase;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
+                letter-spacing: 0.05em;
             }
 
             .stat-value {
-                font-size: 1.75rem;
-                font-weight: 800;
-                background: linear-gradient(135deg, var(--accent-light), var(--accent));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
+                font-size: 2rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                line-height: 1;
             }
 
-            /* ===== HEADER HERO ===== */
-            .header-hero-premium {
-                background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(37, 99, 235, 0.05) 100%);
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(59, 130, 246, 0.2);
-                border-radius: 24px;
-                padding: 2rem;
+            .stat-trend {
+                font-size: 0.75rem;
+                color: var(--text-tertiary);
+                margin-top: 0.5rem;
+            }
+
+            /* ===== HEADER MINIMAL ===== */
+            .page-header {
                 margin-bottom: 2rem;
             }
 
-            .header-hero-premium h1 {
-                color: white;
-                margin: 0;
-                font-size: 2rem;
+            .page-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.25rem;
             }
 
-            .header-hero-premium p {
-                color: rgba(255, 255, 255, 0.8);
-                margin: 0.5rem 0 0 0;
+            .page-subtitle {
+                font-size: 0.9rem;
+                color: var(--text-tertiary);
             }
 
-            /* ===== MODAL GRANDE - CORREGIDO ===== */
-            /* Este es el modal que aparece al hacer clic en los tres puntos */
-            div[class*="stModal"] {
-                background: transparent !important;
-            }
-
-            div[class*="stModal"] > div {
-                background: rgba(15, 17, 23, 0.98) !important;
+            /* ===== POPOVER MINIMAL ===== */
+            [data-testid="stPopoverBody"] {
+                background: var(--bg-secondary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 20px !important;
+                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+                padding: 1.5rem !important;
+                min-width: 360px !important;
                 backdrop-filter: blur(20px) !important;
-                border: 1px solid rgba(59, 130, 246, 0.3) !important;
-                border-radius: 28px !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-                min-width: 800px !important;
-                width: 800px !important;
-                max-width: 800px !important;
-                padding: 2.5rem !important;
-                position: fixed !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                z-index: 999999 !important;
             }
 
-            /* Título del modal */
-            div[class*="stModal"] h3 {
-                color: var(--text-primary) !important;
-                font-size: 2rem !important;
-                font-weight: 700 !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            /* Subtítulo */
-            div[class*="stModal"] .stCaption {
-                color: var(--accent-light) !important;
-                font-size: 1.3rem !important;
-                margin-bottom: 2rem !important;
-            }
-
-            /* Divisor */
-            div[class*="stModal"] .stDivider {
-                background: rgba(255, 255, 255, 0.1) !important;
-                margin: 2rem 0 !important;
-            }
-
-            /* Labels */
-            div[class*="stModal"] label {
-                color: var(--text-muted) !important;
+            [data-testid="stPopoverBody"] h3 {
                 font-size: 1rem !important;
                 font-weight: 600 !important;
+                color: var(--text-primary) !important;
+                margin-bottom: 0.25rem !important;
+            }
+
+            [data-testid="stPopoverBody"] .stCaption {
+                color: var(--text-tertiary) !important;
+                font-size: 0.85rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            [data-testid="stPopoverBody"] label {
+                font-size: 0.75rem !important;
+                font-weight: 600 !important;
+                color: var(--text-tertiary) !important;
                 text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
+                letter-spacing: 0.03em !important;
                 margin-bottom: 0.5rem !important;
             }
 
-            /* Selectores */
-            div[class*="stModal"] .stSelectbox {
-                margin-bottom: 2rem !important;
-            }
-
-            div[class*="stModal"] .stSelectbox > div {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 16px !important;
-                height: 60px !important;
-            }
-
-            div[class*="stModal"] .stSelectbox select {
+            [data-testid="stPopoverBody"] .stSelectbox > div,
+            [data-testid="stPopoverBody"] .stTextArea textarea {
+                background: var(--bg-primary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
                 color: var(--text-primary) !important;
-                font-size: 1.2rem !important;
-                padding: 0 1rem !important;
+                font-size: 0.9rem !important;
             }
 
-            /* TextArea */
-            div[class*="stModal"] .stTextArea {
-                margin-bottom: 2rem !important;
-            }
-
-            div[class*="stModal"] .stTextArea textarea {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 16px !important;
-                color: var(--text-primary) !important;
-                font-size: 1.2rem !important;
-                min-height: 200px !important;
-                padding: 1rem !important;
-                line-height: 1.6 !important;
-            }
-
-            /* Botón Guardar */
-            div[class*="stModal"] .stButton > button {
-                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-                border: none !important;
-                color: white !important;
-                font-weight: 600 !important;
-                font-size: 1.3rem !important;
-                border-radius: 16px !important;
-                padding: 1rem 2rem !important;
-                width: 100% !important;
-                height: auto !important;
-                margin-top: 1rem !important;
-                transition: all 0.3s !important;
-                box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3) !important;
-            }
-
-            div[class*="stModal"] .stButton > button:hover {
-                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.5) !important;
-            }
-
-            /* Botón de cierre (X) */
-            div[class*="stModal"] button[aria-label="Close"] {
-                background: rgba(255, 255, 255, 0.1) !important;
-                border: 1px solid var(--border) !important;
-                border-radius: 50% !important;
-                width: 40px !important;
-                height: 40px !important;
-                font-size: 1.2rem !important;
-                color: var(--text-muted) !important;
-            }
-
-            div[class*="stModal"] button[aria-label="Close"]:hover {
-                background: rgba(239, 68, 68, 0.2) !important;
-                color: #ef4444 !important;
-            }
-
-            /* Botón de los tres puntos (sin cambios) */
-            .stPopoverEmoji {
-                background: rgba(255, 255, 255, 0.05) !important;
-                border: 1px solid var(--border) !important;
-                border-radius: 10px !important;
-                padding: 0.5rem 0.9rem !important;
-                color: var(--text-muted) !important;
-                font-size: 1.2rem !important;
-                cursor: pointer !important;
-                transition: all 0.2s !important;
-            }
-
-            .stPopoverEmoji:hover {
-                background: rgba(59, 130, 246, 0.15) !important;
-                color: var(--accent-light) !important;
-                border-color: rgba(59, 130, 246, 0.4) !important;
-            }
-
-            /* ===== BOTONES GENERALES ===== */
+            /* ===== BOTONES ===== */
             .stButton > button {
-                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-                border: none !important;
-                color: white !important;
-                font-weight: 600 !important;
-                border-radius: 10px !important;
-                transition: all 0.3s !important;
+                background: transparent !important;
+                border: 1px solid var(--border-medium) !important;
+                color: var(--text-secondary) !important;
+                font-weight: 500 !important;
+                font-size: 0.85rem !important;
+                border-radius: 12px !important;
+                padding: 0.5rem 1rem !important;
+                transition: all 0.2s ease !important;
             }
 
             .stButton > button:hover {
-                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4) !important;
-            }
-
-            /* ===== INPUTS GENERALES ===== */
-            input, textarea, select {
-                background: rgba(10, 12, 18, 0.6) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-            }
-
-            input:focus, textarea:focus, select:focus {
                 border-color: var(--accent) !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
-            }
-
-            /* ===== POPOVER CENTRADO EN LA PANTALLA ===== */
-            [data-testid=\"stPopoverBody\"] {
-                background: rgba(15, 17, 23, 0.98) !important;
-                backdrop-filter: blur(20px) !important;
-                border: 1px solid rgba(59, 130, 246, 0.3) !important;
-                border-radius: 20px !important;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
-                padding: 1.5rem !important;
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 0.75rem !important;
-                max-width: 450px !important;
-                min-width: 380px !important;
-                max-height: 80vh !important;
-                overflow-y: auto !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] h3 {
                 color: var(--text-primary) !important;
-                font-size: 1.25rem !important;
-                font-weight: 700 !important;
-                margin: 0 0 0.25rem 0 !important;
+                background: rgba(59, 130, 246, 0.1) !important;
             }
 
-            [data-testid=\"stPopoverBody\"] .stCaption {
-                color: var(--accent-light) !important;
-                font-size: 0.95rem !important;
-                margin: 0 0 0.75rem 0 !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stDivider {
-                background: rgba(255, 255, 255, 0.1) !important;
-                margin: 0.5rem 0 !important;
-                height: 1px !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] label {
-                color: var(--text-muted) !important;
-                font-size: 0.8rem !important;
-                font-weight: 600 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.5px !important;
-                margin: 0.5rem 0 0.25rem 0 !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stSelectbox {
-                margin-bottom: 0.75rem !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stSelectbox > div {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 12px !important;
-                padding: 0.5rem !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stSelectbox select,
-            [data-testid=\"stPopoverBody\"] .stSelectbox input {
-                color: var(--text-primary) !important;
-                font-size: 1rem !important;
-                padding: 0.4rem 0.75rem !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stTextArea {
-                margin-bottom: 0.75rem !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stTextArea textarea {
-                background: rgba(10, 12, 18, 0.9) !important;
-                border: 1.5px solid var(--border) !important;
-                border-radius: 12px !important;
-                color: var(--text-primary) !important;
-                font-size: 0.95rem !important;
-                min-height: 120px !important;
-                max-height: 200px !important;
-                padding: 0.75rem !important;
-                line-height: 1.4 !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stButton {
-                margin-top: 0.5rem !important;
-                width: 100% !important;
-                flex-shrink: 0 !important;
-            }
-
-            [data-testid=\"stPopoverBody\"] .stButton > button {
-                background: linear-gradient(135deg, var(--accent), var(--accent-dark)) !important;
-                border: none !important;
+            button[type="primary"] {
+                background: var(--accent) !important;
+                border-color: var(--accent) !important;
                 color: white !important;
-                font-weight: 600 !important;
-                font-size: 0.95rem !important;
-                border-radius: 12px !important;
-                padding: 0.75rem 1.5rem !important;
-                width: 100% !important;
-                height: auto !important;
-                transition: all 0.3s !important;
-                box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3) !important;
             }
 
-            [data-testid=\"stPopoverBody\"] .stButton > button:hover {
-                background: linear-gradient(135deg, var(--accent-light), var(--accent)) !important;
-                transform: translateY(-1px) !important;
-                box-shadow: 0 8px 12px -2px rgba(59, 130, 246, 0.4) !important;
+            button[type="primary"]:hover {
+                background: #2563EB !important;
+                border-color: #2563EB !important;
+            }
+
+            /* ===== INPUTS ===== */
+            input, select, textarea {
+                background: var(--bg-primary) !important;
+                border: 1px solid var(--border-medium) !important;
+                border-radius: 12px !important;
+                color: var(--text-primary) !important;
+                font-size: 0.9rem !important;
+                padding: 0.75rem 1rem !important;
+            }
+
+            input:focus, select:focus, textarea:focus {
+                border-color: var(--accent) !important;
+                outline: none !important;
+                box-shadow: 0 0 0 2px var(--border-accent) !important;
+            }
+
+            /* ===== DIVIDER ===== */
+            hr {
+                border: none !important;
+                border-top: 1px solid var(--border-medium) !important;
+                margin: 1.5rem 0 !important;
+            }
+
+            /* ===== CONNECTION STATUS ===== */
+            .connection-status {
+                background: rgba(16, 185, 129, 0.05);
+                border: 1px solid rgba(16, 185, 129, 0.1);
+                border-radius: 10px;
+                padding: 0.75rem;
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+            }
+
+            .connection-dot {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                background: var(--success);
+                border-radius: 50%;
+                margin-right: 0.5rem;
+                box-shadow: 0 0 8px var(--success);
             }
         </style>
         """, unsafe_allow_html=True)
 
 
 class ComponentStyles:
-    """Componentes renderizados"""
+    """Componentes renderizados minimalistas"""
     
     @staticmethod
-    def premium_ticket_card(ticket_number: str, title: str, description: str, status: str, priority: str, date: str, person: str = "") -> str:
-        """Tarjeta de ticket minimalista SaaS con bordes sutiles"""
-        status_map = {
-            "new": "badge-new",
-            "in_progress": "badge-in-progress",
-            "won": "badge-won",
-            "closed": "badge-closed"
-        }
-        
-        status_display = {
-            "new": "NUEVO",
-            "in_progress": "EN PROGRESO",
-            "won": "GANADO",
-            "closed": "CERRADO"
-        }
-        
-        badge_class = status_map.get(status, "badge-new")
-        status_text = status_display.get(status, "NUEVO")
-        
+    def stat_card(title: str, value: str, icon: str = "📊", trend: str = "") -> str:
         return f"""
-        <div class="premium-ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-header-left">
-                    <span class="ticket-number">#{ticket_number}</span>
-                    <div class="ticket-title">{title}</div>
-                    {f'<div class="ticket-person">👤 {person}</div>' if person else ''}
-                </div>
-            </div>
-            <div class="ticket-description">"{description}"</div>
-            <div class="ticket-footer">
-                <span class="badge badge-sm {badge_class}">{status_text}</span>
-                <span style="font-size: 0.8rem;">📅 {date}</span>
-            </div>
-        </div>
-        """
-    
-    @staticmethod
-    def stat_card(title: str, value: str, trend: str = "+0%", icon: str = "📊") -> str:
-        return f"""
-        <div class="stat-card-premium">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span>{icon}</span>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <span class="stat-icon">{icon}</span>
                 <span class="stat-label">{title}</span>
             </div>
             <div class="stat-value">{value}</div>
+            {f'<div class="stat-trend">{trend}</div>' if trend else ''}
         </div>
         """
     
     @staticmethod
-    def header_hero(title: str, subtitle: str = "") -> str:
+    def page_header(title: str, subtitle: str = "") -> str:
         return f"""
-        <div class="header-hero-premium">
-            <h1>{title}</h1>
-            <p>{subtitle}</p>
+        <div class="page-header">
+            <h1 class="page-title">{title}</h1>
+            {f'<p class="page-subtitle">{subtitle}</p>' if subtitle else ''}
         </div>
         """
     
     @staticmethod
-    def alert_success(message: str) -> str:
-        return f'<div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 0.75rem; color: #a7f3d0;">✅ {message}</div>'
-    
-    @staticmethod
-    def alert_error(message: str) -> str:
-        return f'<div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.75rem; color: #fecaca;">❌ {message}</div>'
+    def connection_status(connected: bool, count: int = 0) -> str:
+        if connected:
+            return f"""
+            <div class="connection-status">
+                <span class="connection-dot"></span>
+                Conectado • {count} registros
+            </div>
+            """
+        return '<div class="connection-status" style="border-color: rgba(239,68,68,0.1);">❌ Error de conexión</div>'
