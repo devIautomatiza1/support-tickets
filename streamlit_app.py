@@ -38,7 +38,7 @@ st.markdown("""
         --radius-lg: 12px;
         --radius-md: 8px;
         --radius-sm: 6px;
-        --shadow: 0 20px 35px -8px rgba(0,0,0,0.5);
+        --shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
         --transition: all 0.2s ease;
     }
 
@@ -140,16 +140,26 @@ st.markdown("""
         min-height: 2.2rem;
     }
 
-    /* ===== MODAL PROFESIONAL ===== */
+    /* ===== MODAL CENTRADO PROFESIONAL ===== */
+    div[data-testid="stDialog"] {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
     div[data-testid="stDialog"] > div {
         background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 16px !important;
+        border-radius: 20px !important;
         padding: 2rem !important;
         box-shadow: var(--shadow) !important;
-        max-width: 800px !important;
+        max-width: 700px !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        position: relative !important;
     }
     
+    /* Ocultar título por defecto */
     div[data-testid="stDialog"] [data-testid="stMarkdownContainer"] h2 {
         display: none !important;
     }
@@ -157,41 +167,38 @@ st.markdown("""
     /* Header del modal */
     .modal-header {
         margin-bottom: 1.5rem;
-    }
-    
-    .modal-ticket-number {
-        font-family: 'SF Mono', 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-        color: var(--text-tertiary);
-        display: block;
-        margin-bottom: 0.25rem;
+        text-align: left;
     }
     
     .modal-title {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
         font-weight: 450;
         color: var(--text-primary);
         line-height: 1.4;
-        margin: 0.25rem 0 0.5rem 0;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.01em;
     }
     
     .modal-divider {
         height: 2px;
-        width: 60px;
+        width: 50px;
         background: var(--accent);
         opacity: 0.5;
-        margin: 0.75rem 0 1.25rem 0;
+        margin: 0.75rem 0 0 0;
     }
 
-    /* Grid de información */
+    /* Grid de 2 columnas para info */
     .info-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
         margin-bottom: 1.5rem;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 1.25rem;
     }
     
-    .info-group {
+    .info-item {
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
@@ -202,7 +209,7 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--text-tertiary);
-        font-weight: 500;
+        font-weight: 600;
     }
     
     .info-value {
@@ -223,7 +230,7 @@ st.markdown("""
     }
     
     .section-title {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--text-tertiary);
@@ -234,8 +241,8 @@ st.markdown("""
     .description-box {
         background: var(--bg-secondary);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 1rem;
+        border-radius: 10px;
+        padding: 1.25rem;
         color: var(--text-secondary);
         font-size: 0.9rem;
         line-height: 1.6;
@@ -243,15 +250,18 @@ st.markdown("""
     }
 
     /* Formulario */
-    .form-section {
-        margin-top: 1.5rem;
+    .form-card {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
     }
     
     /* Select boxes */
     .stSelectbox [data-baseweb="select"] {
-        background: var(--bg-secondary) !important;
+        background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
     }
     
     .stSelectbox [data-baseweb="select"]:hover {
@@ -260,9 +270,9 @@ st.markdown("""
     
     /* Text area */
     .stTextArea textarea {
-        background: var(--bg-secondary) !important;
+        background: var(--bg-card) !important;
         border: 1px solid var(--border) !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         color: var(--text-primary) !important;
         font-size: 0.85rem !important;
     }
@@ -274,10 +284,11 @@ st.markdown("""
 
     /* Botones */
     .stButton > button {
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         font-size: 0.8rem !important;
-        padding: 0.4rem 1rem !important;
+        padding: 0.5rem 1rem !important;
         transition: var(--transition) !important;
+        font-weight: 500 !important;
     }
     
     .stButton > button[kind="primary"] {
@@ -298,25 +309,15 @@ st.markdown("""
     }
     
     .stButton > button:not([kind="primary"]):hover {
-        background: var(--bg-secondary) !important;
+        background: var(--bg-card) !important;
         border-color: var(--border-hover) !important;
         color: var(--text-primary) !important;
-    }
-
-    /* Success message */
-    div[data-testid="stAlert"] {
-        background: rgba(16,185,129,0.08) !important;
-        border: 1px solid rgba(16,185,129,0.2) !important;
-        color: #34D399 !important;
-        font-size: 0.8rem !important;
-        border-radius: 6px !important;
-        padding: 0.5rem !important;
     }
 
     hr {
         border: none;
         border-top: 1px solid var(--border);
-        margin: 1.25rem 0;
+        margin: 1.5rem 0;
         opacity: 0.7;
     }
 </style>
@@ -388,11 +389,11 @@ def update_ticket(ticket_id: int, status: str, notes: str, priority: str = None)
         return False
 
 # ============================================================================
-# MODAL DE EDICIÓN - CORREGIDO (CON TÍTULO)
+# MODAL DE EDICIÓN - SIN DUPLICIDAD, CENTRADO
 # ============================================================================
-@st.dialog("Editar ticket", width="large")
+@st.dialog("", width="large")
 def edit_ticket_modal(ticket_dict: Dict[str, Any]):
-    """Modal profesional para editar ticket - sin información duplicada"""
+    """Modal profesional sin información duplicada"""
     
     # Extraer datos
     ticket_id = ticket_dict.get("id")
@@ -405,90 +406,85 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
     created_at = ticket_dict.get("created_at", "")[:10] if ticket_dict.get("created_at") else "N/A"
     recording_id = ticket_dict.get("recording_id", "N/A")
     
-    # === HEADER PERSONALIZADO (reemplaza el título por defecto) ===
+    # === HEADER - SOLO TÍTULO ===
     st.markdown(f"""
     <div class="modal-header">
-        <span class="modal-ticket-number">#{ticket_num}</span>
         <div class="modal-title">{title}</div>
         <div class="modal-divider"></div>
     </div>
     """, unsafe_allow_html=True)
     
-    # === INFO GRID - SOLO UNA VEZ ===
+    # === INFO GRID - SIN DUPLICAR ESTADO/PRIORIDAD ===
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown(f"""
-        <div style="margin-bottom: 1rem;">
-            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary);">CREADO</span><br>
-            <span style="font-size: 0.9rem; color: var(--text-primary);">{created_at}</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div style="margin-bottom: 1rem;">
-            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary);">GRABACIÓN</span><br>
-            <span style="font-size: 0.8rem; color: var(--text-secondary); font-family: monospace;">{recording_id[:12]}...{recording_id[-6:] if len(recording_id) > 12 else ''}</span>
+        <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px; height: 100%;">
+            <div style="margin-bottom: 1rem;">
+                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600;">📅 CREADO</span><br>
+                <span style="font-size: 0.95rem; color: var(--text-primary); font-weight: 400;">{created_at}</span>
+            </div>
+            <div>
+                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600;">🎙️ GRABACIÓN</span><br>
+                <span style="font-size: 0.8rem; color: var(--text-secondary); font-family: monospace;">{recording_id[:12]}...{recording_id[-6:] if len(recording_id) > 12 else ''}</span>
+            </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        # Badge de estado actual
+        # Badge de estado
         status_colors = {
-            "new": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171"},
-            "in_progress": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24"},
-            "won": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399"},
-            "closed": {"bg": "rgba(107,114,128,0.08)", "color": "#9CA3AF"}
+            "new": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171", "label": "NUEVO"},
+            "in_progress": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24", "label": "EN PROGRESO"},
+            "won": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399", "label": "GANADO"},
+            "closed": {"bg": "rgba(107,114,128,0.08)", "color": "#9CA3AF", "label": "CERRADO"}
         }
         status_style = status_colors.get(current_status, status_colors["new"])
         
-        st.markdown(f"""
-        <div style="margin-bottom: 1rem;">
-            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary);">ESTADO ACTUAL</span><br>
-            <span style="display: inline-block; padding: 0.2rem 0.6rem; margin-top: 0.25rem; background: {status_style['bg']}; border: 1px solid rgba(239,68,68,0.2); border-radius: 4px; font-size: 0.75rem; color: {status_style['color']}; text-transform: uppercase;">
-                {current_status.replace('_', ' ')}
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Badge de prioridad actual
+        # Badge de prioridad
         priority_colors = {
-            "Low": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399"},
-            "Medium": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24"},
-            "High": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171"}
+            "Low": {"bg": "rgba(16,185,129,0.08)", "color": "#34D399", "label": "BAJA"},
+            "Medium": {"bg": "rgba(245,158,11,0.08)", "color": "#FBBF24", "label": "MEDIA"},
+            "High": {"bg": "rgba(239,68,68,0.08)", "color": "#F87171", "label": "ALTA"}
         }
         priority_style = priority_colors.get(current_priority, priority_colors["Medium"])
         
         st.markdown(f"""
-        <div style="margin-bottom: 1rem;">
-            <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary);">PRIORIDAD ACTUAL</span><br>
-            <span style="display: inline-block; padding: 0.2rem 0.6rem; margin-top: 0.25rem; background: {priority_style['bg']}; border: 1px solid rgba(16,185,129,0.2); border-radius: 4px; font-size: 0.75rem; color: {priority_style['color']};">
-                {current_priority}
-            </span>
+        <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 10px; height: 100%;">
+            <div style="margin-bottom: 1rem;">
+                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600;">📌 ESTADO</span><br>
+                <span style="display: inline-block; padding: 0.25rem 0.75rem; margin-top: 0.25rem; background: {status_style['bg']}; border: 1px solid rgba(239,68,68,0.2); border-radius: 20px; font-size: 0.7rem; color: {status_style['color']}; text-transform: uppercase; font-weight: 500;">
+                    {status_style['label']}
+                </span>
+            </div>
+            <div>
+                <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600;">⚡ PRIORIDAD</span><br>
+                <span style="display: inline-block; padding: 0.25rem 0.75rem; margin-top: 0.25rem; background: {priority_style['bg']}; border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; font-size: 0.7rem; color: {priority_style['color']}; font-weight: 500;">
+                    {priority_style['label']}
+                </span>
+            </div>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("<hr>", unsafe_allow_html=True)
     
-    # === DESCRIPCIÓN COMPLETA ===
+    # === DESCRIPCIÓN ===
     st.markdown("""
-    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 0.75rem;">
-        DESCRIPCIÓN
+    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 0.75rem;">
+        📝 DESCRIPCIÓN
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown(f"""
-    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
         {description if description else 'Sin descripción'}
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("<hr>", unsafe_allow_html=True)
-    
-    # === FORMULARIO DE EDICIÓN ===
+    # === FORMULARIO DE EDICIÓN (ÚNICO LUGAR PARA EDITAR) ===
     st.markdown("""
-    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 1rem;">
-        EDITAR TICKET
+    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); font-weight: 600; margin-bottom: 1rem;">
+        ✏️ EDITAR TICKET
     </div>
     """, unsafe_allow_html=True)
     
@@ -498,14 +494,16 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
         with col1:
             status_options = ["Nuevo", "En progreso", "Cerrado", "Ganado"]
             status_idx = ["new", "in_progress", "closed", "won"].index(current_status) if current_status in ["new", "in_progress", "closed", "won"] else 0
-            new_status = st.selectbox("Estado", status_options, index=status_idx)
+            new_status = st.selectbox("Cambiar estado", status_options, index=status_idx)
             status_map = {"Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
         
         with col2:
             priority_options = ["Baja", "Media", "Alta"]
             priority_idx = ["Low", "Medium", "High"].index(current_priority) if current_priority in ["Low", "Medium", "High"] else 1
-            new_priority = st.selectbox("Prioridad", priority_options, index=priority_idx)
+            new_priority = st.selectbox("Cambiar prioridad", priority_options, index=priority_idx)
             priority_map = {"Baja": "Low", "Media": "Medium", "Alta": "High"}
+        
+        st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
         
         new_notes = st.text_area(
             "Notas",
@@ -514,7 +512,7 @@ def edit_ticket_modal(ticket_dict: Dict[str, Any]):
             placeholder="Agregar notas, enlaces o actualizaciones..."
         )
         
-        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1, 1, 1])
         
