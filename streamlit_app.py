@@ -1,29 +1,17 @@
 """
-Dashboard profesional de gestión de tickets.
-Arquitectura refactorizada con separación de responsabilidades.
+Dashboard minimalista de gestión de tickets con Tailwind CSS.
 """
 
 import streamlit as st
 import pandas as pd
-from typing import Optional, Dict, Any, List, Tuple
-from dataclasses import dataclass, asdict
+from typing import Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
 
-# Importar módulo de estilos centralizado
-from styles import (
-    StyleManager, 
-    StatusColors, 
-    PriorityColors, 
-    ComponentStyles,
-    BootstrapIntegration,
-    ThemeManager,
-    ColorScheme
-)
+from styles import StyleManager, ComponentStyles
 
 
-# ============================================================================
-# CONFIGURACIÓN INICIAL
-# ============================================================================
+# Configuración
 st.set_page_config(
     page_title="Dashboard de Tickets",
     page_icon="🎫",
@@ -31,16 +19,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inyectar todos los estilos desde el módulo centralizado
 StyleManager.inject_all()
 
 
 # ============================================================================
-# MODELOS DE DATOS
+# MODELOS
 # ============================================================================
 
 class Status(Enum):
-    """Estados posibles de un ticket"""
     NEW = "new"
     IN_PROGRESS = "in_progress"
     WON = "won"
@@ -56,34 +42,28 @@ class Status(Enum):
         }
     
     @classmethod
-    def from_display(cls, display_name: str) -> str:
-        reverse_map = {v: k.value for k, v in cls.display_names().items()}
-        return reverse_map.get(display_name, cls.NEW.value)
+    def from_display(cls, name: str) -> str:
+        inverse = {v: k.value for k, v in cls.display_names().items()}
+        return inverse.get(name, cls.NEW.value)
 
 
 class Priority(Enum):
-    """Prioridades posibles"""
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
     
     @classmethod
     def display_names(cls):
-        return {
-            cls.LOW: "Baja",
-            cls.MEDIUM: "Media",
-            cls.HIGH: "Alta"
-        }
+        return {cls.LOW: "Baja", cls.MEDIUM: "Media", cls.HIGH: "Alta"}
     
     @classmethod
-    def from_display(cls, display_name: str) -> str:
-        reverse_map = {v: k.value for k, v in cls.display_names().items()}
-        return reverse_map.get(display_name, cls.MEDIUM.value)
+    def from_display(cls, name: str) -> str:
+        inverse = {v: k.value for k, v in cls.display_names().items()}
+        return inverse.get(name, cls.MEDIUM.value)
 
 
 @dataclass
 class Ticket:
-    """Modelo de datos para un ticket"""
     id: int
     ticket_number: str
     title: str
@@ -92,11 +72,9 @@ class Ticket:
     priority: str
     notes: str
     created_at: Optional[str] = None
-    recording_id: Optional[str] = None
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Ticket":
-        """Crea un Ticket desde un diccionario"""
+    def from_dict(cls, data: dict) -> "Ticket":
         return cls(
             id=data.get("id"),
             ticket_number=data.get("ticket_number", "N/A"),
@@ -105,540 +83,247 @@ class Ticket:
             status=data.get("status", Status.NEW.value).lower(),
             priority=data.get("priority", Priority.MEDIUM.value),
             notes=data.get("notes", "") or "",
-            created_at=data.get("created_at"),
-            recording_id=data.get("recording_id")
+            created_at=data.get("created_at")
         )
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convierte el Ticket a diccionario"""
-        return asdict(self)
 
 
 # ============================================================================
-# SERVICIO DE SUPABASE
+# SERVICIO SUPABASE
 # ============================================================================
 
 class SupabaseService:
-    """Servicio centralizado para operaciones con Supabase"""
-    
     _instance = None
     _client = None
     
     def __new__(cls):
-        """Singleton pattern"""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
     
     def _get_client(self):
-        """Obtiene o inicializa el cliente de Supabase"""
         if self._client is None:
             try:
                 from supabase import create_client
-                SUPABASE_URL = st.secrets["SUPABASE_URL"]
-                SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
-                self._client = create_client(SUPABASE_URL, SUPABASE_KEY)
+                self._client = create_client(
+                    st.secrets["SUPABASE_URL"],
+                    st.secrets["SUPABASE_KEY"]
+                )
             except Exception as e:
-                st.error(f"❌ Error al inicializar Supabase: {e}")
+                st.error(f"Error al conectar: {e}")
                 return None
         return self._client
     
     def test_connection(self) -> Tuple[bool, str, Optional[int]]:
-        """Prueba la conexión a Supabase"""
         try:
             client = self._get_client()
             if not client:
-                return False, "No se pudo inicializar el cliente", None
-            
+                return False, "No se pudo conectar", None
             response = client.table("opportunities").select("count", count="exact").execute()
             count = response.count if hasattr(response, 'count') else len(response.data)
             return True, "Conexión exitosa", count
         except Exception as e:
-            return False, f"Error de conexión: {str(e)}", None
+            return False, str(e), None
     
-    def fetch_tickets(self, 
-                      status_filter: Optional[str] = None, 
-                      priority_filter: Optional[str] = None) -> pd.DataFrame:
-        """Obtiene tickets con filtros opcionales"""
+    def fetch_tickets(self, status_filter: Optional[str] = None, 
+                     priority_filter: Optional[str] = None) -> pd.DataFrame:
         try:
             client = self._get_client()
             if not client:
                 return pd.DataFrame()
             
             query = client.table("opportunities").select(
-                "id, ticket_number, title, description, status, priority, notes, created_at, recording_id"
+                "id, ticket_number, title, description, status, priority, notes, created_at"
             )
             
             if status_filter and status_filter != "Todos":
                 query = query.eq("status", status_filter)
             if priority_filter and priority_filter != "Todos":
                 query = query.eq("priority", priority_filter)
-                
-            response = query.execute()
             
+            response = query.execute()
             if response.data:
                 df = pd.DataFrame(response.data)
                 df.columns = df.columns.str.lower()
                 return df
             return pd.DataFrame()
         except Exception as e:
-            st.error(f"❌ Error al obtener tickets: {e}")
+            st.error(f"Error: {e}")
             return pd.DataFrame()
     
-    def update_ticket(self, 
-                     ticket_id: int, 
-                     status: str, 
-                     notes: str, 
+    def update_ticket(self, ticket_id: int, status: str, notes: str, 
                      priority: Optional[str] = None) -> bool:
-        """Actualiza un ticket existente"""
         try:
             client = self._get_client()
             if not client:
                 return False
-            
             data = {"status": status, "notes": notes}
             if priority:
                 data["priority"] = priority
-                
             client.table("opportunities").update(data).eq("id", ticket_id).execute()
             return True
         except Exception as e:
-            st.error(f"❌ Error al actualizar ticket: {e}")
+            st.error(f"Error: {e}")
             return False
     
-    def get_sample_data(self, table: str, limit: int = 3) -> List[Dict]:
-        """Obtiene datos de muestra de una tabla"""
+    def get_sample_data(self, table: str, limit: int = 5) -> list:
         try:
             client = self._get_client()
             if not client:
                 return []
             response = client.table(table).select("*").limit(limit).execute()
             return response.data or []
-        except Exception:
+        except:
             return []
 
 
 # ============================================================================
-# COMPONENTES DE UI
+# COMPONENTES UI
 # ============================================================================
 
-class TicketCard:
-    """Componente para renderizar una tarjeta de ticket"""
+@st.fragment
+def render_grid(tickets_df: pd.DataFrame):
+    """Grid de tickets"""
+    if tickets_df.empty:
+        st.info("📭 No hay tickets")
+        return
     
-    BADGE_STYLES = {
-        Status.NEW.value: ("badge-new", "NUEVO"),
-        Status.IN_PROGRESS.value: ("badge-progress", "PROGRESO"),
-        Status.WON.value: ("badge-won", "GANADO"),
-        Status.CLOSED.value: ("badge-closed", "CERRADO")
-    }
-    
-    @staticmethod
-    def render(ticket: Ticket):
-        """Renderiza una tarjeta de ticket profesional"""
-        badge_class, badge_label = TicketCard.BADGE_STYLES.get(
-            ticket.status, 
-            TicketCard.BADGE_STYLES[Status.NEW.value]
-        )
-        
-        # Usar ComponentStyles para renderizar el badge mejorado
-        badge_html = ComponentStyles.render_status_badge(ticket.status, badge_label)
-        
-        card_html = f"""
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <span class="ticket-number">#{ticket.ticket_number}</span>
-                {badge_html}
-            </div>
-            <div class="ticket-title">{ticket.title[:60]}</div>
-        </div>
-        """
-        
-        st.markdown(card_html, unsafe_allow_html=True)
-        
-        if st.button("📝 EDITAR", key=f"edit_{ticket.id}", use_container_width=True):
-            st.session_state.edit_ticket = ticket.to_dict()
-            st.rerun()
-
-
-class TicketGrid:
-    """Grid responsiva de tickets"""
-    
-    def __init__(self, num_columns: int = 3):
-        self.num_columns = num_columns
-    
-    @st.fragment
-    def render(self, tickets_df: pd.DataFrame):
-        """Renderiza el grid de tickets"""
-        if tickets_df.empty:
-            st.info("📭 No hay tickets disponibles")
-            return
-        
-        columns = st.columns(self.num_columns, gap="small")
-        
-        for idx, (_, row) in enumerate(tickets_df.iterrows()):
-            with columns[idx % self.num_columns]:
-                ticket = Ticket.from_dict(row.to_dict())
-                TicketCard.render(ticket)
-
-
-class EditTicketModal:
-    """Modal profesional para editar tickets"""
-    
-    def __init__(self, supabase_service: SupabaseService):
-        self.supabase = supabase_service
-    
-    @st.dialog("Editar ticket", width="large")
-    def render(self, ticket_dict: Dict[str, Any]):
-        """Renderiza el modal de edición"""
-        ticket = Ticket.from_dict(ticket_dict)
-        
-        # Limpiar descripción
-        description = self._clean_description(ticket.description)
-        created_at = ticket.created_at[:10] if ticket.created_at else "N/A"
-        
-        # Renderizar componentes
-        self._render_header(ticket.title, created_at)
-        self._render_description(description)
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            new_status = self._render_status_section(ticket)
-        
-        with col2:
-            new_priority = self._render_priority_section(ticket)
-        
-        self._render_notes_form(ticket, new_status, new_priority)
-    
-    @staticmethod
-    def _clean_description(description: str) -> str:
-        """Limpia la descripción eliminando líneas vacías"""
-        if description:
-            desc_clean = "\n".join([l for l in description.split("\n") if l.strip()])
-            return desc_clean or "Sin descripción"
-        return "Sin descripción"
-    
-    def _render_header(self, title: str, created_at: str):
-        """Renderiza el header del modal"""
-        st.markdown(f"""
-        <div class="modal-header">
-            <div>
-                <span class="modal-title">📋 {title}</span>
-            </div>
-            <span class="modal-date">📅 {created_at}</span>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    def _render_description(self, description: str):
-        """Renderiza la sección de descripción"""
-        st.markdown(ComponentStyles.render_section_label("DESCRIPCIÓN", "📝"), unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="description-box">
-            {description}
-        </div>
-        """, unsafe_allow_html=True)
-    
-    def _render_status_section(self, ticket: Ticket) -> str:
-        """Renderiza la sección de estado"""
-        status_obj = Status(ticket.status)
-        status_colors = {
-            Status.NEW: StatusColors.NEW,
-            Status.IN_PROGRESS: StatusColors.IN_PROGRESS,
-            Status.WON: StatusColors.WON,
-            Status.CLOSED: StatusColors.CLOSED
-        }
-        
-        color = status_colors.get(status_obj, StatusColors.NEW)
-        status_label = Status.display_names()[status_obj]
-        
-        status_icon = {"new": "🆕", "in_progress": "⏳", "won": "✅", "closed": "🔒"}.get(ticket.status, "ℹ️")
-        
-        st.markdown(f"""
-        <div class="info-card">
-            <div class="info-label">{status_icon} ESTADO ACTUAL</div>
-            {ComponentStyles.render_colored_value(color.bg, color.color, status_label)}
-            <div class="select-label">▼ CAMBIAR A</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        status_options = list(Status.display_names().values())
-        current_idx = list(Status.display_names().values()).index(status_label)
-        
-        new_status_display = st.selectbox(
-            "", 
-            status_options, 
-            index=current_idx, 
-            key=f"status_{ticket.id}", 
-            label_visibility="collapsed"
-        )
-        
-        return Status.from_display(new_status_display)
-    
-    def _render_priority_section(self, ticket: Ticket) -> str:
-        """Renderiza la sección de prioridad"""
-        priority_obj = Priority(ticket.priority)
-        priority_colors = {
-            Priority.LOW: PriorityColors.LOW,
-            Priority.MEDIUM: PriorityColors.MEDIUM,
-            Priority.HIGH: PriorityColors.HIGH
-        }
-        
-        color = priority_colors.get(priority_obj, PriorityColors.MEDIUM)
-        priority_label = Priority.display_names()[priority_obj]
-        
-        priority_icon = {"Low": "📊", "Medium": "⚠️", "High": "🔴"}.get(ticket.priority, "⚠️")
-        
-        st.markdown(f"""
-        <div class="info-card">
-            <div class="info-label">{priority_icon} PRIORIDAD ACTUAL</div>
-            {ComponentStyles.render_colored_value(color.bg, color.color, priority_label)}
-            <div class="select-label">▼ CAMBIAR A</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        priority_options = list(Priority.display_names().values())
-        current_idx = list(Priority.display_names().values()).index(priority_label)
-        
-        new_priority_display = st.selectbox(
-            "", 
-            priority_options, 
-            index=current_idx, 
-            key=f"priority_{ticket.id}", 
-            label_visibility="collapsed"
-        )
-        
-        return Priority.from_display(new_priority_display)
-    
-    def _render_notes_form(self, ticket: Ticket, new_status: str, new_priority: str):
-        """Renderiza el formulario de notas y botones de acción"""
-        st.markdown(ComponentStyles.render_section_label("NOTAS", "📝"), unsafe_allow_html=True)
-        
-        with st.form(key=f"edit_form_{ticket.id}"):
-            new_notes = st.text_area(
-                "",
-                value=ticket.notes,
-                height=120,
-                placeholder="⭐️ Tema / 📌 Descripción / 👤 Mencionado / 💬 Contexto / 📊 Confianza",
-                key=f"notes_{ticket.id}",
-                label_visibility="collapsed"
+    cols = st.columns(3, gap="medium")
+    for idx, (_, row) in enumerate(tickets_df.iterrows()):
+        with cols[idx % 3]:
+            ticket = Ticket.from_dict(row.to_dict())
+            st.markdown(
+                ComponentStyles.ticket_card(
+                    ticket.ticket_number,
+                    ticket.title,
+                    ticket.status
+                ),
+                unsafe_allow_html=True
             )
-            
-            st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
-            
-            col1, col2, col3 = st.columns([1, 1, 1])
-            
-            with col2:
-                saved = st.form_submit_button(
-                    "✓ Guardar cambios", 
-                    use_container_width=True,
-                    type="primary"
-                )
-            
-            with col3:
-                cancelled = st.form_submit_button(
-                    "✕ Cancelar", 
-                    use_container_width=True
-                )
-            
-            if saved:
-                if self.supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
-                    st.success("✅ Ticket actualizado correctamente")
-                    st.rerun()
-                else:
-                    st.error("❌ Error al actualizar el ticket")
-            
-            if cancelled:
+            if st.button("✏️ Editar", key=f"edit_{ticket.id}", use_container_width=True):
+                st.session_state.edit_ticket = ticket
                 st.rerun()
 
 
-# ============================================================================
-# INTERFAZ PRINCIPAL
-# ============================================================================
-
-def render_sidebar(supabase: SupabaseService) -> Tuple[str, str]:
-    """Renderiza la barra lateral con filtros y estadísticas"""
-    with st.sidebar:
-        st.markdown("## 🔍 Filtros")
-        
-        status_filter = st.selectbox(
-            "Estado",
-            ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"],
-            key="status_filter"
+@st.dialog("Editar Ticket", width="large")
+def edit_modal(ticket: Ticket):
+    """Modal de edición"""
+    st.markdown(f"### 📋 {ticket.title}")
+    st.caption(f"Creado: {ticket.created_at[:10] if ticket.created_at else 'N/A'}")
+    
+    st.markdown("**Descripción:**")
+    st.text(ticket.description or "Sin descripción")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Estado actual:**")
+        status_label = Status.display_names().get(Status(ticket.status), "Nuevo")
+        st.markdown(f"🔹 {status_label}")
+        new_status_label = st.selectbox(
+            "Cambiar a:", 
+            list(Status.display_names().values()),
+            index=list(Status.display_names().values()).index(status_label)
         )
-        
-        priority_filter = st.selectbox(
-            "Prioridad",
-            ["Todos", "Baja", "Media", "Alta"],
-            key="priority_filter"
+        new_status = Status.from_display(new_status_label)
+    
+    with col2:
+        st.markdown("**Prioridad actual:**")
+        priority_label = Priority.display_names().get(Priority(ticket.priority), "Media")
+        st.markdown(f"⚡ {priority_label}")
+        new_priority_label = st.selectbox(
+            "Cambiar a:",
+            list(Priority.display_names().values()),
+            index=list(Priority.display_names().values()).index(priority_label)
         )
-        
-        if st.button("🔄 ACTUALIZAR", key="ACTUALIZAR", use_container_width=True):
+        new_priority = Priority.from_display(new_priority_label)
+    
+    st.markdown("**Notas:**")
+    new_notes = st.text_area("", value=ticket.notes, height=120)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("💾 Guardar", use_container_width=True, type="primary"):
+            supabase = SupabaseService()
+            if supabase.update_ticket(ticket.id, new_status, new_notes, new_priority):
+                st.success("✅ Guardado")
+                st.rerun()
+    with col2:
+        if st.button("❌ Cancelar", use_container_width=True):
             st.rerun()
-        
-        st.divider()
-        
-        # Estadísticas mejoradas
-        st.markdown("## 📊 Estadísticas")
-        all_tickets = supabase.fetch_tickets()
-        
-        if not all_tickets.empty:
-            total = len(all_tickets)
-            new_count = len(all_tickets[all_tickets["status"] == "new"])
-            won_count = len(all_tickets[all_tickets["status"] == "won"])
-            
-            # Renderizar tarjetas de estadísticas profesionales
-            st.markdown(ComponentStyles.render_stat_card(
-                "Total de Tickets",
-                str(total),
-                f"+{total}" if total > 0 else "sin cambios"
-            ), unsafe_allow_html=True)
-            
-            st.markdown(ComponentStyles.render_stat_card(
-                "Nuevos",
-                str(new_count),
-                f"{new_count} por procesar"
-            ), unsafe_allow_html=True)
-            
-            st.markdown(ComponentStyles.render_stat_card(
-                "Ganados",
-                str(won_count),
-                f"✅ {won_count} completados",
-                trend_positive=True
-            ), unsafe_allow_html=True)
-        else:
-            st.info("📭 Sin datos disponibles")
-        
-        return status_filter, priority_filter
 
 
-def render_diagnostics(supabase: SupabaseService):
-    """Renderiza la sección de diagnóstico del sistema"""
-    with st.expander("🔧 Diagnóstico del sistema", expanded=False):
-        success, msg, count = supabase.test_connection()
-        
-        if success:
-            st.markdown(BootstrapIntegration.alert_success(
-                f"{msg} — {count} registros disponibles en la base de datos"
-            ), unsafe_allow_html=True)
-        else:
-            st.markdown(BootstrapIntegration.alert_error(
-                f"{msg}. Verifica tu conexión a Supabase."
-            ), unsafe_allow_html=True)
-        
-        st.caption("🔐 Configuración: Secrets de Streamlit (.streamlit/secrets.toml)")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("📋 Ver opportunities", key="ver_opp", use_container_width=True):
-                data = supabase.get_sample_data("opportunities", limit=5)
-                if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
-                else:
-                    st.warning("⚠️ No hay datos disponibles")
-        with col2:
-            if st.button("🎙️ Ver recordings", key="ver_rec", use_container_width=True):
-                data = supabase.get_sample_data("recordings", limit=5)
-                if data:
-                    st.dataframe(pd.DataFrame(data), use_container_width=True)
-                else:
-                    st.warning("⚠️ No hay datos disponibles")
-
+# ============================================================================
+# APLICACIÓN PRINCIPAL
+# ============================================================================
 
 def main():
-    """Función principal"""
-    
-    # Inicializar servicios
     supabase = SupabaseService()
-    modal_editor = EditTicketModal(supabase)
-    grid = TicketGrid(num_columns=3)
     
-    # Header profesional
+    # Header
     st.markdown("""
-    <div style="
-        background: linear-gradient(135deg, var(--accent), #2563EB);
-        padding: 2rem 1.5rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
-    ">
-        <h1 style="
-            color: white;
-            margin: 0;
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        ">🎫 Dashboard de Tickets</h1>
-        <p style="
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0.5rem 0 0 0;
-            font-size: 1.1rem;
-        ">Sistema de gestión de oportunidades — Interfaz profesional</p>
+    <div style="background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+        <h1 style="color: white; margin: 0; font-size: 2rem;">🎫 Dashboard de Tickets</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0;">Gestión minimalista de oportunidades</p>
     </div>
     """, unsafe_allow_html=True)
     
     # Sidebar
-    status_filter, priority_filter = render_sidebar(supabase)
+    with st.sidebar:
+        st.markdown("### 🔍 Filtros")
+        status = st.selectbox("Estado", ["Todos", "Nuevo", "En progreso", "Cerrado", "Ganado"])
+        priority = st.selectbox("Prioridad", ["Todos", "Baja", "Media", "Alta"])
+        
+        if st.button("🔄 Actualizar", use_container_width=True):
+            st.rerun()
+        
+        st.divider()
+        
+        st.markdown("### 📊 Estadísticas")
+        all_tickets = supabase.fetch_tickets()
+        if not all_tickets.empty:
+            st.markdown(ComponentStyles.stat_card("Total", str(len(all_tickets))), unsafe_allow_html=True)
+            st.markdown(ComponentStyles.stat_card("Nuevos", str(len(all_tickets[all_tickets["status"]=="new"]))), unsafe_allow_html=True)
+            st.markdown(ComponentStyles.stat_card("Ganados", str(len(all_tickets[all_tickets["status"]=="won"]))), unsafe_allow_html=True)
     
-    # Mapeos para filtros
-    status_map = {
-        "Todos": "Todos", "Nuevo": "new", "En progreso": "in_progress", 
-        "Cerrado": "closed", "Ganado": "won"
-    }
-    priority_map = {
-        "Todos": "Todos", "Baja": "Low", "Media": "Medium", "Alta": "High"
-    }
+    # Mapeos
+    status_map = {"Todos": "Todos", "Nuevo": "new", "En progreso": "in_progress", "Cerrado": "closed", "Ganado": "won"}
+    priority_map = {"Todos": "Todos", "Baja": "Low", "Media": "Medium", "Alta": "High"}
     
-    selected_status = status_map[status_filter]
-    selected_priority = priority_map[priority_filter]
-    
-    # Obtener tickets
+    # Obtener y mostrar tickets
     tickets = supabase.fetch_tickets(
-        status_filter=selected_status if selected_status != "Todos" else None,
-        priority_filter=selected_priority if selected_priority != "Todos" else None
+        status_map[status] if status_map[status] != "Todos" else None,
+        priority_map[priority] if priority_map[priority] != "Todos" else None
     )
     
-    # Mostrar grid
-    if tickets.empty:
-        st.markdown("""
-        <div style="
-            text-align: center;
-            padding: 3rem 1.5rem;
-            background: var(--bg-card);
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            color: var(--text-secondary);
-        ">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
-            <p style="font-size: 1.1rem; margin: 0;">
-                No hay tickets con los filtros seleccionados
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+    if not tickets.empty:
+        st.markdown(f"#### 📌 {len(tickets)} tickets encontrados")
+        render_grid(tickets)
     else:
-        st.markdown(f"""
-        <div style="
-            padding: 1rem;
-            background: linear-gradient(90deg, var(--bg-card), rgba(59, 130, 246, 0.1));
-            border-left: 4px solid var(--accent);
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        ">
-            <h3 style="
-                margin: 0;
-                color: var(--text-primary);
-                font-weight: 600;
-            ">📌 {len(tickets)} tickets encontrados</h3>
-        </div>
-        """, unsafe_allow_html=True)
-        grid.render(tickets)
+        st.info("📭 No hay tickets con esos filtros")
     
-    # Modal de edición
+    # Modal
     if "edit_ticket" in st.session_state and st.session_state.edit_ticket:
-        modal_editor.render(st.session_state.edit_ticket)
+        edit_modal(st.session_state.edit_ticket)
         st.session_state.edit_ticket = None
     
     # Diagnóstico
-    render_diagnostics(supabase)
+    with st.expander("🔧 Diagnóstico"):
+        success, msg, count = supabase.test_connection()
+        if success:
+            st.markdown(ComponentStyles.alert_success(f"{msg} — {count} registros"), unsafe_allow_html=True)
+        else:
+            st.markdown(ComponentStyles.alert_error(msg), unsafe_allow_html=True)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Ver opportunities"):
+                data = supabase.get_sample_data("opportunities")
+                if data:
+                    st.dataframe(pd.DataFrame(data), use_container_width=True)
+        with col2:
+            if st.button("Ver recordings"):
+                data = supabase.get_sample_data("recordings")
+                if data:
+                    st.dataframe(pd.DataFrame(data), use_container_width=True)
 
 
 if __name__ == "__main__":
